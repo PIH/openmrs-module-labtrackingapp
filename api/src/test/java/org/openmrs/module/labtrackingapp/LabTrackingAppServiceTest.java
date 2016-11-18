@@ -9,10 +9,17 @@
  */
 package org.openmrs.module.labtrackingapp.api;
 
+import org.junit.Test;
+
 /**
  * This is a unit test, which verifies logic in LabTrackingAppService. It doesn't extend
  * BaseModuleContextSensitiveTest, thus it is run without the in-memory DB and Spring context.
  */
 public class LabTrackingAppServiceTest {
+	
+	@Test
+	public void emptyTest() {
+		
+	}
 	
 }
