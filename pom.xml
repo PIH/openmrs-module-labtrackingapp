@@ -18,9 +18,9 @@
 	<url>https://wiki.openmrs.org/x/FQ4z</url>
 
 	<scm>
-		<connection>scm:git:git@github.com:openmrs/openmrs-module-labtrackingapp.git</connection>
-		<developerConnection>scm:git:git@github.com:openmrs/openmrs-module-labtrackingapp.git</developerConnection>
-		<url>https://github.com/openmrs/openmrs-module-labtrackingapp/</url>
+		<connection>scm:git:git@github.com:PIH/openmrs-module-labtrackingapp.git</connection>
+		<developerConnection>scm:git:git@github.com:PIH/openmrs-module-labtrackingapp.git</developerConnection>
+		<url>https://github.com/PIH/openmrs-module-labtrackingapp/</url>
 	</scm>
 
 	<distributionManagement>
