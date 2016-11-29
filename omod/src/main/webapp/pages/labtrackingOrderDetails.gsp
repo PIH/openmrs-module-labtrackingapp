@@ -20,9 +20,9 @@
     ui.includeJavascript("uicommons", "model/user-model.js")
     ui.includeJavascript("uicommons", "model/encounter-model.js")
 
-
-    ui.includeJavascript("labtrackingapp", "components/LabTrackingViewQueueController.js")
-    ui.includeJavascript("labtrackingapp", "app.js")
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderDetailsController.js")
+    ui.includeJavascript("labtrackingapp", "app_order_details.js")
 
 %>
 
@@ -41,21 +41,21 @@
 </style>
 
 
-<div class="container" ng-app="labTrackingApp" ng-controller="viewQueueController">
+<div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
 
 
 
         <div class="panel panel-primary" id="details_box">
-          <div class="panel-heading">Test Details for Patient ABC123</div>
+          <div class="panel-heading">${ui.message("labtrackingapp.orderdetailstitle")} Patient ABC123</div>
           <div class="panel-body">
             <div class="panel-group">
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#order_panel">Order details</a>
+                    <a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.orderdetailslabel")}</a>
                   </h4>
                 </div>
-                <div id="order_panel" class="panel-collapse collapse">
+                <div id="order_panel" class="panel-collapse">
                   <div class="panel-body">
                     <form class="form-horizontal">
                       <div class="form-group">
@@ -78,10 +78,10 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#specimen">Pathology Specimen details</a>
+                    <a data-toggle="collapse" href="#specimen">${ui.message("labtrackingapp.pathologyspecimendetailslabel")}</a>
                   </h4>
                 </div>
-                <div id="specimen" class="panel-collapse collapse">
+                <div id="specimen" class="panel-collapse">
                   <div class="panel-body">
 
                     <form class="form-horizontal">
@@ -144,10 +144,10 @@
               <div class="panel panel-default">
                 <div class="panel-heading">
                   <h4 class="panel-title">
-                    <a data-toggle="collapse" href="#results">Result details</a>
+                    <a data-toggle="collapse" href="#results">${ui.message("labtrackingapp.resultdetailslabel")}</a>
                   </h4>
                 </div>
-                <div id="results" class="panel-collapse collapse">
+                <div id="results" class="panel-collapse">
                   <div class="panel-body">
                     <form class="form-horizontal">
                       <div class="form-group">
