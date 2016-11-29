@@ -21,8 +21,9 @@
     ui.includeJavascript("uicommons", "model/encounter-model.js")
 
 
-    ui.includeJavascript("labtrackingapp", "components/LabTrackingViewQueueController.js")
-    ui.includeJavascript("labtrackingapp", "app.js")
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingAddOrderController.js")
+    ui.includeJavascript("labtrackingapp", "app_add_order.js")
 
 
 %>
@@ -31,7 +32,7 @@
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
-            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=edtriageapp.app.triageQueue") }"
+            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=labtrackingapp.app.viewQueue") }"
         }
 
     ];
@@ -42,49 +43,52 @@
 </style>
 
 
-<div class="container" ng-app="labTrackingApp" ng-controller="viewQueueController">
+<div class="container" ng-app="labTrackingApp" ng-controller="addOrderController">
 
         <div class="panel panel-primary" id="order_box">
-          <div class="panel-heading">Order a new test</div>
+          <div class="panel-heading">${ui.message("labtrackingapp.addorderpagetitle")}</div>
           <div class="panel-body">
             <form>
               <div class="form-group row">
-                <label class="col-sm-2 col-form-label">Pre-Lab Diagnosis</label>
+                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                 <div class="col-sm-10">
-                  <input type="text" class="form-control" id="diagnosis" placeholder="">
+                  <select class="form-control" id="site" ng-model="order.diagnosis.value">
+                    <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}</option>
+                  </select>
+
                 </div>
               </div>
               <div class="form-group row">
-                <label for="site" class="col-sm-2 col-form-label">Procedure/Site</label>
+                <label for="site" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                 <div class="col-sm-10">
-                  <select class="form-control" id="site">
-                    <option>CNB</option>
-                    <option>ABC</option>
-                    <option>DEF</option>
+                  <select class="form-control" id="site" ng-model="order.procedure.value">
+                    <option ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}</option>
                   </select>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="instructions" class="col-sm-2 col-form-label">Instructions</label>
+                <label for="instructions" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.instructionslabel")}</label>
                 <div class="col-sm-10">
                   <textarea class="form-control" id="instructions" placeholder=""></textarea>
                 </div>
               </div>
               <div class="form-group row">
-                <label for="history" class="col-sm-2 col-form-label">Clinical History</label>
+                <label for="history" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
                 <div class="col-sm-10">
                   <textarea type="text" class="form-control" id="history" placeholder=""></textarea>
                 </div>
               </div>
               <div class="pull-right">
-                <button class="btn btn-default cancel">Cancel</button>
-                <button class="btn btn-success" onclick="handleSaveOrder()">Save</button>
+                <button class="btn btn-default cancel">${ui.message("uicommons.cancel")}</button>
+                <button class="btn btn-success" onclick="handleSaveOrder()">${ui.message("uicommons.save")}</button>
               </div>
             </form>
           </div>
         </div>
 
-${ ui.includeFragment("edtriageapp", "translations") }
+        <pre>{{order.concepts | json }}</pre>
+</div>
+${ ui.includeFragment("labtrackingapp", "translations") }
 
 <script type="text/javascript">
     angular.module('labTrackingApp')

@@ -24,14 +24,13 @@
     ui.includeJavascript("labtrackingapp", "components/LabTrackingViewQueueController.js")
     ui.includeJavascript("labtrackingapp", "app.js")
 
-
 %>
 
 <script type="text/javascript" xmlns="http://www.w3.org/1999/html">
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
-            label: "${ ui.message("labtrackingapp.test") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=edtriageapp.app.triageQueue") }"
+            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=labtrackingapp.app.viewQueue") }"
         }
 
     ];
@@ -201,22 +200,7 @@
         </div>
 
 
-
-
-<div class="container">
-  <h2>Button Styles</h2>
-  <button type="button" class="btn btn-default">Default</button>
-  <button type="button" class="btn btn-primary">Primary</button>
-  <button type="button" class="btn btn-success">Success</button>
-  <button type="button" class="btn btn-info">Info</button>
-  <button type="button" class="btn btn-warning">Warning</button>
-  <button type="button" class="btn btn-danger">Danger</button>
-  <button type="button" class="btn btn-link">Link</button>
-  <button type="button" class="confirm">confirm</button>
-
-</div>
-
-${ ui.includeFragment("edtriageapp", "translations") }
+${ ui.includeFragment("labtrackingapp", "translations") }
 
 <script type="text/javascript">
     angular.module('labTrackingApp')
