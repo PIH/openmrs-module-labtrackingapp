@@ -20,7 +20,7 @@
     ui.includeJavascript("uicommons", "model/user-model.js")
     ui.includeJavascript("uicommons", "model/encounter-model.js")
 
-
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingAddOrderController.js")
     ui.includeJavascript("labtrackingapp", "app_add_order.js")
@@ -80,21 +80,20 @@
               </div>
               <div class="pull-right">
                 <button class="btn btn-default cancel">${ui.message("uicommons.cancel")}</button>
-                <button class="btn btn-success" onclick="handleSaveOrder()">${ui.message("uicommons.save")}</button>
+                <button class="btn btn-success" ng-click="handleSaveOrder()">${ui.message("uicommons.save")}</button>
               </div>
             </form>
           </div>
         </div>
 
-        <pre>{{order.concepts | json }}</pre>
+        <pre>{{order | json }}</pre>
 </div>
 ${ ui.includeFragment("labtrackingapp", "translations") }
 
 <script type="text/javascript">
     angular.module('labTrackingApp')
-            .value('patientDashboard', '')
-            .value('serverDateTimeInMillis', '')
-            .value('locationUuid', '')
+			.value('patientUuid', '${ patient.uuid }')
+			.value('locationUuid', '${ location.uuid }')
             .value('translations', translations);
 
     jq(function () {

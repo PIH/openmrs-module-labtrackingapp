@@ -143,7 +143,6 @@
 
               <div class="panel panel-default">
                 <div class="panel-heading">
-                  <h4 class="panel-title">
                     <a data-toggle="collapse" href="#results">${ui.message("labtrackingapp.resultdetailslabel")}</a>
                   </h4>
                 </div>
