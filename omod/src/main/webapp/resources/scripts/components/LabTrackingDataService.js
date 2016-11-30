@@ -1,6 +1,6 @@
 angular.module("labTrackingDataService", [])
-    .service('LabTrackingDataService', ['$q', '$http', 'LabTrackingOrder',
-        function ($q, $http, LabTrackingOrder) {
+    .service('LabTrackingDataService', ['$q', '$http', 'SessionInfo','LabTrackingOrder',
+        function ($q, $http, SessionInfo, LabTrackingOrder) {
             var CONSTANTS = {
                 URLS: {
                     FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
@@ -25,7 +25,7 @@ angular.module("labTrackingDataService", [])
                     concept: labTrackingOrder.procedure.value,
                     careSetting: labTrackingOrder.careSetting.value,
                     encounter: labTrackingOrder.encounter.value,
-                    orderer:labTrackingOrder.orderer.value,
+                    orderer: this.session.user.uuid,
                     orderReason:labTrackingOrder.diagnosis.value,
                     instructions:labTrackingOrder.instructions.value,
                     clinicalHistory:labTrackingOrder.clinicalHistory.value,
@@ -33,8 +33,7 @@ angular.module("labTrackingDataService", [])
                 }
         
                 return ensureActiveVisit(labTrackingOrder.patient.value, labTrackingOrder.location.value)
-                    .then(function (res) {
-                        console.log(res);
+                    .then(function () {
                         return $http.post(CONSTANTS.URLS.SAVE_ORDER, order)
                     })
                     .then(function () {
@@ -51,5 +50,11 @@ angular.module("labTrackingDataService", [])
             }
 
             this.CONSTANTS = CONSTANTS;
-   //         this.session =  SessionInfo.get();
+            this.session =  SessionInfo.get();
+//            return SessionInfo.get().then(function(sess){
+//                this.session = sess;
+//                console.log(this.session);
+//            });
+
+
         }]);

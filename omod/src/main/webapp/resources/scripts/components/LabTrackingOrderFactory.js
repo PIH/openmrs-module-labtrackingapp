@@ -11,7 +11,6 @@ angular.module("labTrackingOrderFactory", [])
             this.clinicalHistory = {concept: LabTrackingOrder.concepts.clinicalHistory, value:"Test history info"};
             this.careSetting =  {concept: LabTrackingOrder.concepts.careSetting, value:LabTrackingOrder.concepts.careSetting.answers[1].uuid};
             this.encounter = {concept: null, value:null};
-            this.orderer = {value:null};
             this.location = {value: locationUuid};
             this.patient = {value: patientUuid};
 
