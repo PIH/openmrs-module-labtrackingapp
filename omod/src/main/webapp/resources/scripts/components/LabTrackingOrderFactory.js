@@ -17,7 +17,7 @@ angular.module("labTrackingOrderFactory", [])
         }
 
         LabTrackingOrder.concepts = {
-            order:{label:'Order', uuid:'25fa3a49-ca69-4e8d-9e55-394a9964a1cd'} ,
+            order:{label:'Order', uuid:'25fa3a49-ca69-4e8d-9e55-394a9964a1cd', encounter_type:'b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd'} ,
             diagnosis: {label:'Pre-Pathology Suspected diagnosis', uuid:'226ed7ad-b776-4b99-966d-fd818d3302c2',
                 answers:
                 [
@@ -37,9 +37,9 @@ angular.module("labTrackingOrderFactory", [])
             },
             procedure: {label:'Procedure', uuid:'c6a87394-4cd0-48b7-a8ac-c7dad55be2e6',
                 answers:[
-                    {label:'Neck/Head', uuid:'1?????'},
                     {label:'L Breast', uuid:'fcd5199e-1a36-11e2-a310-aa00f871a3e1'},
                     {label:'R Breast', uuid:'fcd4c8e0-1a36-11e2-a310-aa00f871a3e1'},
+                    {label:'Neck/Head', uuid:'1?????'},
                     {label:'Bilateral Breast', uuid:'?????'},
                     {label:'Uterus', uuid:'?????'},
                     {label:'R Ovary', uuid:'?????'},

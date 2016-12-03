@@ -21,6 +21,7 @@
     ui.includeJavascript("uicommons", "model/encounter-model.js")
 
     ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
+    ui.includeJavascript("labtrackingapp", "components/EncounterFactory.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingAddOrderController.js")
     ui.includeJavascript("labtrackingapp", "app_add_order.js")
@@ -53,7 +54,7 @@
                 <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="site" ng-model="order.diagnosis.value">
-                    <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}</option>
+                    <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
                   </select>
 
                 </div>
@@ -62,7 +63,7 @@
                 <label for="site" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="site" ng-model="order.procedure.value">
-                    <option ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}</option>
+                    <option ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
                   </select>
                 </div>
               </div>
@@ -83,8 +84,18 @@
                 <button class="btn btn-success" ng-click="handleSaveOrder()">${ui.message("uicommons.save")}</button>
               </div>
             </form>
+             <div class="row">
+                <div class="col-sm-12">
+                    <br/>
+                    <div class="alert alert-danger" ng-if="error"><strong>Save failed!</strong> - {{error}}</div>
+                </div>
+             </div>
+
           </div>
         </div>
+
+        <h1>Debug info</h1>
+        <pre>debugInfo={{debugInfo | json }}</pre>
 
         <pre>{{order | json }}</pre>
 </div>

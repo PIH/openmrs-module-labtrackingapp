@@ -20,6 +20,7 @@
     ui.includeJavascript("uicommons", "model/user-model.js")
     ui.includeJavascript("uicommons", "model/encounter-model.js")
 
+    ui.includeJavascript("labtrackingapp", "bootstrap.min.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderDetailsController.js")
     ui.includeJavascript("labtrackingapp", "app_order_details.js")
@@ -55,7 +56,7 @@
                     <a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.orderdetailslabel")}</a>
                   </h4>
                 </div>
-                <div id="order_panel" class="panel-collapse">
+                <div id="order_panel" class="panel-collapse collapse">
                   <div class="panel-body">
                     <form class="form-horizontal">
                       <div class="form-group">
@@ -81,7 +82,7 @@
                     <a data-toggle="collapse" href="#specimen">${ui.message("labtrackingapp.pathologyspecimendetailslabel")}</a>
                   </h4>
                 </div>
-                <div id="specimen" class="panel-collapse">
+                <div id="specimen" class="panel-collapse collapse">
                   <div class="panel-body">
 
                     <form class="form-horizontal">

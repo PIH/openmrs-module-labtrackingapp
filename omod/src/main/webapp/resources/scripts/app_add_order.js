@@ -4,6 +4,7 @@
 angular.module('labTrackingApp', [
     'session',
     'labTrackingDataService',
+    'encounterFactory',
     'labTrackingOrderFactory',
     'labTrackingAddOrderController'
 ]);
