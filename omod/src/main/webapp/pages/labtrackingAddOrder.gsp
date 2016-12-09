@@ -88,16 +88,17 @@
                 <div class="col-sm-12">
                     <br/>
                     <div class="alert alert-danger" ng-if="error"><strong>Save failed!</strong> - {{error}}</div>
+                    <div class="alert alert-success" ng-if="was_saved"><strong>The order was saved</strong></div>
                 </div>
              </div>
 
           </div>
         </div>
 
-        <h1>Debug info</h1>
-        <pre>debugInfo={{debugInfo | json }}</pre>
+        <h1 ng-if="error">Debug info</h1>
+        <pre ng-if="error">debugInfo={{debugInfo | json }}</pre>
 
-        <pre>{{order | json }}</pre>
+        <pre ng-if="error">{{order | json }}</pre>
 </div>
 ${ ui.includeFragment("labtrackingapp", "translations") }
 
