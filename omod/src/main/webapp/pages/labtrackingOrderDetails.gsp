@@ -43,8 +43,11 @@
 
 
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
-
-
+        <div class=row>
+              <div class="col-sm-12">
+        <date-with-popup ng-model="foo" />
+              </div>
+        </div>
 
         <div class="panel panel-primary" id="details_box">
           <div class="panel-heading">${ui.message("labtrackingapp.orderdetailstitle")} Patient ABC123</div>
@@ -60,15 +63,15 @@
                   <div class="panel-body">
                     <form class="form-horizontal">
                       <div class="form-group">
-                        <label class="control-label col-sm-2">Date of Initial Consult</label>
-                        <div class="col-sm-10">
+                        <label class="control-label col-sm-3">Date of Initial Consult</label>
+                        <div class="col-sm-9">
                           <p class="form-control-static"> 8-Nov-2014</p>
                         </div>
                       </div>
                     </form>
                     <div class="form-group">
-                      <label class="control-label col-sm-2">Procedure site</label>
-                      <div class="col-sm-10">
+                      <label class="control-label col-sm-3">Procedure site</label>
+                      <div class="col-sm-9">
                         <p class="form-control-static"> CNB</p>
                       </div>
                     </div>
@@ -82,58 +85,126 @@
                     <a data-toggle="collapse" href="#specimen">${ui.message("labtrackingapp.pathologyspecimendetailslabel")}</a>
                   </h4>
                 </div>
-                <div id="specimen" class="panel-collapse collapse">
+                <div id="specimen" class="panel-collapse">
                   <div class="panel-body">
 
                     <form class="form-horizontal">
-                      <div class="form-group">
-                        <label class="control-label col-sm-2" for="date_of_sample">Sample Date</label>
-                        <div class="col-sm-10">
-                          <div class='input-group date'>
-                            <input type='text' class="form-control" id="date_of_sample" value="8-Nov-2014"/>
-                            <span class="input-group-addon">
-                             <span class="glyphicon glyphicon-calendar"></span>
-                          </span>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-3" for="date_of_sample">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
+                          <div class="col-md-6">
+
                           </div>
-                        </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-sm-3" for="date_of_sample">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
+                          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
+                          <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
+                          </span>
                       </div>
 
                       <div class="form-group">
-                        <label class="control-label col-sm-2" for="proc_location">Location where procedure performed</label>
-                        <div class="col-sm-10">
-                          <div class='input-group date'>
+                        <label class="control-label col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
+                        <div class="col-sm-9">
                             <select type='text' class="form-control" id="proc_location" >
                               <option>Mirebalais Hospital</option>
                               <option>Another Hospital</option>
                               </select>
-                          </span>
-                          </div>
                         </div>
                       </div>
 
                       <div class="form-group">
-                        <label class="control-label col-sm-2" for="atttending_surgeon">Attending surgeon</label>
-                        <div class="col-sm-10">
-                          <div class='input-group date'>
-                            <select type='text' class="form-control" id="atttending_surgeon" >
+                        <label class="control-label col-sm-3" for="attending_surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
+                        <div class="col-sm-9">
+                            <select type='text' class="form-control" id="attending_surgeon" >
                               <option>Joseph Jones</option>
                               <option>Another Dr.</option>
                             </select>
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label class="control-label col-sm-2" ></label>
-                        <div class="col-sm-10">
-                          <p class="form-control-static"> more elements ...</p>
                         </div>
                       </div>
 
                       <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10 pull-right">
-                          <button type="button" class="btn btn-primary">Save</button>
-                          <button type="button" class="btn btn-default">Cancel</button>
+                        <label class="control-label col-sm-3" for="resident">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
+                        <div class="col-sm-9">
+                            <select type='text' class="form-control" id="resident" >
+                              <option>Resident Jones</option>
+                              <option>Another Dr.</option>
+                            </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-sm-3" for="mdtonotify">${ui.message("labtrackingapp.orderdetails.mdtonotifylabel")}</label>
+                        <div class="col-sm-9">
+                            <select type='text' class="form-control" id="mdtonotify" >
+                              <option>MD Jones</option>
+                              <option>Another MD.</option>
+                            </select>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="col-sm-3 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
+                        <div class="col-sm-9">
+                          <select class="form-control" id="site" ng-model="order.diagnosis.value">
+                            <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
+                          </select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="site" class="col-sm-3 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
+                        <div class="col-sm-9">
+                          <select class="form-control" id="site" ng-model="order.procedure.value">
+                            <option ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                       <div class="row">
+                         <label class="control-label col-sm-3" for="urgentreviewlabel">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
+                         <div class="col-sm-9">
+                             <div id="file1" class="btn-group" data-toggle="buttons">
+                                 <label class="btn btn-danger"><input type="radio" name="radioGroup2" value="yes">Yes</label>
+                                 <label class="btn btn-primary"><input type="radio" name="radioGroup2" >No</label>
+                             </div>
+                         </div>
+
+                       </div>
+
+                      <div class="form-group">
+                        <label class="control-label col-sm-3  col-form-label" for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" id="postopdiagnosis"></textarea>
+                        </div>
+                      </div>
+
+                       <div class="form-group">
+                         <label class="control-label col-sm-3" for="clinicalhistory">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
+                         <div class="col-sm-9">
+                             <textarea class="form-control" id="clinicalhistory"></textarea>
+                         </div>
+                       </div>
+
+                       <div class="form-group">
+                         <label class="control-label col-sm-3" for="specimandetails">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
+                         <div class="col-sm-9">
+                              <textarea class="form-control" id="additionalinformation"></textarea>
+                         </div>
+                       </div>
+
+                       <div class="form-group">
+                         <label class="control-label col-sm-3" for="additionalinformation">${ui.message("labtrackingapp.orderdetails.additionalinformationlabel")}</label>
+                         <div class="col-sm-9">
+                             <textarea class="form-control" id="additionalinformation"></textarea>
+                         </div>
+                       </div>
+
+
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-9 pull-right">
+                          <button type="button" class="btn btn-primary">${ui.message("uicommons.cancel")}</button>
+                          <button type="button" class="btn btn-default">${ui.message("uicommons.save")}</button>
                         </div>
                       </div>
                     </form>
@@ -151,8 +222,8 @@
                   <div class="panel-body">
                     <form class="form-horizontal">
                       <div class="form-group">
-                        <label class="control-label col-sm-2" for="date_of_results">Results Date</label>
-                        <div class="col-sm-10">
+                        <label class="control-label col-sm-3" for="date_of_results">${ui.message("labtrackingapp.orderdetails.resultsdatelabel")}</label>
+                        <div class="col-sm-9">
                           <div class='input-group date'>
                             <input type='text' class="form-control" id="date_of_results"  value="8-Nov-2014"/>
                             <span class="input-group-addon">
@@ -163,28 +234,24 @@
                       </div>
 
                       <div class="form-group">
-                        <label class="control-label col-sm-2" for="notes">Notes</label>
-                        <div class="col-sm-10">
-                          <div class='input-group date'>
+                        <label class="control-label col-sm-3" for="notes">${ui.message("labtrackingapp.orderdetails.noteslabel")}</label>
+                        <div class="col-sm-9">
                             <textarea class="form-control" id="notes"></textarea>
-                          </div>
                         </div>
                       </div>
 
 
                       <div class="form-group">
-                        <label class="control-label col-sm-2" for="upload_file">Upload file</label>
-                        <div class="col-sm-10">
-                          <div class='input-group date'>
-                            <input type="file" class="form-control" id="upload_file" /> <a href="">file link here is exists</a>
-                          </div>
+                        <label class="control-label col-sm-3" for="upload_file">${ui.message("labtrackingapp.orderdetails.uploadfilelabel")}</label>
+                        <div class="col-sm-9">
+                            <input type="file" class="form-control" id="upload_file" /> <a href="">[TODO: file link here if exists]</a>
                         </div>
                       </div>
 
                       <div class="form-group">
-                        <div class="col-sm-offset-2 col-sm-10 pull-right">
-                          <button type="button" class="btn btn-primary">Save</button>
-                          <button type="button" class="btn btn-default">Cancel</button>
+                        <div class="col-sm-offset-2 col-sm-9 pull-right">
+                          <button type="button" class="btn btn-primary">${ui.message("uicommons.cancel")}</button>
+                          <button type="button" class="btn btn-default">${ui.message("uicommons.save")}</button>
                         </div>
                       </div>
 

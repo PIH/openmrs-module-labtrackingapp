@@ -22,7 +22,7 @@
 
 
     ui.includeJavascript("labtrackingapp", "components/LabTrackingViewQueueController.js")
-    ui.includeJavascript("labtrackingapp", "app.js")
+    ui.includeJavascript("labtrackingapp", "app_view_queue.js")
 
 
 %>

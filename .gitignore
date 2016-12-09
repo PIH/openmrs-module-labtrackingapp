@@ -12,7 +12,7 @@
 /omod/target
 
 
-/.idea
+*.idea
 *.iml
 *.sass-cache
 *.DS_Store

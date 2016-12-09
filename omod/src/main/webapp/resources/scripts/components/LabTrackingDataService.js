@@ -45,12 +45,13 @@ angular.module("labTrackingDataService", [])
 					.then(function(res) {
 						if(_self.isOk(res)){
 						    //set the encounter id
+						    //test edit
                             labTrackingOrder.encounter.value = res.data.uuid;
-
+//06cf82e6-47a3-4f7a-b2ba-51eaf463294e
                             var order = {
                                 type: CONSTANTS.ORDER_TYPE,
                                 patient: labTrackingOrder.patient.value,
-                                orderer:  _self.session.user.uuid,
+                                orderer: _self.session.currentProvider.uuid,
                                 concept: labTrackingOrder.procedure.value,
                                 careSetting: labTrackingOrder.careSetting.value,
                                 encounter: labTrackingOrder.encounter.value,
