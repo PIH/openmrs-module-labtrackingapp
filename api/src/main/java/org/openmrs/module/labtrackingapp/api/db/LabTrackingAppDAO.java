@@ -11,25 +11,24 @@
  * <p>
  * Copyright (C) OpenMRS, LLC.  All Rights Reserved.
  */
-package org.openmrs.module.edtriageapp.api.db;
+package org.openmrs.module.labtrackingapp.api.db;
 
 import org.openmrs.Encounter;
-import org.openmrs.module.edtriageapp.api.EdTriageAppService;
-
+import org.openmrs.Order;
 import java.util.List;
 
 /**
- * Database methods for {@link EdTriageAppService}.
+ * Database methods for {@link org.openmrs.module.labtrackingapp.api.LabTrackingAppService}.
  */
-public interface EdTriageAppDAO {
-
-    /*
-     * gets all the ED Triage encounters for a patient at a location, the location and or the patient are not provided
-     *  then the filter will not be applied
-     * @param hoursBack - how many hours back to look
-     * @param locationUUid - (optional) the location UUID for the encounters
-     * @param patientUuid - (optional) the patient UUID for the encounters
-     */
-    List<Encounter> getAllEDTriageEncountersForPatientAtLocation(int hoursBack, String locationUuid, String patientId);
-
-   }
+public interface LabTrackingAppDAO {
+	
+	/*
+	 * gets all the Orders for a patient at a location, the location and or the patient are not provided
+	 *  then the filter will not be applied
+	 * @param hoursBack - how many hours back to look
+	 * @param locationUUid - (optional) the location UUID for the orders
+	 * @param patientUuid - (optional) the patient UUID for the orders
+	 */
+	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientId);
+	
+}

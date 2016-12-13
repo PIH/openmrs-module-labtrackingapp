@@ -17,15 +17,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
-import java.util.Calendar;
+
+import org.openmrs.Order;
+import org.openmrs.OrderType;
+import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import java.util.List;
 
 /**
- * It is a default implementation of {@link LabTrackingAppDAO}.
+ * It is a default implementation of {@link HibernateLabTrackingAppDAO}.
  */
-public class LabTrackingAppDAO implements org.openmrs.module.labtrackingapp.api.db.LabTrackingAppDAO {
+public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackingapp.api.db.LabTrackingAppDAO {
 	
 	private final Log log = LogFactory.getLog(this.getClass());
 	
@@ -48,20 +50,27 @@ public class LabTrackingAppDAO implements org.openmrs.module.labtrackingapp.api.
 	/*
 	* gets all  encounters at a current location for a patient
 	* */
-	public List<org.openmrs.Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid) {
+	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid) {
+		
+		Criteria t = sessionFactory.getCurrentSession().createCriteria(OrderType.class);
+		List<OrderType> tt = t.list();
+		for (OrderType ot : tt) {
+			System.out.println(ot.getId() + " - order type " + ot.getUuid() + " - " + ot.getName());
+		}
 		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");
 		
-		Calendar now = Calendar.getInstance();
+		//Calendar now = Calendar.getInstance();
 		//        now.add(Calendar.HOUR, hoursBack * -1);
 		//        criteria.add(Restrictions.ge("enc.encounterDatetime", now.getTime()));
 		//        criteria.add(Restrictions.eq("enc.voided", Boolean.FALSE));
 		
-		//        criteria.createAlias("enc.encounterType", "encType");
-		//        criteria.add(Restrictions.eq("encType.uuid", EDTriageConstants.ED_TRIAGE_ENCOUNTER_TYPE_UUID));
+		criteria.createAlias("encounter", "enc");
+		criteria.createAlias("ord.orderType", "orderType");
+		criteria.add(Restrictions.eq("orderType.uuid", LabTrackingConstants.LAB_TRACKING_TESTORDER_TYPE_UUID));
 		
 		if (locationUuid != null && locationUuid.length() > 0) {
-			criteria.createAlias("ord.location", "loc");
+			criteria.createAlias("enc.location", "loc");
 			criteria.add(Restrictions.eq("loc.uuid", locationUuid));
 		}
 		
@@ -72,6 +81,30 @@ public class LabTrackingAppDAO implements org.openmrs.module.labtrackingapp.api.
 		
 		//criteria.addOrder(Order.desc("enc.encounterDatetime"));
 		
-		return criteria.list();
+		List<Order> orders = criteria.list();
+		
+		debug(orders);
+		return orders;
 	}
+	
+	private void debug(List<Order> orders) {
+		for (Order order : orders) {
+			System.out.println(toOrderStr(order));
+		}
+	}
+	
+	private static String toOrderStr(Order order) {
+		StringBuilder ss = new StringBuilder();
+		
+		ss.append(" uuid=").append(order.getUuid());
+		ss.append(" instructions=").append(order.getInstructions());
+		if (order.getOrderType() != null) {
+			ss.append(" orderType=").append(order.getOrderType().getName());
+		}
+		
+		//ss.append(" orderreason=").append(.getName());
+		
+		return ss.toString();
+	}
+	
 }

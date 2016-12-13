@@ -11,4 +11,20 @@
 	<packaging>jar</packaging>
 	<name>Lab Tracking App API</name>
 	<description>API project for Lab Tracking App</description>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<filtering>true</filtering>
+			</testResource>
+		</testResources>
+	</build>
 </project>

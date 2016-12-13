@@ -9,12 +9,23 @@
  */
 package org.openmrs.module.labtrackingapp.api;
 
+import org.openmrs.Order;
 import org.openmrs.api.OpenmrsService;
+
+import java.util.List;
 
 /**
  * The main service of this module, which is exposed for other modules. See
  * moduleApplicationContext.xml on how it is wired up.
  */
 public interface LabTrackingAppService extends OpenmrsService {
+	
+	/*
+	 * gets the all oders for a patient at a location, if no patient provided, then get for all
+	 * @param hoursBack - how many hours back to look
+	 * @param locationUUid - (optional) the location UUID for the encounters
+	 * @param patientUuid - (optional) the patient UUID for the encounters
+	 */
+	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid);
 	
 }

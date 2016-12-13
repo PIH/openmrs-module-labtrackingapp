@@ -34,6 +34,13 @@
         </property>
         <property name="target">
             <bean class="org.openmrs.module.labtrackingapp.api.impl.LabTrackingAppServiceImpl">
+                <property name="dao">
+                    <bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateLabTrackingAppDAO">
+                        <property name="sessionFactory">
+                            <ref bean="sessionFactory" />
+                        </property>
+                    </bean>
+                </property>
             </bean>
         </property>
         <property name="preInterceptors">
@@ -44,8 +51,9 @@
         </property>
     </bean>
 
-    <!-- Adds LabTrackingAppService to OpenMRS context so it can be accessed
-    calling Context.getService(LabTrackingAppService.class) -->
+    <!--&lt;!&ndash; Adds LabTrackingAppService to OpenMRS context so it can be accessed-->
+    <!--calling Context.getService(LabTrackingAppService.class) &ndash;&gt;-->
+    <!--Z ${project.parent.groupId}.${project.parent.artifactId}.api -->
     <bean parent="serviceContext">
         <property name="moduleService">
             <list>
@@ -54,4 +62,42 @@
             </list>
         </property>
     </bean>
+
+    <!-- Services accessible via Context.getService() -->
+    <!--<bean parent="serviceContext">-->
+        <!--<property name="moduleService">-->
+            <!--<list>-->
+                <!--<value>${project.parent.groupId}.${project.parent.artifactId}.api.LabTrackingAppService</value>-->
+                <!--<bean-->
+                        <!--class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">-->
+                    <!--<property name="transactionManager">-->
+                        <!--<ref bean="transactionManager" />-->
+                    <!--</property>-->
+                    <!--<property name="target">-->
+                        <!--<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.impl.LabTrackingAppServiceImpl">-->
+
+                            <!--&lt;!&ndash;<property name="patientService" ref="patientService"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<property name="locationService" ref="locationService"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<property name="obsService" ref="obsService"/>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<property name="conceptService" ref="conceptService"/>&ndash;&gt;-->
+                            <!--<property name="dao">-->
+                                <!--<bean class="${project.parent.groupId}.${project.parent.artifactId}.api.db.hibernate.HibernateLabTrackingAppDAO">-->
+                                    <!--<property name="sessionFactory">-->
+                                        <!--<ref bean="sessionFactory" />-->
+                                    <!--</property>-->
+                                <!--</bean>-->
+                            <!--</property>-->
+                        <!--</bean>-->
+                    <!--</property>-->
+                    <!--<property name="preInterceptors">-->
+                        <!--<ref bean="serviceInterceptors" />-->
+                    <!--</property>-->
+                    <!--<property name="transactionAttributeSource">-->
+                        <!--<ref bean="transactionAttributeSource" />-->
+                    <!--</property>-->
+                <!--</bean>-->
+            <!--</list>-->
+        <!--</property>-->
+    <!--</bean>-->
+
 </beans>

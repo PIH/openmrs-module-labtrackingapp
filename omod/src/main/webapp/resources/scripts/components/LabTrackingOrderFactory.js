@@ -1,5 +1,8 @@
 angular.module("labTrackingOrderFactory", [])
     .factory('LabTrackingOrder', ['$http', function ($http) {
+        var CONSTANTS = {
+            ORDER_TYPE: "testorder"
+        };
         /**
          * Constructor, with class name
          */
@@ -13,9 +16,15 @@ angular.module("labTrackingOrderFactory", [])
             this.encounter = {concept: null, value:null};
             this.location = {value: locationUuid};
             this.patient = {value: patientUuid};
-
+            this.status = {value: null};
+            this.requestDate = {value: null};
+            this.sampleDate = {value: null};
+            this.resultDate = {value: null};
         }
-
+        /*
+         the concept definitions for labTracking results
+         TODO:  things with ????? as UUID need to have real concepts
+        */
         LabTrackingOrder.concepts = {
             order:{label:'Order', uuid:'25fa3a49-ca69-4e8d-9e55-394a9964a1cd', encounter_type:'b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd'} ,
             diagnosis: {label:'Pre-Pathology Suspected diagnosis', uuid:'226ed7ad-b776-4b99-966d-fd818d3302c2',
@@ -66,6 +75,70 @@ angular.module("labTrackingOrderFactory", [])
             }
         }
 
+        /*
+        builds a list of LabTrackingOrder objects out of the results from an OpenMRS web service call
+        @param webServiceResults - the results of the web service call
+        @return LabTrackingOrder[]
+        */
+        LabTrackingOrder.buildList = function(webServiceResults){
+            var ret = [];
+
+            for(var i = 0;i<data.length;++i){
+                var ord = LabTrackingOrder.fromWebServiceObject(data[i]);
+                ret.push(ord);
+            }
+
+            return ret;
+        }
+
+        /*
+        creates a LabTracking order form a web service object
+        @param webServiceResult - the web service object
+        @return LabeTrackingOrder object
+        */
+        LabTrackingOrder.fromWebServiceObject = function(webServiceResult){
+            var order = new LabTrackingOrder();
+
+            order.order.value = webServiceResult.uuid;
+            order.diagnosis.value = webServiceResult.orderReason.uuid;
+            order.procedure.value = webServiceResult.encounter.orders.order[0].uuid;
+            order.instructions = webServiceResult.instructions;
+            order.clinicalHistory = webServiceResult.clinicalHistory;
+            order.careSetting.value =  webServiceResult.careSetting.uuid;
+            order.encounter.value = webServiceResult.encounter.uuid;
+            order.location.value =  locationUuid;
+            order.patient.value =  patientUuid;
+            order.status.value = null; //TODO: need to get this
+            order.requestDate.value = webServiceResult.dateActivated;
+            order.sampleDate.value = null; //TODO: need to get this
+            order.resultDate.value = null; //TODO: need to get this
+
+            return order;
+        }
+
+        /*
+        creates a web service object from a LabTrackingOrder object
+        @param labTrackingOrder - the LabTrackingOrder object
+        @param currentProviderUUID - the current provider UUID
+        @return Object - the web service object
+        */
+        LabTrackingOrder.toWebServiceObject = function(labTrackingOrder, currentProviderUUID){
+                var order = {
+                    type: CONSTANTS.ORDER_TYPE,
+                    patient: labTrackingOrder.patient.value,
+                    orderer: currentProviderUUID,
+                    concept: labTrackingOrder.procedure.value,
+                    careSetting: labTrackingOrder.careSetting.value,
+                    encounter: labTrackingOrder.encounter.value,
+
+                    orderReason: labTrackingOrder.diagnosis.value,
+                    instructions: labTrackingOrder.instructions.value,
+                    clinicalHistory: labTrackingOrder.clinicalHistory.value,
+                    laterality: null //TODO:  maybe store the site info, or not
+                };
+
+                return order;
+        }
 
         /**
          * Return the constructor function

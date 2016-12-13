@@ -6,6 +6,7 @@ angular.module("labTrackingDataService", [])
 				URLS: {
 					FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
 					SAVE_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order",
+					VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(uuid,dateActivated,orderReason,instructions,encounter)&location=LOCATION_UUID",
 					PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
 					ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
 				},
@@ -17,6 +18,29 @@ angular.module("labTrackingDataService", [])
 
 			};
 
+
+            /* load the LabTracking for a location
+             *  @param OPTIONAL {String} locationUuid - the location uuid
+             *  @param OPTIONAL {String} patientUuid - the patient uuid
+             * @returns {LabTrackingOrder} the list of LabTrackingOrder objects
+             * */
+            this.loadQueue = function (locationUuid, patientUuid) {
+                var url = CONSTANTS.URLS.VIEW_QUEUE.replace("LOCATION_UUID", (locationUuid==null?"":locationUuid)).replace("PATIENT_UUID", (patientUuid==null?"":patientUuid));
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        var list = resp.data.results;
+                        var testOrders = LabTrackingOrder.buildList(list);
+
+                        return {status:{ code: resp.status, msg:null},data:testOrders};
+                    }
+                    else {
+                        return {status:{ code: resp.status, msg:"Error loading queue " + resp.status},data:[]};
+                    }
+
+                }, function (err) {
+                    return {status:{ code: 500, msg:"Error loading queue " + err},data:[]};
+                });
+            };
 
 			this.createOrderEncounter = function(labTrackingOrder) {
 				var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
@@ -44,24 +68,8 @@ angular.module("labTrackingDataService", [])
 					})
 					.then(function(res) {
 						if(_self.isOk(res)){
-						    //set the encounter id
-						    //test edit
                             labTrackingOrder.encounter.value = res.data.uuid;
-//06cf82e6-47a3-4f7a-b2ba-51eaf463294e
-                            var order = {
-                                type: CONSTANTS.ORDER_TYPE,
-                                patient: labTrackingOrder.patient.value,
-                                orderer: _self.session.currentProvider.uuid,
-                                concept: labTrackingOrder.procedure.value,
-                                careSetting: labTrackingOrder.careSetting.value,
-                                encounter: labTrackingOrder.encounter.value,
-
-                                orderReason: labTrackingOrder.diagnosis.value,
-                                instructions: labTrackingOrder.instructions.value,
-                                clinicalHistory: labTrackingOrder.clinicalHistory.value,
-                                laterality: null //TODO:  maybe store the site info, or not
-                            };
-
+                            var order = LabTrackingOrder.toWebServiceObject(labTrackingOrder,_self.session.currentProvider.uuid);
 						    return $http.post(CONSTANTS.URLS.SAVE_ORDER, order)
 						}
 						else{
