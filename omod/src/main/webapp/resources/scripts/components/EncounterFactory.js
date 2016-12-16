@@ -18,7 +18,9 @@ angular.module("encounterFactory", [])
 			this.encounterProviders = currentProvider !== null ? [encounterProvider] : [];
 			this.obs = [];
 		}
-
+        /*  save an encounter
+        @param encounter - the encounter to save
+        @param existingUuid - the encounter UUID if it already exists*/
 		Encounter.save = function(encounter, existingUuid){
 			var url = CONSTANTS.ENCOUNTER_SAVE;
 
