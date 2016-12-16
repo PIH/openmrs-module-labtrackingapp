@@ -1,5 +1,5 @@
 angular.module("labTrackingOrderFactory", [])
-    .factory('LabTrackingOrder', ['$http', function ($http) {
+    .factory('LabTrackingOrder', ['$http', '$filter', function ($http, $filter) {
         var CONSTANTS = {
             ORDER_TYPE: "testorder"
         };
@@ -15,7 +15,7 @@ angular.module("labTrackingOrderFactory", [])
             this.careSetting =  {concept: LabTrackingOrder.concepts.careSetting, value:LabTrackingOrder.concepts.careSetting.answers[1].uuid};
             this.encounter = {concept: null, value:null};
             this.location = {value: locationUuid};
-            this.patient = {value: patientUuid};
+            this.patient = {value: patientUuid, name:null, id:null};
             this.status = {value: null};
             this.requestDate = {value: null};
             this.sampleDate = {value: null};
@@ -23,7 +23,7 @@ angular.module("labTrackingOrderFactory", [])
         }
         /*
          the concept definitions for labTracking results
-         TODO:  things with ????? as UUID need to have real concepts
+         TODO:  things with ????? as UUID need to have real concepts, need to load the translatins
         */
         LabTrackingOrder.concepts = {
             order:{label:'Order', uuid:'25fa3a49-ca69-4e8d-9e55-394a9964a1cd', encounter_type:'b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd'} ,
@@ -48,7 +48,7 @@ angular.module("labTrackingOrderFactory", [])
                 answers:[
                     {label:'L Breast', uuid:'fcd5199e-1a36-11e2-a310-aa00f871a3e1'},
                     {label:'R Breast', uuid:'fcd4c8e0-1a36-11e2-a310-aa00f871a3e1'},
-                    {label:'Neck/Head', uuid:'1?????'},
+                    {label:'Neck/Head', uuid:'?????'},
                     {label:'Bilateral Breast', uuid:'?????'},
                     {label:'Uterus', uuid:'?????'},
                     {label:'R Ovary', uuid:'?????'},
@@ -83,8 +83,8 @@ angular.module("labTrackingOrderFactory", [])
         LabTrackingOrder.buildList = function(webServiceResults){
             var ret = [];
 
-            for(var i = 0;i<data.length;++i){
-                var ord = LabTrackingOrder.fromWebServiceObject(data[i]);
+            for(var i = 0;i<webServiceResults.length;++i){
+                var ord = LabTrackingOrder.fromWebServiceObject(webServiceResults[i]);
                 ret.push(ord);
             }
 
@@ -101,15 +101,30 @@ angular.module("labTrackingOrderFactory", [])
 
             order.order.value = webServiceResult.uuid;
             order.diagnosis.value = webServiceResult.orderReason.uuid;
-            order.procedure.value = webServiceResult.encounter.orders.order[0].uuid;
+
+
+            order.procedure.value = webServiceResult.concept.uuid;
+            order.procedure.display = webServiceResult.concept.display;
+            order.diagnosis.value = webServiceResult.orderReason.uuid;
+            order.diagnosis.display = webServiceResult.orderReason.display;
+
+
             order.instructions = webServiceResult.instructions;
             order.clinicalHistory = webServiceResult.clinicalHistory;
-            order.careSetting.value =  webServiceResult.careSetting.uuid;
+            if(webServiceResult.careSetting){
+                order.careSetting.value =  webServiceResult.careSetting.uuid;
+            }
+
             order.encounter.value = webServiceResult.encounter.uuid;
-            order.location.value =  locationUuid;
-            order.patient.value =  patientUuid;
+            order.location.value =  webServiceResult.encounter.location.uuid;
+            order.patient.value =  webServiceResult.encounter.patient.uuid;
+            order.patient.name =  webServiceResult.patient.person.display;
+            //have to load the id this way b/c of the way the rest web services
+            //  return this field
+            order.patient.id =  webServiceResult['patient.identifiers'][0].identifier;
             order.status.value = null; //TODO: need to get this
-            order.requestDate.value = webServiceResult.dateActivated;
+            order.status.display = 'Requested'; //TODO: need to get this
+            order.requestDate.value = new Date($filter('serverDate')(webServiceResult.dateActivated));
             order.sampleDate.value = null; //TODO: need to get this
             order.resultDate.value = null; //TODO: need to get this
 

@@ -13,6 +13,7 @@
     ui.includeJavascript("uicommons", "services/conceptService.js")
     ui.includeJavascript("uicommons", "directives/coded-or-free-text-answer.js")
     ui.includeJavascript("uicommons", "services/session.js")
+    ui.includeJavascript("uicommons", "filters/serverDate.js")
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
     ui.includeCss("labtrackingapp", "labtrackingapp.css")
@@ -20,7 +21,9 @@
     ui.includeJavascript("uicommons", "model/user-model.js")
     ui.includeJavascript("uicommons", "model/encounter-model.js")
 
-
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
+    ui.includeJavascript("labtrackingapp", "components/EncounterFactory.js")
+    ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingViewQueueController.js")
     ui.includeJavascript("labtrackingapp", "app_view_queue.js")
 
@@ -44,6 +47,11 @@
 
 <div class="container" ng-app="labTrackingApp" ng-controller="viewQueueController">
 
+          <div class="row" ng-if="errorMessage">
+             <div class="col-sm-12">
+                 <div class="alert alert-danger" ng-if="error"><strong>There was an error loading the test orders</strong> - {{error}}</div>
+             </div>
+          </div>
 
         <div class="panel panel-primary" id="monitor_box">
           <div class="panel-heading">Test Monitor Page</div>
@@ -108,69 +116,17 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr >
-                  <td>ABC123</td>
-                  <td>Trot Nixon</td>
-                  <td>Taken</td>
-                  <td>23-Nov-2014</td>
-                  <td>23-Nov-2014</td>
-                  <td>23-Nov-2014</td>
+                  <tr ng-repeat="a in testOrderQueue | orderBy:a.requestDate.value" >
+                  <td>{{a.patient.id}}</td>
+                  <td>{{a.patient.name}}</td>
+                  <td>{{a.status.display}}</td>
+                  <td>{{a.requestDate.value | date : 'shortDate'}}</td>
+                  <td>{{a.sampleDate.value | date : 'shortDate'}}</td>
+                  <td>{{a.resultDate.value | date : 'shortDate'}}</td>
                   <td>
-                    <button class="btn btn-sm btn-primary"  onclick="setState(3)">details</button>
-                    <button class="btn btn-sm">print</button>
-                    <button class="btn btn-sm">cancel</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>ABC123</td>
-                  <td>Trot Nixon</td>
-                  <td>Reported</td>
-                  <td>23-Nov-2014</td>
-                  <td>23-Nov-2014</td>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" onclick="setState(3)">details</button>
-                    <button class="btn btn-sm">print</button>
-                    <button class="btn btn-sm">cancel</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>ABC124</td>
-                  <td>Brot Nixon</td>
-                  <td>Requested</td>
-                  <td>23-Nov-2014</td>
-                  <td></td>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" onclick="setState(3)">details</button>
-                    <button class="btn btn-sm">print</button>
-                    <button class="btn btn-sm">cancel</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>ABC126</td>
-                  <td>Blot Nixon</td>
-                  <td>Taken</td>
-                  <td>23-Nov-2014</td>
-                  <td>23-Nov-2014</td>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" onclick="setState(3)">details</button>
-                    <button class="btn btn-sm">print</button>
-                    <button class="btn btn-sm">cancel</button>
-                  </td>
-                </tr>
-                <tr>
-                  <td>ABC123</td>
-                  <td>Trot Nixon</td>
-                  <td>Taken</td>
-                  <td>23-Nov-2014</td>
-                  <td>23-Nov-2014</td>
-                  <td></td>
-                  <td>
-                    <button class="btn btn-sm btn-primary" onclick="setState(3)">details</button>
-                    <button class="btn btn-sm">print</button>
-                    <button class="btn btn-sm">cancel</button>
+                    <button class="btn btn-sm btn-primary" ng-click="handleDetails(a)">details</button>
+                    <button class="btn btn-sm" ng-click="handlePrint(a)" >print</button>
+                    <button class="btn btn-sm" ng-click="handleCancel(a)">cancel</button>
                   </td>
                 </tr>
                 </tbody>

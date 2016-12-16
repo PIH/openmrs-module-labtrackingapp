@@ -6,7 +6,9 @@ angular.module("labTrackingDataService", [])
 				URLS: {
 					FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
 					SAVE_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order",
-					VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(uuid,dateActivated,orderReason,instructions,encounter)&location=LOCATION_UUID",
+					VIEW_CARE_SETTINGS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/caresetting",
+					VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(uuid,dateActivated,orderReason,instructions,encounter,concept,patient,patient.identifiers)&location=LOCATION_UUID",
+					VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(uuid,dateActivated,orderReason,instructions,encounter,concept,patient,patient.identifiers)",
 					PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
 					ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
 				},
@@ -18,6 +20,44 @@ angular.module("labTrackingDataService", [])
 
 			};
 
+            /*
+            loads the CareSettings in the system, so that we can show them in the list with the correct
+               id/display valies
+               @return An Array of objects with uuid:diplay props
+            */
+            this.loadCareSettings = function(){
+                var url = CONSTANTS.URLS.VIEW_CARE_SETTINGS;
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        return {status:{ code: resp.status, msg:null},data:resp.data.results};
+                    }
+                    else {
+                        return {status:{ code: resp.status, msg:"Error loading caresettings " + resp.status},data:[]};
+                    }
+
+                }, function (err) {
+                    return {status:{ code: 500, msg:"Error loading caresettings " + err},data:[]};
+                });
+            }
+
+            /* loads a LabTrackingOrder
+             *  @param OPTIONAL {String} orderUuid - the order uuid
+             * @returns {LabTrackingOrder} the LabTrackingOrder object
+             * */
+            this.loadOrder = function (orderUuid) {
+                var url = CONSTANTS.URLS.VIEW_ORDER.replace("ORDER_UUID", orderUuid);
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        return {status:{ code: resp.status, msg:null},data:LabTrackingOrder.fromWebServiceObject(resp.data)};
+                    }
+                    else {
+                        return {status:{ code: resp.status, msg:"Error loading queue " + resp.status},data:[]};
+                    }
+
+                }, function (err) {
+                    return {status:{ code: 500, msg:"Error loading queue " + err},data:[]};
+                });
+            };
 
             /* load the LabTracking for a location
              *  @param OPTIONAL {String} locationUuid - the location uuid

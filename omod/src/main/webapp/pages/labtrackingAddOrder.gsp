@@ -13,6 +13,7 @@
     ui.includeJavascript("uicommons", "services/conceptService.js")
     ui.includeJavascript("uicommons", "directives/coded-or-free-text-answer.js")
     ui.includeJavascript("uicommons", "services/session.js")
+    ui.includeJavascript("uicommons", "filters/serverDate.js")
 
     ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
     ui.includeCss("labtrackingapp", "labtrackingapp.css")
@@ -54,7 +55,7 @@
                 <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="site" ng-model="order.diagnosis.value">
-                    <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
+                    <option ng-disabled="a.uuid=='?????'" ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}</option>
                   </select>
 
                 </div>
@@ -63,10 +64,21 @@
                 <label for="site" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                 <div class="col-sm-10">
                   <select class="form-control" id="site" ng-model="order.procedure.value">
-                    <option ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
+                    <option ng-disabled="a.uuid=='?????'" ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}</option>
                   </select>
                 </div>
               </div>
+
+              <div class="form-group row">
+                <label for="site" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.caresettinglabel")}</label>
+                <div class="col-sm-10">
+                  <select class="form-control" id="site" ng-model="order.careSetting.value" >
+                    <option ng-repeat="a in careSettings | orderBy:a.display" ng-selected="order.careSetting.value==a.uuid"  value="{{a.uuid}}">{{a.display}}</option>
+                  </select>
+                </div>
+              </div>
+
+
               <div class="form-group row">
                 <label for="instructions" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.instructionslabel")}</label>
                 <div class="col-sm-10">
