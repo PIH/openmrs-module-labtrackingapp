@@ -2,13 +2,17 @@ angular.module("labTrackingDataService", [])
 	.service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'LabTrackingOrder', 'Encounter',
 		function($q, $http, SessionInfo, LabTrackingOrder, Encounter) {
 		    var _self = this;
+		    var ORDER_FIELDS = "uuid,dateActivated,orderReason,instructions,clinicalHistory,encounter,concept,patient,patient.identifiers";
+		    var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
 			var CONSTANTS = {
 				URLS: {
 					FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
 					SAVE_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order",
+					VIEW_LOCATIONS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/location?v=custom:(uuid,display)&tag=" + LOCATION_CONSULT_NOTE_UUID,
 					VIEW_CARE_SETTINGS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/caresetting",
-					VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(uuid,dateActivated,orderReason,instructions,encounter,concept,patient,patient.identifiers)&location=LOCATION_UUID",
-					VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(uuid,dateActivated,orderReason,instructions,encounter,concept,patient,patient.identifiers)",
+					VIEW_PROVIDERS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/provider?v=custom:(uuid,display,person)",
+					VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(" + ORDER_FIELDS + ")&location=LOCATION_UUID",
+					VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
 					PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
 					ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
 				},
@@ -19,6 +23,59 @@ angular.module("labTrackingDataService", [])
 
 
 			};
+
+            /*
+            loads the Providers in the system, so that we can show them in the list with the correct
+               id/display valies
+               @return An Array of objects with uuid:diplay props
+            */
+            this.loadProviders = function(){
+                var url = CONSTANTS.URLS.VIEW_PROVIDERS;
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        var ret = [];
+                        for(var i=0;i<resp.data.results.length;++i){
+                            var uuid = resp.data.results[i].uuid;
+                            var nm;
+                            if(resp.data.results[i].person != null){
+                                nm = resp.data.results[i].person.display
+                            }
+                            else{
+                                nm = resp.data.results[i].display;
+                            }
+
+                            ret.push({uuid:uuid, name:nm});
+                        }
+                        return {status:{ code: resp.status, msg:null},data:ret};
+                    }
+                    else {
+                        return {status:{ code: resp.status, msg:"Error loading providers " + resp.status},data:[]};
+                    }
+
+                }, function (err) {
+                    return {status:{ code: 500, msg:"Error loading providers " + err},data:[]};
+                });
+            }
+
+            /*
+            loads the Locations in the system, so that we can show them in the list with the correct
+               id/display valies
+               @return An Array of objects with uuid:diplay props
+            */
+            this.loadLocations = function(){
+                var url = CONSTANTS.URLS.VIEW_LOCATIONS;
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        return {status:{ code: resp.status, msg:null},data:resp.data.results};
+                    }
+                    else {
+                        return {status:{ code: resp.status, msg:"Error loading locations " + resp.status},data:[]};
+                    }
+
+                }, function (err) {
+                    return {status:{ code: 500, msg:"Error loading locations " + err},data:[]};
+                });
+            }
 
             /*
             loads the CareSettings in the system, so that we can show them in the list with the correct
@@ -84,8 +141,15 @@ angular.module("labTrackingDataService", [])
 
 			this.createOrderEncounter = function(labTrackingOrder) {
 				var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
+
+				var obs = [];
+				for(var i=0;i<labTrackingOrder.procedure.value.length;++i){
+				    var o = Encounter.toObsWebServiceObject(labTrackingOrder.procedure.value[i].uuid, null, null);
+				    obs.push(o);
+				}
+
 				var encounter = new Encounter(CONSTANTS.ORDER_ENCOUNTER_TYPE_UUID, provider, CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-					labTrackingOrder.patient.value, labTrackingOrder.location.value);
+					labTrackingOrder.patient.value, labTrackingOrder.location.value, obs);
 
 				return Encounter.save(encounter);
 			};

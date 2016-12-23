@@ -6,7 +6,8 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.order = new LabTrackingOrder();
             $scope.foo = new Date();
             $scope.errorMessage = null;
-           // var orderUuid = "59633abe-47bc-403f-bc0a-461a40289e74";
+            $scope.providers = [];
+            $scope.locations = [];
             /*
             loads the queue from the openmrs web services
             */
@@ -22,10 +23,23 @@ angular.module("labTrackingOrderDetailsController", [])
                     }
 
                     console.log(resp);
+                    return resp;
                 });
             };
 
-            return $scope.loadOrder(orderUuid);
+            return $scope.loadOrder(orderUuid).then(function(resp){
+                return LabTrackingDataService.loadProviders().then(function(resp2){
+                    console.log(resp2);
+                    if(resp2.status.code == 200){
+                        $scope.providers = resp2.data;
+                    }
+                    return LabTrackingDataService.loadLocations().then(function(resp3){
+                    if(resp3.status.code == 200){
+                        $scope.locations = resp3.data;
+                    }
+                    });
+                });
+            });
 
         }])
         .directive('orderDebugPanel', function() {
@@ -48,6 +62,8 @@ angular.module("labTrackingOrderDetailsController", [])
           return {
               scope: {
                   order: '=',
+                  providers: '=',
+                  locations: '=',
                   },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
           };

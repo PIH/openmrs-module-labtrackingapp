@@ -8,7 +8,9 @@
   <div id="debug_panel" class="panel-collapse collapse">
     <div class="panel-body">      
       <div class="row">
-        <pre>{{order | json}}</pre>
+
+        <pre> Providers = {{providers | json}}</pre>
+        <pre> Order = {{order | json}}</pre>
       </div>
     </div>
   </div>

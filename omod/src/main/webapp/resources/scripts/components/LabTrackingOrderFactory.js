@@ -1,7 +1,8 @@
 angular.module("labTrackingOrderFactory", [])
     .factory('LabTrackingOrder', ['$http', '$filter', function ($http, $filter) {
         var CONSTANTS = {
-            ORDER_TYPE: "testorder"
+            ORDER_TYPE: "testorder",
+            ORDER_CONCEPT_UUID:"d6d585b6-4887-4aac-8361-424c17b030f2"
         };
         /**
          * Constructor, with class name
@@ -9,13 +10,18 @@ angular.module("labTrackingOrderFactory", [])
         function LabTrackingOrder(patientUuid, locationUuid) {
             this.order = {concept: LabTrackingOrder.concepts.order, value:null};
             this.diagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:LabTrackingOrder.concepts.diagnosis.answers[0].uuid};
-            this.procedure = {concept: LabTrackingOrder.concepts.procedure, value:LabTrackingOrder.concepts.procedure.answers[0].uuid};
+            this.postopDiagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:null};
+            this.procedure = {concept: LabTrackingOrder.concepts.procedure, value:[]};
             this.instructions = {concept: LabTrackingOrder.concepts.instructions, value:"Test instructions"};
             this.clinicalHistory = {concept: LabTrackingOrder.concepts.clinicalHistory, value:"Test history info"};
             this.careSetting =  {concept: LabTrackingOrder.concepts.careSetting, value:LabTrackingOrder.concepts.careSetting.answers[1].uuid};
             this.encounter = {concept: null, value:null};
             this.location = {value: locationUuid};
             this.patient = {value: patientUuid, name:null, id:null};
+            this.surgeon = {value: null, name:null};
+            this.resident = {value: null, name:null};
+            this.mdToNotify = {value: null, name:null};
+            this.urgency = {value: null, name:null};
             this.status = {value: null};
             this.requestDate = {value: null};
             this.sampleDate = {value: null};
@@ -109,8 +115,8 @@ angular.module("labTrackingOrderFactory", [])
             order.diagnosis.display = webServiceResult.orderReason.display;
 
 
-            order.instructions = webServiceResult.instructions;
-            order.clinicalHistory = webServiceResult.clinicalHistory;
+            order.instructions.value = webServiceResult.instructions;
+            order.clinicalHistory.value = webServiceResult.clinicalHistory;
             if(webServiceResult.careSetting){
                 order.careSetting.value =  webServiceResult.careSetting.uuid;
             }
@@ -142,14 +148,12 @@ angular.module("labTrackingOrderFactory", [])
                     type: CONSTANTS.ORDER_TYPE,
                     patient: labTrackingOrder.patient.value,
                     orderer: currentProviderUUID,
-                    concept: labTrackingOrder.procedure.value,
+                    concept: CONSTANTS.ORDER_CONCEPT_UUID,
                     careSetting: labTrackingOrder.careSetting.value,
                     encounter: labTrackingOrder.encounter.value,
-
                     orderReason: labTrackingOrder.diagnosis.value,
                     instructions: labTrackingOrder.instructions.value,
-                    clinicalHistory: labTrackingOrder.clinicalHistory.value,
-                    laterality: null //TODO:  maybe store the site info, or not
+                    clinicalHistory: labTrackingOrder.clinicalHistory.value
                 };
 
                 return order;

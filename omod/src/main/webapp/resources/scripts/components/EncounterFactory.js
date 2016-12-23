@@ -6,7 +6,7 @@ angular.module("encounterFactory", [])
 		/**
 		 * Constructor, with class name , all parameters are UUID's
 		 */
-		function Encounter(encounterType, currentProvider, encounterRole, patient, location) {
+		function Encounter(encounterType, currentProvider, encounterRole, patient, location, obs) {
 
 			var encounterProvider = {
 				provider: currentProvider,
@@ -16,7 +16,7 @@ angular.module("encounterFactory", [])
 			this.encounterType = encounterType;
 			this.location = location;
 			this.encounterProviders = currentProvider !== null ? [encounterProvider] : [];
-			this.obs = [];
+			this.obs = obs;
 		}
         /*  save an encounter
         @param encounter - the encounter to save
@@ -35,6 +35,26 @@ angular.module("encounterFactory", [])
 			}, function(err){
 			    return err;
 			});
+		};
+
+        /*
+        creates an objs WS object
+        @param conceptUuid - the concept UUID
+        @param obsValue - the obj value
+        @param existingObsUuid - the obj UUID if updating an existing obs
+        @return The WebService object
+        */
+		Encounter.toObsWebServiceObject = function(conceptUuid, obsValue, existingObsUuid){
+		  var ret = {concept: conceptUuid};
+		  if(obsValue != null){
+		    ret['value'] = objValue;
+		  }
+
+		  if(existingObsUuid != null){
+		    ret['uuid'] = existingObsUuid;
+		  }
+
+		  return ret;
 		};
 
 		/**

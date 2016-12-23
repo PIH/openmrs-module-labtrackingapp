@@ -8,6 +8,11 @@ $fontPath: "../../fonts";
 @import "bootstrap/assets/stylesheets/bootstrap";
 
 
+/* used to create a space between form rows */
+.top-buffer {
+    margin-top:20px;
+}
+
 /* fix so that the 1000px max size works with bootstrap
    if the UI changes, we can remove this
 */

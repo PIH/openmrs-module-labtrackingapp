@@ -1,30 +1,6 @@
+${ ui.includeFragment("labtrackingapp", "libs") }
 <%
     ui.decorateWith("appui", "standardEmrPage")
-
-    ui.includeJavascript("uicommons", "angular.min.js")
-    ui.includeJavascript("uicommons", "angular-ui/ui-bootstrap-tpls-0.13.0.js")
-    ui.includeJavascript("uicommons", "angular-ui/angular-ui-router.min.js")
-    ui.includeJavascript("uicommons", "ngDialog/ngDialog.min.js")
-    ui.includeJavascript("uicommons", "angular-resource.min.js")
-    ui.includeJavascript("uicommons", "angular-common.js")
-    ui.includeJavascript("uicommons", "angular-app.js")
-    ui.includeJavascript("uicommons", "angular-translate.min.js")
-    ui.includeJavascript("uicommons", "angular-translate-loader-url.min.js")
-    ui.includeJavascript("uicommons", "services/conceptService.js")
-    ui.includeJavascript("uicommons", "directives/coded-or-free-text-answer.js")
-    ui.includeJavascript("uicommons", "services/session.js")
-    ui.includeJavascript("uicommons", "filters/serverDate.js")
-
-    ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
-    ui.includeCss("labtrackingapp", "labtrackingapp.css")
-
-    ui.includeJavascript("uicommons", "model/user-model.js")
-    ui.includeJavascript("uicommons", "model/encounter-model.js")
-
-    ui.includeJavascript("labtrackingapp", "bootstrap.min.js")
-    ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
-    ui.includeJavascript("labtrackingapp", "components/EncounterFactory.js")
-    ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
 
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderDetailsController.js")
     ui.includeJavascript("labtrackingapp", "app_order_details.js")
@@ -46,9 +22,9 @@
     <div class="panel-body">
       <div class="panel-group">
         <order-details-panel order="order"></order-details-panel>
-        <order-specimen-panel order="order"></order-specimen-panel>
+        <order-specimen-panel order="order" locations="locations" providers="providers"></order-specimen-panel>
         <order-results-panel order="order"></order-results-panel>
-        <order-debug-panel order="order"></order-debug-panel>
+        <order-debug-panel order="order" providers="providers"></order-debug-panel>
       </div>
     </div>
   </div>
@@ -59,8 +35,6 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
 <script type="text/javascript">
     angular.module('labTrackingApp')
             .value('patientDashboard', '')
-            .value('serverDateTimeInMillis', '')
-            .value('locationUuid', '')
             .value('orderUuid', '${ orderUuid }')
             .value('translations', translations);
 
