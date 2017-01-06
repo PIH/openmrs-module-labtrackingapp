@@ -36,9 +36,9 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
                 </div>
               </div>
               <div class="form-group row">
-                <label for="site" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
+                <label for="procedure" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                 <div class="col-sm-10">
-                  <select class="selectpicker" id="site" ng-model="order.procedure.value" multiple
+                  <select class="form-control" id="procedure" ng-model="order.procedure.value" multiple
                     ng-options="a.label for a in order.procedure.concept.answers | filter:{ uuid: '!?????'} | orderBy: 'label' track by a.uuid ">
                   </select>
                 </div>
@@ -86,6 +86,8 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
         <pre ng-if="error">debugInfo={{debugInfo | json }}</pre>
 
         <pre ng-if="error">{{order | json }}</pre>
+
+        <pre>order.procedure.value={{order.procedure.value}}</pre>
 </div>
 ${ ui.includeFragment("labtrackingapp", "translations") }
 

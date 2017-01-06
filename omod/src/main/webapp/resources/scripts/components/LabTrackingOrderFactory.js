@@ -11,7 +11,7 @@ angular.module("labTrackingOrderFactory", [])
             this.order = {concept: LabTrackingOrder.concepts.order, value:null};
             this.diagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:LabTrackingOrder.concepts.diagnosis.answers[0].uuid};
             this.postopDiagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:null};
-            this.procedure = {concept: LabTrackingOrder.concepts.procedure, value:[]};
+            this.procedure = {concept: LabTrackingOrder.concepts.procedure, value:[]};  //this is an array of values
             this.instructions = {concept: LabTrackingOrder.concepts.instructions, value:"Test instructions"};
             this.clinicalHistory = {concept: LabTrackingOrder.concepts.clinicalHistory, value:"Test history info"};
             this.careSetting =  {concept: LabTrackingOrder.concepts.careSetting, value:LabTrackingOrder.concepts.careSetting.answers[1].uuid};
@@ -111,6 +111,24 @@ angular.module("labTrackingOrderFactory", [])
 
             order.procedure.value = webServiceResult.concept.uuid;
             order.procedure.display = webServiceResult.concept.display;
+
+            var procs = [];
+            if(webServiceResult.encounter.obs != null && webServiceResult.encounter.obs.length > 0){
+                for(var i=0;i<webServiceResult.encounter.obs.length;++i){
+                   var obs = webServiceResult.encounter.obs[i];
+                   var display = obs.display;
+                   for(var j=0;j<order.procedure.concept.answers.length;++j){
+                        var a = order.procedure.concept.answers[j];
+                        if(a.uuid == obs.uuid){
+                            display = a.label;
+                            break;
+                        }
+                   }
+                   procs.push({uuid: obs.uuid, display:obs.display})
+                }
+            }
+            order.procedure.value = procs;
+
             order.diagnosis.value = webServiceResult.orderReason.uuid;
             order.diagnosis.display = webServiceResult.orderReason.display;
 

@@ -15,7 +15,6 @@ ui.includeJavascript("uicommons", "filters/serverDate.js")
 
 ui.includeCss("uicommons", "ngDialog/ngDialog.min.css")
 ui.includeCss("labtrackingapp", "labtrackingapp.css")
-ui.includeCss("labtrackingapp", "bootstrap-select.min.css")
 
 ui.includeJavascript("uicommons", "model/user-model.js")
 ui.includeJavascript("uicommons", "model/encounter-model.js")
@@ -28,7 +27,6 @@ ui.includeJavascript("labtrackingapp", "libs/bootstrap.min.js")
 //  the version in openmrs is older
 ui.includeJavascript("labtrackingapp", "libs/ui-bootstrap-tpls-2.3.1.js")
 
-ui.includeJavascript("labtrackingapp", "libs/bootstrap-select.min.js")
 
 ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
 ui.includeJavascript("labtrackingapp", "components/EncounterFactory.js")
