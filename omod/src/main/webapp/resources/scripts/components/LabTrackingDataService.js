@@ -2,7 +2,7 @@ angular.module("labTrackingDataService", [])
 	.service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'LabTrackingOrder', 'Encounter',
 		function($q, $http, SessionInfo, LabTrackingOrder, Encounter) {
 		    var _self = this;
-		    var ORDER_FIELDS = "uuid,dateActivated,orderReason,instructions,clinicalHistory,encounter,concept,patient,patient.identifiers";
+		    var ORDER_FIELDS = "uuid,dateActivated,orderReason,instructions,clinicalHistory,urgency,encounter,encounter.obs,concept,patient,patient.identifiers";
 		    var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
 			var CONSTANTS = {
 				URLS: {
@@ -143,8 +143,8 @@ angular.module("labTrackingDataService", [])
 				var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
 
 				var obs = [];
-				for(var i=0;i<labTrackingOrder.procedure.value.length;++i){
-				    var o = Encounter.toObsWebServiceObject(labTrackingOrder.procedure.value[i].uuid, null, null);
+				for(var i=0;i<labTrackingOrder.procedures.length;++i){
+				    var o = Encounter.toObsWebServiceObject(labTrackingOrder.procedures[i].value, null, null);
 				    obs.push(o);
 				}
 

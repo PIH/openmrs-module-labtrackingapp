@@ -3,11 +3,15 @@ angular.module("labTrackingOrderDetailsController", [])
     'orderUuid',
         function ($scope, LabTrackingOrder,LabTrackingDataService, orderUuid) {
             // used to determine if we should disable things
+            $scope.concepts = LabTrackingOrder.concepts;
+
             $scope.order = new LabTrackingOrder();
             $scope.foo = new Date();
             $scope.errorMessage = null;
             $scope.providers = [];
             $scope.locations = [];
+            $scope.simpleLocations = ['Alabama', 'Arkansas', 'Connecticut'];
+            $scope.states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'];
             /*
             loads the queue from the openmrs web services
             */
@@ -35,6 +39,9 @@ angular.module("labTrackingOrderDetailsController", [])
                     }
                     return LabTrackingDataService.loadLocations().then(function(resp3){
                     if(resp3.status.code == 200){
+                        for(var i=0;i < resp3.data.length;++i){
+                            $scope.simpleLocations.push(resp3.data[i].display);
+                        }
                         $scope.locations = resp3.data;
                     }
                     });
@@ -64,7 +71,28 @@ angular.module("labTrackingOrderDetailsController", [])
                   order: '=',
                   providers: '=',
                   locations: '=',
+                  concepts: '='
                   },
+            controller: function($scope){
+                /* checks whether a procedure has been selected
+                @param proceudureUuid  - the UUID for the procedure
+                @return true/false
+                */
+                $scope.isProcedureSelected = function(procedureUuid){
+                    var ret = false;
+
+                    if($scope.order != null && $scope.order.procedure != null){
+                        for(var i=0;i<$scope.order.procedure.value.length;++i){
+                           if($scope.order.procedure.value[i].uuid == procedureUuid){
+                                ret = true;
+                                break;
+                           }
+                        }
+                    }
+
+                    return ret;
+                }
+            },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
           };
         })

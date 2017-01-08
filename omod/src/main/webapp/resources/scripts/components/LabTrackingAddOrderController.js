@@ -1,7 +1,7 @@
 angular.module("labTrackingAddOrderController", [])
     .controller("addOrderController", ['$scope', 'LabTrackingOrder', 'LabTrackingDataService','patientUuid', 'locationUuid',
         function ($scope, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid) {
-
+            $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging

@@ -9,19 +9,20 @@ angular.module("labTrackingOrderFactory", [])
          */
         function LabTrackingOrder(patientUuid, locationUuid) {
             this.order = {concept: LabTrackingOrder.concepts.order, value:null};
-            this.diagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:LabTrackingOrder.concepts.diagnosis.answers[0].uuid};
+            this.preLabDiagnosis = {label:LabTrackingOrder.concepts.preLabDiagnosis.answers[0].label, value: LabTrackingOrder.concepts.preLabDiagnosis.answers[0].value};
             this.postopDiagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:null};
-            this.procedure = {concept: LabTrackingOrder.concepts.procedure, value:[]};  //this is an array of values
-            this.instructions = {concept: LabTrackingOrder.concepts.instructions, value:"Test instructions"};
-            this.clinicalHistory = {concept: LabTrackingOrder.concepts.clinicalHistory, value:"Test history info"};
-            this.careSetting =  {concept: LabTrackingOrder.concepts.careSetting, value:LabTrackingOrder.concepts.careSetting.answers[1].uuid};
-            this.encounter = {concept: null, value:null};
+            this.procedures = [];  //this is an array of values
+            this.instructions = {value:""};
+            this.clinicalHistory = {value:""};
+            this.specimanDetails = [{value:""},{value:""},{value:""}];
+            this.careSetting =  {label:LabTrackingOrder.concepts.careSetting.answers[1].label, value:LabTrackingOrder.concepts.careSetting.answers[1].value};
+            this.encounter = {value:null};
             this.location = {value: locationUuid};
             this.patient = {value: patientUuid, name:null, id:null};
             this.surgeon = {value: null, name:null};
             this.resident = {value: null, name:null};
-            this.mdToNotify = {value: null, name:null};
-            this.urgency = {value: null, name:null};
+            this.mdToNotify = {value: null};
+            this.urgency = {value: null};
             this.status = {value: null};
             this.requestDate = {value: null};
             this.sampleDate = {value: null};
@@ -32,51 +33,51 @@ angular.module("labTrackingOrderFactory", [])
          TODO:  things with ????? as UUID need to have real concepts, need to load the translatins
         */
         LabTrackingOrder.concepts = {
-            order:{label:'Order', uuid:'25fa3a49-ca69-4e8d-9e55-394a9964a1cd', encounter_type:'b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd'} ,
-            diagnosis: {label:'Pre-Pathology Suspected diagnosis', uuid:'226ed7ad-b776-4b99-966d-fd818d3302c2',
+            order:{label:'Order', value:'25fa3a49-ca69-4e8d-9e55-394a9964a1cd', encounter_type:'b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd'} ,
+            preLabDiagnosis: {label:'Pre-Pathology Suspected diagnosis', value:'226ed7ad-b776-4b99-966d-fd818d3302c2',
                 answers:
                 [
-                    {label:'CNB', uuid:'162813AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
-                    {label:'Mastectomy', uuid:'161947AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
-                    {label:'Lumpectomy', uuid:'?????'},
-                    {label:'Hysterectomy', uuid:'159837AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
-                    {label:'Adnexectomy', uuid:'?????'},
-                    {label:'Oophorectomy', uuid:'161844AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
-                    {label:'Excisional/Incisional Biopsy', uuid:'162928AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
-                    {label:'Axillary Lymph Resection', uuid:'162215AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
-                    {label:'Blood', uuid:'?????'},
-                    {label:'Surgical Margin', uuid:'?????'},
-                    {label:'Procedure Performed Outside', uuid:'?????'},
-                    {label:'Other', uuid:'3cee7fb4-26fe-102b-80cb-0017a47871b2'}
+                    {label:'CNB', value:'162813AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+                    {label:'Mastectomy', value:'161947AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+                    {label:'Lumpectomy', value:'?????'},
+                    {label:'Hysterectomy', value:'159837AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+                    {label:'Adnexectomy', value:'?????'},
+                    {label:'Oophorectomy', value:'161844AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+                    {label:'Excisional/Incisional Biopsy', value:'162928AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+                    {label:'Axillary Lymph Resection', value:'162215AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+                    {label:'Blood', value:'?????'},
+                    {label:'Surgical Margin', value:'?????'},
+                    {label:'Procedure Performed Outside', value:'?????'},
+                    {label:'Other', value:'3cee7fb4-26fe-102b-80cb-0017a47871b2'}
                 ]
             },
-            procedure: {label:'Procedure', uuid:'c6a87394-4cd0-48b7-a8ac-c7dad55be2e6',
+            procedure: {label:'Procedure', value:'c6a87394-4cd0-48b7-a8ac-c7dad55be2e6',
                 answers:[
-                    {label:'L Breast', uuid:'fcd5199e-1a36-11e2-a310-aa00f871a3e1'},
-                    {label:'R Breast', uuid:'fcd4c8e0-1a36-11e2-a310-aa00f871a3e1'},
-                    {label:'Neck/Head', uuid:'?????'},
-                    {label:'Bilateral Breast', uuid:'?????'},
-                    {label:'Uterus', uuid:'?????'},
-                    {label:'R Ovary', uuid:'?????'},
-                    {label:'L Ovary', uuid:'?????'},
-                    {label:'Bilateral Ovary', uuid:'?????'},
-                    {label:'Axillary Lymph', uuid:'?????'},
-                    {label:'Cervix', uuid:'?????'},
-                    {label:'Fallopian Tubes', uuid:'?????'},
-                    {label:'Intestine', uuid:'?????'},
-                    {label:'Esophagus', uuid:'?????'},
-                    {label:'Gastric', uuid:'?????'},
-                    {label:'Orthopedic', uuid:'?????'},
-                    {label:'Lymph nodes', uuid:'?????'},
-                    {label:'Other', uuid:'3cee7fb4-26fe-102b-80cb-0017a47871b2'},
+                    {label:'L Breast', value:'fcd5199e-1a36-11e2-a310-aa00f871a3e1'},
+                    {label:'R Breast', value:'fcd4c8e0-1a36-11e2-a310-aa00f871a3e1'},
+                    {label:'Neck/Head', value:'?????'},
+                    {label:'Bilateral Breast', value:'?????'},
+                    {label:'Uterus', value:'?????'},
+                    {label:'R Ovary', value:'?????'},
+                    {label:'L Ovary', value:'?????'},
+                    {label:'Bilateral Ovary', value:'?????'},
+                    {label:'Axillary Lymph', value:'?????'},
+                    {label:'Cervix', value:'?????'},
+                    {label:'Fallopian Tubes', value:'?????'},
+                    {label:'Intestine', value:'?????'},
+                    {label:'Esophagus', value:'?????'},
+                    {label:'Gastric', value:'?????'},
+                    {label:'Orthopedic', value:'?????'},
+                    {label:'Lymph nodes', value:'?????'},
+                    {label:'Other', value:'3cee7fb4-26fe-102b-80cb-0017a47871b2'},
                 ]
             },
-            instructions: {label:'Instructions', uuid:'?????'},
-            clinicalHistory: {label:'Clinical History', uuid:'?????'},
-            careSetting: {label:'Care Setting', uuid:'NA',
+            instructions: {label:'Instructions', value:'?????'},
+            clinicalHistory: {label:'Clinical History', value:'?????'},
+            careSetting: {label:'Care Setting', value:'NA',
                 answers:[
-                    {label: 'Inpatient', uuid:'c365e560-c3ec-11e3-9c1a-0800200c9a66'},
-                    {label: 'Outpatient', uuid:'6f0c9a92-6f24-11e3-af88-005056821db0'}
+                    {label: 'Inpatient', value:'c365e560-c3ec-11e3-9c1a-0800200c9a66'},
+                    {label: 'Outpatient', value:'6f0c9a92-6f24-11e3-af88-005056821db0'}
                 ]
             }
         }
@@ -106,41 +107,36 @@ angular.module("labTrackingOrderFactory", [])
             var order = new LabTrackingOrder();
 
             order.order.value = webServiceResult.uuid;
-            order.diagnosis.value = webServiceResult.orderReason.uuid;
-
-
-            order.procedure.value = webServiceResult.concept.uuid;
-            order.procedure.display = webServiceResult.concept.display;
+            order.preLabDiagnosis.value = webServiceResult.orderReason.uuid;
 
             var procs = [];
-            if(webServiceResult.encounter.obs != null && webServiceResult.encounter.obs.length > 0){
-                for(var i=0;i<webServiceResult.encounter.obs.length;++i){
-                   var obs = webServiceResult.encounter.obs[i];
-                   var display = obs.display;
-                   for(var j=0;j<order.procedure.concept.answers.length;++j){
-                        var a = order.procedure.concept.answers[j];
-                        if(a.uuid == obs.uuid){
-                            display = a.label;
-                            break;
-                        }
-                   }
-                   procs.push({uuid: obs.uuid, display:obs.display})
+            if(webServiceResult.encounter.obs != null && webServiceResult['encounter.obs'].length > 0){
+                var obs = webServiceResult['encounter.obs'];
+                for(var i=0;i<obs.length;++i){
+                   procs.push({value: obs[i].concept.uuid, label:obs[i].concept.display, obsUuid:obs[i].uuid});
                 }
             }
-            order.procedure.value = procs;
+            order.procedures = procs;
 
-            order.diagnosis.value = webServiceResult.orderReason.uuid;
-            order.diagnosis.display = webServiceResult.orderReason.display;
+            order.preLabDiagnosis.value = webServiceResult.orderReason.uuid;
+            order.preLabDiagnosis.display = webServiceResult.orderReason.display;
 
 
             order.instructions.value = webServiceResult.instructions;
             order.clinicalHistory.value = webServiceResult.clinicalHistory;
+            if(webServiceResult.urgency == 'ROUTINE'){
+                order.urgency.value = false;
+            }
+            else{
+                order.urgency.value = true;
+            }
             if(webServiceResult.careSetting){
                 order.careSetting.value =  webServiceResult.careSetting.uuid;
             }
 
             order.encounter.value = webServiceResult.encounter.uuid;
             order.location.value =  webServiceResult.encounter.location.uuid;
+            order.location.display =  webServiceResult.encounter.location.display;
             order.patient.value =  webServiceResult.encounter.patient.uuid;
             order.patient.name =  webServiceResult.patient.person.display;
             //have to load the id this way b/c of the way the rest web services
@@ -169,7 +165,7 @@ angular.module("labTrackingOrderFactory", [])
                     concept: CONSTANTS.ORDER_CONCEPT_UUID,
                     careSetting: labTrackingOrder.careSetting.value,
                     encounter: labTrackingOrder.encounter.value,
-                    orderReason: labTrackingOrder.diagnosis.value,
+                    orderReason: labTrackingOrder.preLabDiagnosis.value,
                     instructions: labTrackingOrder.instructions.value,
                     clinicalHistory: labTrackingOrder.clinicalHistory.value
                 };

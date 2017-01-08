@@ -15,26 +15,19 @@
          <div class="form-group">
             <label class="control-label form-control-static text-right col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
             <div class="col-sm-8">
-               <select type='text' class="form-control" id="proc_location" ng-model="order.location.value" >
-                  <option ng-repeat="a in locations | orderBy:a.display" ng-selected="order.location.value==a.uuid"  value="{{a.uuid}}">{{a.display}}</option>
-               </select>
+                <input type="text" ng-model="order.location"  uib-typeahead="loc as loc.display for loc in locations| filter:{display:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false">
             </div>
          </div>
          <div class="form-group">
             <label class="control-label text-right col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
             <div class="col-sm-8">
-               <select type='text' class="form-control" ng-model="order.surgeon.value" id="surgeon">
-                <option ng-repeat="a in providers | orderBy:a.name" ng-selected="order.surgeon.value==a.uuid"  value="{{a.uuid}}">{{a.name}}</option>
-               </select>
+               <input id="surgeon" type="text" ng-model="order.surgeon"  uib-typeahead="a as a.name for a in providers| filter:{name:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false">
             </div>
          </div>
          <div class="form-group">
             <label class="control-label col-sm-3" for="resident">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
             <div class="col-sm-8">
-               <select type='text' class="form-control" id="resident" ng-model="order.resident.value">
-                  <option ng-repeat="a in providers | orderBy:a.name" ng-selected="order.resident.value==a.uuid"  value="{{a.uuid}}">{{a.name}}</option>
-               </select>
-            </div>
+               <input id="resident" type="text" ng-model="order.resident"  uib-typeahead="a as a.name for a in providers| filter:{name:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false">            </div>
          </div>
          <div class="form-group">
             <label class="control-label col-sm-3" for="mdtonotify">${ui.message("labtrackingapp.orderdetails.mdtonotifylabel")}</label>
@@ -45,34 +38,37 @@
          <div class="form-group">
             <label class="control-label col-sm-3">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
             <div class="col-sm-8">
-               <select class="form-control" id="site" ng-model="order.diagnosis.value">
-                  <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.diagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
+               <select class="form-control" id="prelabdiagnosis"
+                    ng-options="item as item.label disable when item.value=='?????' for item in concepts.preLabDiagnosis.answers | orderBy:'label' track by item.value "
+                    ng-selected="order.preLabDiagnosis.value==item.value"
+                    ng-model="order.preLabDiagnosis">
                </select>
             </div>
          </div>
          <div class="form-group">
-            <label class="control-label col-sm-3" for="site" >${ui.message("labtrackingapp.proceduresitelabel")}</label>
+            <label class="control-label col-sm-3" for="procedure" >${ui.message("labtrackingapp.proceduresitelabel")}</label>
             <div class="col-sm-8">
-               <select class="form-control" id="site" ng-model="order.procedure.value">
-                  <option ng-repeat="a in order.procedure.concept.answers | orderBy:a.label" ng-selected="order.procedure.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
-               </select>
+               <select id="procedure" class="form-control" multiple
+                ng-options="item as item.label disable when item.value=='?????' for item in concepts.procedure.answers | orderBy:'label' track by item.value"
+                ng-model="order.procedures" ></select>
             </div>
          </div>
          <div class="form-group">
             <label class="control-label col-sm-3" for="urgentreviewlabel">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
             <div class="col-sm-8">
-               <div class="btn-group" id="urgentreviewlabel" data-toggle="buttons">
-                  <label class="btn btn-danger"><input type="radio" name="radioGroup2" value="yes">Yes</label>
-                  <label class="btn btn-primary"><input type="radio" name="radioGroup2" >No</label>
-               </div>
+                 <div class="btn-group btn-toggle">
+                   <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">Yes</button>
+                   <button class="btn btn-lg btn-default" ng-class="{'btn-primary': !order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">No</button>
+                 </div>
             </div>
          </div>
          <div class="form-group">
             <label class="control-label col-sm-3"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
             <div class="col-sm-8">
-              <select class="form-control" id="site" ng-model="order.postopDiagnosis.value">
-                 <option ng-repeat="a in order.diagnosis.concept.answers | orderBy:a.label" ng-selected="order.postopDiagnosis.concept.value==a.uuid"  value="{{a.uuid}}">{{a.label}}-{{a.uuid}}</option>
-              </select>
+               <select class="form-control" id="postopdiagnosis"
+                    ng-options="item as item.label disable when item.value=='?????' for item in concepts.preLabDiagnosis.answers | orderBy:'label' track by item.value "
+                    ng-model="order.postopDiagnosis">
+               </select>
             </div>
          </div>
          <div class="form-group">
@@ -84,10 +80,10 @@
          <div class="form-group">
             <label class="control-label col-sm-3">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
             <div class="col-sm-8">
-                <div class="form-group" ng-repeat="a in [1,2,3]">
-                    <label class="control-label col-sm-1">{{a}}.</label>
+                <div class="form-group" ng-repeat="a in [0,1,2]">
+                    <label class="control-label col-sm-1">{{a+1 }}.</label>
                     <div class="col-sm-11">
-                       <input type="text" class="form-control" ng-model="order.clinicalHistory.value"></input>
+                       <input type="text" class="form-control" ng-model="order.specimanDetails[a].value"></input>
                     </div>
                 </div>
             </div>

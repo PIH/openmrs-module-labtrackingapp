@@ -17,12 +17,13 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
 </script>
 
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
+<input type="text" ng-model="selected" uib-typeahead="state for state in states | filter:${'$'}viewValue | limitTo:8" class="form-control">
   <div class="panel panel-primary" id="details_box">
     <div class="panel-heading">${ui.message("labtrackingapp.orderdetailstitle")} Patient ABC123</div>
     <div class="panel-body">
       <div class="panel-group">
         <order-details-panel order="order"></order-details-panel>
-        <order-specimen-panel order="order" locations="locations" providers="providers"></order-specimen-panel>
+        <order-specimen-panel order="order" locations="locations" providers="providers" concepts="concepts"></order-specimen-panel>
         <order-results-panel order="order"></order-results-panel>
         <order-debug-panel order="order" providers="providers"></order-debug-panel>
       </div>

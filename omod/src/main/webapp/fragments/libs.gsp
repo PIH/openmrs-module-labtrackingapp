@@ -27,7 +27,6 @@ ui.includeJavascript("labtrackingapp", "libs/bootstrap.min.js")
 //  the version in openmrs is older
 ui.includeJavascript("labtrackingapp", "libs/ui-bootstrap-tpls-2.3.1.js")
 
-
 ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
 ui.includeJavascript("labtrackingapp", "components/EncounterFactory.js")
 ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
