@@ -1,8 +1,11 @@
 angular.module("labTrackingOrderFactory", [])
-    .factory('LabTrackingOrder', ['$http', '$filter', function ($http, $filter) {
+    .factory('LabTrackingOrder', ['$http', '$filter', 'Encounter', function ($http, $filter, Encounter) {
         var CONSTANTS = {
             ORDER_TYPE: "testorder",
-            ORDER_CONCEPT_UUID:"d6d585b6-4887-4aac-8361-424c17b030f2"
+            ORDER_CONCEPT_UUID:"d6d585b6-4887-4aac-8361-424c17b030f2",
+            ORDER_PROCEDURE_ORDERED_UUID:"d6d585b6-4887-4aac-8361-424c17b030f2",
+            ORDER_ENCOUNTER_TYPE_UUID: "b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd",
+            ORDER_ENCOUNTER_PROVIDER_ROLE_UUID: "c458d78e-8374-4767-ad58-9f8fe276e01c"
         };
         /**
          * Constructor, with class name
@@ -110,10 +113,10 @@ angular.module("labTrackingOrderFactory", [])
             order.preLabDiagnosis.value = webServiceResult.orderReason.uuid;
 
             var procs = [];
-            if(webServiceResult.encounter.obs != null && webServiceResult['encounter.obs'].length > 0){
+            if(webServiceResult['encounter.obs'] != null && webServiceResult['encounter.obs'].length > 0){
                 var obs = webServiceResult['encounter.obs'];
                 for(var i=0;i<obs.length;++i){
-                   procs.push({value: obs[i].concept.uuid, label:obs[i].concept.display, obsUuid:obs[i].uuid});
+                   procs.push({value: obs[0].value.uuid, label:obs[0].value.display, obsUuid:obs[i].uuid});
                 }
             }
             order.procedures = procs;
@@ -172,6 +175,58 @@ angular.module("labTrackingOrderFactory", [])
 
                 return order;
         }
+
+        /* creates the web service observations objects for
+           the encounter associated with the test order
+        @param labTrackingOrder - the order to create
+        @param provider - the provider that created the order
+        @return the Encounter as a WebService Object
+        */
+        LabTrackingOrder.toTestOrderEncounterWebServiceObject = function(labTrackingOrder, currentProviderUUID) {
+
+            var obs = [];
+            for(var i=0;i<labTrackingOrder.procedures.length;++i){
+                var o = Encounter.toObsWebServiceObject(CONSTANTS.ORDER_PROCEDURE_ORDERED_UUID, labTrackingOrder.procedures[i].value, null);
+                obs.push(o);
+            }
+
+            var encounter = new Encounter(CONSTANTS.ORDER_ENCOUNTER_TYPE_UUID, currentProviderUUID, CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
+                labTrackingOrder.patient.value, labTrackingOrder.location.value, obs);
+
+            return encounter;
+        };
+
+
+        /* creates the web service observations objects for
+           the specimen collection encounter associated with the test order
+        @param labTrackingOrder - the order to create
+        @param provider - the provider that created the encounter
+        @return the Encounter as a WebService Object
+        */
+        LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject = function(labTrackingOrder, currentProviderUUID) {
+//
+//        Attending surgeon
+//        Resident
+//        MD to notify
+//        Specimen Details
+//        Results Date
+//        Notes
+//        File
+//        Procudure performed at outside location
+//        Other procedure
+//
+            var obs = [];
+            for(var i=0;i<labTrackingOrder.procedures.length;++i){
+                var o = Encounter.toObsWebServiceObject(ORDER_PROCEDURE_ORDERED_UUID, labTrackingOrder.procedures[i].value, null);
+                obs.push(o);
+            }
+
+            var encounter = new Encounter(CONSTANTS.ORDER_ENCOUNTER_TYPE_UUID, currentProviderUUID, CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
+                labTrackingOrder.patient.value, labTrackingOrder.location.value, obs);
+
+            return encounter;
+        };
+
 
         /**
          * Return the constructor function

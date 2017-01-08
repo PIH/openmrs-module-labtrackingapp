@@ -20,11 +20,11 @@
         <div class="panel panel-primary" id="order_box">
           <div class="panel-heading">${ui.message("labtrackingapp.addorderpagetitle")}</div>
           <div class="panel-body">
-            <form>
+            <form name="addOrderForm">
               <div class="form-group row">
                 <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                 <div class="col-sm-10">
-                  <select class="form-control" id="site"
+                  <select class="form-control" id="site" ng-required="true"
                   ng-options="item as item.label disable when item.value=='?????' for item in concepts.preLabDiagnosis.answers | orderBy:'label' track by item.value "
                   ng-model="order.preLabDiagnosis">
                   </select>
@@ -33,16 +33,16 @@
               <div class="form-group row">
                 <label for="procedure" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                 <div class="col-sm-10">
-                 <select id="procedure" class="form-control" multiple
+                 <select id="procedure" class="form-control" multiple   ng-required="true"
                   ng-options="item as item.label disable when item.value=='?????' for item in concepts.procedure.answers | orderBy:'label' track by item.value "
                   ng-model="order.procedures" ></select>
                 </div>
               </div>
 
               <div class="form-group row">
-                <label for="site" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.caresettinglabel")}</label>
+                <label for="caresetting" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.caresettinglabel")}</label>
                 <div class="col-sm-10">
-                  <select class="form-control" id="site"
+                  <select class="form-control" id="caresetting"  ng-required="true"
                     ng-options="item as item.label for item in concepts.careSetting.answers | orderBy:'label' track by item.value "
                     ng-model="order.careSetting">
                   </select>
@@ -64,7 +64,7 @@
               </div>
               <div class="pull-right">
                 <button class="btn btn-default cancel">${ui.message("uicommons.cancel")}</button>
-                <button class="btn btn-success" ng-click="handleSaveOrder()">${ui.message("uicommons.save")}</button>
+                <button class="btn btn-success" ng-click="handleSaveOrder()" ng-disabled="addOrderForm.${'$'}invalid" >${ui.message("uicommons.save")}</button>
               </div>
             </form>
              <div class="row">

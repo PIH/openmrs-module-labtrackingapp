@@ -15,13 +15,7 @@ angular.module("labTrackingDataService", [])
 					VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
 					PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
 					ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
-				},
-				ORDER_TYPE: "testorder",
-				ORDER_FREQUENCY_UUID: "38090760-7c38-11e4-baa7-0800200c9a67",
-				ORDER_ENCOUNTER_TYPE_UUID: "b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd",
-				ORDER_ENCOUNTER_PROVIDER_ROLE_UUID: "c458d78e-8374-4767-ad58-9f8fe276e01c",
-
-
+				}
 			};
 
             /*
@@ -103,6 +97,7 @@ angular.module("labTrackingDataService", [])
              * */
             this.loadOrder = function (orderUuid) {
                 var url = CONSTANTS.URLS.VIEW_ORDER.replace("ORDER_UUID", orderUuid);
+                console.log(url);
                 return $http.get(url).then(function (resp) {
                     if (resp.status == 200) {
                         return {status:{ code: resp.status, msg:null},data:LabTrackingOrder.fromWebServiceObject(resp.data)};
@@ -139,20 +134,28 @@ angular.module("labTrackingDataService", [])
                 });
             };
 
+            /* creates the encounter associated with the test order
+            @param labTrackingOrder - the order to create
+            @return the saved encounter
+            */
 			this.createOrderEncounter = function(labTrackingOrder) {
+			    var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
+				var encounter = LabTrackingOrder.toTestOrderEncounterWebServiceObject(labTrackingOrder, provider);
+				return Encounter.save(encounter);
+			};
+
+
+            /* creates the encounter associated with the specimen for the test
+            @param labTrackingOrder - the order to create
+            @return the saved encounter
+            */
+			this.createOrderSpecimenEncounter = function(labTrackingOrder) {
 				var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
-
-				var obs = [];
-				for(var i=0;i<labTrackingOrder.procedures.length;++i){
-				    var o = Encounter.toObsWebServiceObject(labTrackingOrder.procedures[i].value, null, null);
-				    obs.push(o);
-				}
-
-				var encounter = new Encounter(CONSTANTS.ORDER_ENCOUNTER_TYPE_UUID, provider, CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-					labTrackingOrder.patient.value, labTrackingOrder.location.value, obs);
+				var encounter = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(labTrackingOrder, provider);
 
 				return Encounter.save(encounter);
 			};
+
 
 
 			/*
