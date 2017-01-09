@@ -31,7 +31,24 @@ public interface LabTrackingAppService extends OpenmrsService {
 
 	/* gets the specimen details encounter associated with the Test order
 	* @param orderNumber - the Order orderNumber
-	* the Encounter*/
+	* the Encounter
+	* */
 	public Encounter getSpecimenDetailsEncounter(String orderNumber);
-	
+
+
+	/* updates the urgency field for a order
+	* @param orderUuid - the order to udpate
+	* @return true/false depending on whether something was updated*
+	* @param urgent - whether to flag the order as urgent or not
+	* */
+	public boolean updateOrderUrgency(String orderUuid, boolean urgent);
+
+
+	/* cancels an order
+	* @param orderUuid - the order to udpate
+	* @return true/false depending on whether something was updated
+	* */
+	public boolean cancelOrder(String orderUuid, String reasons);
+
+
 }
