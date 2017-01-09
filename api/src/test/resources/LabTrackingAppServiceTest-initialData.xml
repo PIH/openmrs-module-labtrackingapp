@@ -16,8 +16,10 @@
     <concept_name concept_id="9991" name="test order procedure" locale="en" creator="1" date_created="2016-12-11 00:00:00.0" concept_name_id="9991" voided="false" uuid="99999999-9999-9999-9999-999999999900" concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <location location_id="9991" name="Test Location" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="d033b4e1-2a21-4265-943b-d5a0710a0c2d"/>
 
+    <!--  the concept that matches the specimen details to the order -->
+    <concept concept_id="9992" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="393dec41-2fb5-428f-acfa-36ea85da6666"/>
 
-    <encounter_type encounter_type_id="9991" name="Test LabeTracking Encounter type"
+    <encounter_type encounter_type_id="9991" name="Test LabTracking Encounter type"
                     description="This is a the test LabTracking EncounterType" creator="1"
                     date_created="2005-01-01 00:00:00.0" retired="false" uuid="b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd"/>
 
@@ -25,13 +27,19 @@
                encounter_datetime="2016-06-09 12:00:00.0" creator="1" date_created="2016-06-09 12:00:00.0"
                voided="false" uuid="f13d6fae-baa9-4553-955d-920098bec08f"/>
 
-    <!--<order_type order_type_id="9991" uuid="52a447d3-a64a-11e3-9aeb-50e549534c5e" name="Test Order"-->
-                <!--java_class_name="org.openmrs.TestOrder" retired="0" creator="1"-->
-                <!--description="test of a test order" date_created="2016-06-09 12:00:00.0" />-->
+    <!-- this is the specimen details page -->
+    <encounter encounter_id="9992" encounter_type="9991" patient_id="2" location_id="9991"
+               encounter_datetime="2016-06-09 12:00:00.0" creator="1" date_created="2016-06-09 12:00:00.0"
+               voided="false" uuid="f13d6fae-baa9-4553-955d-999999999999"/>
+
+    <!-- the observation that maps the order to this encounter -->
+    <obs obs_id="9991" person_id="2" concept_id="9992" encounter_id="9992" obs_datetime="2017-01-08 12:00:00.0"
+         location_id="9991" value_text="ORD-999" creator="1" date_created="2017-01-08 15:57:35.0" voided="false"
+         uuid="3ce93824-26fe-102b-80cb-0017a47871b2"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-8a9024cb75d9" order_id="9991" encounter_id="9991" order_type_id="2" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
-            order_number="ORD-1"
+            order_number="ORD-999"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
             voided="false" patient_id="2"  care_setting="1"/>
     <patient patient_id="2" creator="1" date_created="2005-01-01 00:00:00.0" voided="false"/>

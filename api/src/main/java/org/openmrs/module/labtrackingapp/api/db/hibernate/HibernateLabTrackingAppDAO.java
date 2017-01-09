@@ -17,11 +17,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
+import org.hibernate.criterion.Subqueries;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
+
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -52,12 +59,6 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 	* */
 	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid) {
 		
-		Criteria t = sessionFactory.getCurrentSession().createCriteria(OrderType.class);
-		List<OrderType> tt = t.list();
-		for (OrderType ot : tt) {
-			System.out.println(ot.getId() + " - order type " + ot.getUuid() + " - " + ot.getName());
-		}
-		
 		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");
 		
 		//Calendar now = Calendar.getInstance();
@@ -68,7 +69,8 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 		criteria.createAlias("encounter", "enc");
 		criteria.createAlias("ord.orderType", "orderType");
 		criteria.add(Restrictions.eq("orderType.uuid", LabTrackingConstants.LAB_TRACKING_TESTORDER_TYPE_UUID));
-		
+		criteria.add(Restrictions.eq("ord.voided", Boolean.FALSE));
+
 		if (locationUuid != null && locationUuid.length() > 0) {
 			criteria.createAlias("enc.location", "loc");
 			criteria.add(Restrictions.eq("loc.uuid", locationUuid));
@@ -85,6 +87,31 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 		
 		debug(orders);
 		return orders;
+	}
+
+	public Encounter getSpecimenDetailsEncounter(String orderNumber){
+
+		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class, "enc");
+
+		DetachedCriteria orderNumberObservation = DetachedCriteria.forClass(Obs.class)
+				.createAlias("concept", "con")
+				.createAlias("encounter", "enc")
+				.setProjection(Property.forName("enc.id"))
+				.add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+				.add(Restrictions.eq("valueText",orderNumber));
+
+				;
+
+		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+				.add(Subqueries.propertyIn("id", orderNumberObservation));
+
+
+		List<Encounter> list = criteria.list();
+		if(list.size()>0){
+			return list.get(0);
+		}
+
+		return null;
 	}
 	
 	private void debug(List<Order> orders) {

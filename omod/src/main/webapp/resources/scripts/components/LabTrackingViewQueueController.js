@@ -49,7 +49,7 @@ angular.module("labTrackingViewQueueController", [])
             */
             $scope.handleDetails = function(order){
                 console.log(order);
-                 $window.location.href ='labtrackingOrderDetails.page?orderUuid=' + order.order.value;
+                $window.location.href ='labtrackingOrderDetails.page?orderUuid=' + order.uuid;
             }
 
             /*

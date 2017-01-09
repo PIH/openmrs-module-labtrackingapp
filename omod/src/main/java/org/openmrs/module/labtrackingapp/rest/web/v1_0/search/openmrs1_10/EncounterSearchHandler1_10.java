@@ -3,7 +3,6 @@ package org.openmrs.module.labtrackingapp.rest.web.v1_0.search.openmrs1_10;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.context.Context;
-
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
@@ -15,22 +14,19 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Component
-public class TestOrderSearchHandler1_10 implements SearchHandler {
+public class EncounterSearchHandler1_10 implements SearchHandler {
 	
-	private static final String REQUEST_PARAM_PATIENT = "patient";
+	private static final String REQUEST_PARAM_ORDER_NUMBER = "orderNumber";
 	
-	private static final String REQUEST_PARAM_LOCATION = "location";
+	private final SearchQuery searchQuery = new SearchQuery.Builder("Gets the specimen details associated with an encounter")
+	        .withRequiredParameters(REQUEST_PARAM_ORDER_NUMBER).build();
 	
-	private final SearchQuery searchQuery = new SearchQuery.Builder("Gets active test orders in the system")
-	        .withRequiredParameters(REQUEST_PARAM_PATIENT, REQUEST_PARAM_LOCATION).build();
-	
-	private final SearchConfig searchConfig = new SearchConfig("getActiveOrders", RestConstants.VERSION_1 + "/order",
+	private final SearchConfig searchConfig = new SearchConfig("getSpecimenDetailsEncounter", RestConstants.VERSION_1 + "/encounter",
 	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"), searchQuery);
 	
 	/**
@@ -46,10 +42,11 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 	 */
 	//@Override
 	public PageableResult search(RequestContext context) throws ResponseException {
-		String patient = context.getParameter(REQUEST_PARAM_PATIENT);
-		String location = context.getParameter(REQUEST_PARAM_LOCATION);
-		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(24, location, patient);
-		return new NeedsPaging<Order>(orders, context);
+		String orderNumber = context.getParameter(REQUEST_PARAM_ORDER_NUMBER);
+		Encounter encounter = Context.getService(LabTrackingAppService.class).getSpecimenDetailsEncounter(orderNumber);
+
+		//TODO:  how do you just return one in search, for now wrap in a list
+		return new NeedsPaging<Encounter>(Collections.singletonList(encounter), context);
 	}
 	
 }

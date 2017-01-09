@@ -9,7 +9,7 @@
           <div class="row">
             <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
             <div class="col-sm-9">
-              <p class="form-control-static">{{(order.sampleDate.value==null?"NEW":2) | date : 'shortDate'}}</p>
+              <p class="form-control-static">{{(order.sampleDate.value==null?"New":order.sampleDate.value) | date : 'shortDate'}}</p>
             </div>
           </div>
          <div class="form-group">
@@ -80,18 +80,18 @@
          <div class="form-group">
             <label class="control-label col-sm-3">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
             <div class="col-sm-8">
-                <div class="form-group" ng-repeat="a in [0,1,2]">
-                    <label class="control-label col-sm-1">{{a+1 }}.</label>
+                <div class="form-group" ng-repeat="a in concepts.specimenDetails">
+                    <label class="control-label col-sm-1">{{${'$'}index+1 }}.</label>
                     <div class="col-sm-11">
-                       <input type="text" class="form-control" ng-model="order.specimanDetails[a].value"></input>
+                       <input type="text" class="form-control" ng-model="order.specimenDetails[${'$'}index].value"></input>
                     </div>
                 </div>
             </div>
          </div>
          <div class="form-group" >
             <div class="col-sm-offset-2 col-sm-9 text-right">
-               <button type="button" class="btn btn-primary">${ui.message("uicommons.cancel")}</button>
-               <button type="button" class="btn btn-default">${ui.message("uicommons.save")}</button>
+               <button type="button" class="btn btn-primary" ng-click="cancelSpecimenDetails()">${ui.message("uicommons.cancel")}</button>
+               <button type="button" class="btn btn-default" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
             </div>
          </div>
       </form>

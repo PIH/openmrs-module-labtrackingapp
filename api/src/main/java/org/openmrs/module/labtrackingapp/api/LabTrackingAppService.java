@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.labtrackingapp.api;
 
+import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.OpenmrsService;
 
@@ -27,5 +28,10 @@ public interface LabTrackingAppService extends OpenmrsService {
 	 * @param patientUuid - (optional) the patient UUID for the encounters
 	 */
 	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid);
+
+	/* gets the specimen details encounter associated with the Test order
+	* @param orderNumber - the Order orderNumber
+	* the Encounter*/
+	public Encounter getSpecimenDetailsEncounter(String orderNumber);
 	
 }

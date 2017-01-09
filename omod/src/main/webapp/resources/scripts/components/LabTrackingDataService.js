@@ -2,7 +2,7 @@ angular.module("labTrackingDataService", [])
 	.service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'LabTrackingOrder', 'Encounter',
 		function($q, $http, SessionInfo, LabTrackingOrder, Encounter) {
 		    var _self = this;
-		    var ORDER_FIELDS = "uuid,dateActivated,orderReason,instructions,clinicalHistory,urgency,encounter,encounter.obs,concept,patient,patient.identifiers";
+		    var ORDER_FIELDS = "uuid,dateActivated,orderReason,orderNumber,instructions,clinicalHistory,urgency,encounter,encounter.obs,concept,patient,patient.identifiers";
 		    var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
 			var CONSTANTS = {
 				URLS: {
@@ -13,6 +13,7 @@ angular.module("labTrackingDataService", [])
 					VIEW_PROVIDERS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/provider?v=custom:(uuid,display,person)",
 					VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(" + ORDER_FIELDS + ")&location=LOCATION_UUID",
 					VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
+					VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumber=ORDER_NUMBER&v=custom:(obs,encounterDatetime,uuid)",
 					PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
 					ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
 				}
@@ -100,7 +101,34 @@ angular.module("labTrackingDataService", [])
                 console.log(url);
                 return $http.get(url).then(function (resp) {
                     if (resp.status == 200) {
-                        return {status:{ code: resp.status, msg:null},data:LabTrackingOrder.fromWebServiceObject(resp.data)};
+                        var labTrackingOrder = LabTrackingOrder.fromWebServiceObject(resp.data);
+
+                        return _self.loadSpecimenDetailsForOrder(labTrackingOrder);
+
+                        //return {status:{ code: resp.status, msg:null},data:LabTrackingOrder.fromWebServiceObject(resp.data)};
+                    }
+                    else {
+                        return {status:{ code: resp.status, msg:"Error loading queue " + resp.status},data:[]};
+                    }
+
+                }, function (err) {
+                    return {status:{ code: 500, msg:"Error loading queue " + err},data:[]};
+                });
+            };
+
+            /* loads the specimen details for an order
+             *  @param {LabTrackingOrder} labTrackingOrder - the order to update with the info
+             * @returns {LabTrackingOrder} the LabTrackingOrder object
+             * */
+            this.loadSpecimenDetailsForOrder = function (labTrackingOrder) {
+                var url = CONSTANTS.URLS.VIEW_SPECIMEN_DETAILS.replace("ORDER_NUMBER", labTrackingOrder.orderNumber.value);
+                console.log(url);
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        if(resp.data.results != null && resp.data.results.length > 0 && resp.data.results[0] != null){
+                            LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject(resp.data.results[0],labTrackingOrder);
+                        }
+                        return {status:{ code: resp.status, msg:null},data:labTrackingOrder};
                     }
                     else {
                         return {status:{ code: resp.status, msg:"Error loading queue " + resp.status},data:[]};
@@ -149,13 +177,22 @@ angular.module("labTrackingDataService", [])
             @param labTrackingOrder - the order to create
             @return the saved encounter
             */
-			this.createOrderSpecimenEncounter = function(labTrackingOrder) {
+			this.createOrUpdateOrderSpecimenEncounter = function(labTrackingOrder) {
 				var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
-				var encounter = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(labTrackingOrder, provider);
 
-				return Encounter.save(encounter);
+                var encounter = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(labTrackingOrder, provider);
+                return Encounter.save(encounter,labTrackingOrder.specimenDetailsEncounter.uuid);
+
+			    //first check if the encounter exists
+                if(labTrackingOrder.specimenDetailsEncounter.uuid != null){
+                    //we need to update the observations from this encounter
+                    return null;
+                }
+                else{
+                    var encounter = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(labTrackingOrder, provider);
+                    return Encounter.save(encounter);
+                }
 			};
-
 
 
 			/*

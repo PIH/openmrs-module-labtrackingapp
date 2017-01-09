@@ -5,19 +5,24 @@ angular.module("labTrackingOrderFactory", [])
             ORDER_CONCEPT_UUID:"d6d585b6-4887-4aac-8361-424c17b030f2",
             ORDER_PROCEDURE_ORDERED_UUID:"d6d585b6-4887-4aac-8361-424c17b030f2",
             ORDER_ENCOUNTER_TYPE_UUID: "b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd",
-            ORDER_ENCOUNTER_PROVIDER_ROLE_UUID: "c458d78e-8374-4767-ad58-9f8fe276e01c"
+            ORDER_ENCOUNTER_PROVIDER_ROLE_UUID: "c458d78e-8374-4767-ad58-9f8fe276e01c",
+            SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID:"10db3139-07c0-4766-b4e5-a41b01363145",
+            SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER:"393dec41-2fb5-428f-acfa-36ea85da6666",
+            SPECIMEN_COLLECTION_ENCOUNTER_SPECIMEN_COMMENT_1: "7d557ddc-eca3-421e-98ae-5469a1ecba4d"
         };
         /**
          * Constructor, with class name
          */
         function LabTrackingOrder(patientUuid, locationUuid) {
-            this.order = {concept: LabTrackingOrder.concepts.order, value:null};
+            this.uuid = null;
+            this.specimenDetailsEncounter = {uuid:null};  // used to keep track of whether to create/update the details
+            this.orderNumber = {value:null};
             this.preLabDiagnosis = {label:LabTrackingOrder.concepts.preLabDiagnosis.answers[0].label, value: LabTrackingOrder.concepts.preLabDiagnosis.answers[0].value};
             this.postopDiagnosis = {concept: LabTrackingOrder.concepts.diagnosis, value:null};
             this.procedures = [];  //this is an array of values
             this.instructions = {value:""};
             this.clinicalHistory = {value:""};
-            this.specimanDetails = [{value:""},{value:""},{value:""}];
+            this.specimenDetails = [{value:"", obsUuid:null},{value:"", obsUuid:null},{value:"", obsUuid:null},{value:"", obsUuid:null}];
             this.careSetting =  {label:LabTrackingOrder.concepts.careSetting.answers[1].label, value:LabTrackingOrder.concepts.careSetting.answers[1].value};
             this.encounter = {value:null};
             this.location = {value: locationUuid};
@@ -82,7 +87,11 @@ angular.module("labTrackingOrderFactory", [])
                     {label: 'Inpatient', value:'c365e560-c3ec-11e3-9c1a-0800200c9a66'},
                     {label: 'Outpatient', value:'6f0c9a92-6f24-11e3-af88-005056821db0'}
                 ]
-            }
+            },
+            specimenDetails: [{label:'Speciman details 1', value:'7d557ddc-eca3-421e-98ae-5469a1ecba4d'},
+                                {label:'Speciman details 2', value:'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},{
+                                label:'Speciman details 3', value:'873d2496-4576-4948-80c3-e36913d2a9a7'},
+                                {label:'Speciman details 4', value:'96010c0d-0328-4d5f-a4e4-b8bb391a3882'}]
         }
 
         /*
@@ -109,14 +118,16 @@ angular.module("labTrackingOrderFactory", [])
         LabTrackingOrder.fromWebServiceObject = function(webServiceResult){
             var order = new LabTrackingOrder();
 
-            order.order.value = webServiceResult.uuid;
+            order.uuid = webServiceResult.uuid;
+            order.orderNumber.value = webServiceResult.orderNumber;
+
             order.preLabDiagnosis.value = webServiceResult.orderReason.uuid;
 
             var procs = [];
             if(webServiceResult['encounter.obs'] != null && webServiceResult['encounter.obs'].length > 0){
                 var obs = webServiceResult['encounter.obs'];
                 for(var i=0;i<obs.length;++i){
-                   procs.push({value: obs[0].value.uuid, label:obs[0].value.display, obsUuid:obs[i].uuid});
+                   procs.push({value: obs[i].value.uuid, label:obs[i].value.display, obsUuid:obs[i].uuid});
                 }
             }
             order.procedures = procs;
@@ -155,6 +166,34 @@ angular.module("labTrackingOrderFactory", [])
         }
 
         /*
+        updates a LabTracking order with details from a web service object
+        @param webServiceResult - the web service object
+        @param LabeTrackingOrder - the order to update with the details
+        @return LabeTrackingOrder object
+        */
+        LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject = function(webServiceResult, labTrackingOrder){
+            labTrackingOrder.sampleDate.value = new Date($filter('serverDate')(webServiceResult.encounterDatetime));
+            labTrackingOrder.specimenDetailsEncounter.uuid = webServiceResult.uuid;
+            if(webServiceResult.obs != null && webServiceResult.obs.length > 0){
+                var obs = webServiceResult.obs;
+                for(var i=0;i<obs.length;++i){
+                    if(obs[i].value != null){
+                        for(var j=0;j<LabTrackingOrder.concepts.specimenDetails.length;++j){
+                            if(obs[i].concept.uuid == LabTrackingOrder.concepts.specimenDetails[j].value){
+                                labTrackingOrder.specimenDetails[j].value = obs[i].value;
+                                labTrackingOrder.specimenDetails[j].obsUuid = obs[i].value;
+                                break;
+                            }
+                        }
+                    }
+
+                }
+            }
+
+            return labTrackingOrder;
+        }
+
+        /*
         creates a web service object from a LabTrackingOrder object
         @param labTrackingOrder - the LabTrackingOrder object
         @param currentProviderUUID - the current provider UUID
@@ -175,6 +214,7 @@ angular.module("labTrackingOrderFactory", [])
 
                 return order;
         }
+
 
         /* creates the web service observations objects for
            the encounter associated with the test order
@@ -216,12 +256,26 @@ angular.module("labTrackingOrderFactory", [])
 //        Other procedure
 //
             var obs = [];
-            for(var i=0;i<labTrackingOrder.procedures.length;++i){
-                var o = Encounter.toObsWebServiceObject(ORDER_PROCEDURE_ORDERED_UUID, labTrackingOrder.procedures[i].value, null);
-                obs.push(o);
+
+            var specimenDetailsIndex = 0;
+            for(var i=0;i<labTrackingOrder.specimenDetails.length;++i){
+                var v = labTrackingOrder.specimenDetails[i].value;
+                if(v != null && v.length > 0){
+                    var conceptUuid = LabTrackingOrder.concepts.specimenDetails[i].value;
+                    obs.push( Encounter.toObsWebServiceObject(conceptUuid, v, labTrackingOrder.specimenDetails[i].obsUuid));
+                }
+                else{
+                    //TODO: this detail is not being used anymore, so we need to delete it, it it has an obsUUid
+                }
+
             }
 
-            var encounter = new Encounter(CONSTANTS.ORDER_ENCOUNTER_TYPE_UUID, currentProviderUUID, CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
+            obs.push( Encounter.toObsWebServiceObject(CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER,
+                                              labTrackingOrder.orderNumber.value, labTrackingOrder.orderNumber.obsUuid))
+
+
+            var encounter = new Encounter(CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID, currentProviderUUID,
+                CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
                 labTrackingOrder.patient.value, labTrackingOrder.location.value, obs);
 
             return encounter;

@@ -13,6 +13,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
@@ -42,17 +43,17 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	private LabTrackingAppService service;
-	
+
+
 	private static final int TOTAL_ALL_ORDERS = 2;
 	
-	private static final int TOTAL_ACTIVE_ORDERS = 5;
+	private static final int TOTAL_ACTIVE_ORDERS = 4;
 	
 	private static final String TEST_LOCATION = "11111111-0b6d-4481-b979-ccdd38c76cb4";
-	
 	private static final String TEST_PATIENT = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-	
 	private static final String TEST_ENCOUNTER_DATE = "2016-06-09 12:00:00.0";
-	
+	private static final String TEST_ORDER_NUMBER="ORD-999";
+
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	@Before
@@ -68,7 +69,16 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		//printResults(list);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
 	}
-	
+
+	@Test
+	@Verifies(value = "should get active orders at location", method = "getActiveOrders()")
+	public void getSpecimenDetailsEncounter_shouldGetOne() throws Exception {
+		Encounter enc = service.getSpecimenDetailsEncounter(TEST_ORDER_NUMBER);
+		assertNotNull(enc);
+	}
+
+
+
 	/* gets the hours back for testing, b/c the test data date is static*/
 	private static int getHoursBack() {
 		int ret = 0;
@@ -83,5 +93,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		
 		return ret;
 	}
-	
+
+
+
 }

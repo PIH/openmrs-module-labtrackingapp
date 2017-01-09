@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.labtrackingapp.api.impl;
 
+import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
@@ -23,6 +24,10 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
 	
 	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid) {
 		return dao.getActiveOrders(hoursBack, locationUuid, patientUuid);
+	}
+
+	public Encounter getSpecimenDetailsEncounter(String orderNumber){
+		  return dao.getSpecimenDetailsEncounter(orderNumber);
 	}
 	
 	public LabTrackingAppDAO getDao() {

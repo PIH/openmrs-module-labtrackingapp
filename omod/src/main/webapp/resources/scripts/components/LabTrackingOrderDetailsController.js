@@ -1,7 +1,7 @@
 angular.module("labTrackingOrderDetailsController", [])
-    .controller("orderDetailsController", ['$scope', 'LabTrackingOrder',  'LabTrackingDataService',
+    .controller("orderDetailsController", ['$scope', '$window','LabTrackingOrder',  'LabTrackingDataService',
     'orderUuid',
-        function ($scope, LabTrackingOrder,LabTrackingDataService, orderUuid) {
+        function ($scope, $window, LabTrackingOrder,LabTrackingDataService, orderUuid) {
             // used to determine if we should disable things
             $scope.concepts = LabTrackingOrder.concepts;
 
@@ -30,6 +30,7 @@ angular.module("labTrackingOrderDetailsController", [])
                     return resp;
                 });
             };
+
 
             return $scope.loadOrder(orderUuid).then(function(resp){
                 return LabTrackingDataService.loadProviders().then(function(resp2){
@@ -73,24 +74,16 @@ angular.module("labTrackingOrderDetailsController", [])
                   locations: '=',
                   concepts: '='
                   },
-            controller: function($scope){
-                /* checks whether a procedure has been selected
-                @param proceudureUuid  - the UUID for the procedure
-                @return true/false
-                */
-                $scope.isProcedureSelected = function(procedureUuid){
-                    var ret = false;
+            controller: function($scope, $window, LabTrackingDataService){
 
-                    if($scope.order != null && $scope.order.procedure != null){
-                        for(var i=0;i<$scope.order.procedure.value.length;++i){
-                           if($scope.order.procedure.value[i].uuid == procedureUuid){
-                                ret = true;
-                                break;
-                           }
-                        }
-                    }
+                /* save the specimen details*/
+                $scope.saveSpecimenDetails = function(){
+                    return LabTrackingDataService.createOrUpdateOrderSpecimenEncounter($scope.order);
+                }
 
-                    return ret;
+                /* save the specimen details*/
+                $scope.cancelSpecimenDetails = function(){
+                    $window.location.href ='labtrackingViewQueue.page';
                 }
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'

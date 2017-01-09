@@ -30,5 +30,10 @@ public interface LabTrackingAppDAO {
 	 * @param patientUuid - (optional) the patient UUID for the orders
 	 */
 	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientId);
+
+	/* gets the speciment details encounter for the test order
+	* @param orderNumber - the order number
+	* @return the Encounter if there is one, otherwise null*/
+	public Encounter getSpecimenDetailsEncounter(String orderNumber);
 	
 }
