@@ -17,11 +17,11 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
 
 <div class="container" ng-app="labTrackingApp" ng-controller="viewQueueController">
    <div class="panel panel-primary" id="monitor_box">
-      <div class="panel-heading">Test Monitor Page</div>
+      <div class="panel-heading">${ui.message("labtrackingapp.listpage.panelheading")}</div>
       <div class="panel-body">
          <div class="row">
             <div class="col-md-4">
-               <label for="status">Status:</label>
+               <label for="status">${ui.message("labtrackingapp.listpage.status")}:</label>
                <select class="form-control" id="status" ng-model="filter.status.value" ng-change="handleFilterChange('status')">
                   <option>All</option>
                   <option>Requested</option>
@@ -30,22 +30,22 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
                </select>
             </div>
             <div class="col-md-4">
-               <label for="from_date">to:</label>
+               <label for="from_date">${ui.message("labtrackingapp.listpage.from")}:</label>
                <div class='input-group date' id='from_date'>
                   <input type="text" class="form-control" uib-datepicker-popup="{{filter.date_box.format}}" ng-model="filter.from_date.value" is-open="filter.from_date.opened"
                      datepicker-options="filter.date_box.options"  ng-change="handleFilterChange('to_date')"
-                     ng-required="true" close-text="Close" alt-input-formats="filter.date_box.altInputFormats" />
+                     ng-required="false" close-text="Close" alt-input-formats="filter.date_box.altInputFormats" />
                   <span class="input-group-btn">
                   <button type="button" class="btn btn-default" ng-click="handleFromDate()"><i class="glyphicon glyphicon-calendar"></i></button>
                   </span>
                </div>
             </div>
             <div class="col-md-4">
-               <label for="to_date">to:</label>
+               <label for="to_date">${ui.message("labtrackingapp.listpage.to")}:</label>
                <div class='input-group date' id='to_date'>
                   <input type="text" class="form-control" uib-datepicker-popup="{{filter.date_box.format}}" ng-model="filter.to_date.value" is-open="filter.to_date.opened"
                      datepicker-options="filter.date_box.options" ng-change="handleFilterChange('from_date')"
-                     ng-required="true" close-text="Close" alt-input-formats="filter.date_box.altInputFormats" />
+                     ng-required="false" close-text="Close" alt-input-formats="filter.date_box.altInputFormats" />
                   <span class="input-group-btn">
                   <button type="button" class="btn btn-default" ng-click="handleToDate()"><i class="glyphicon glyphicon-calendar"></i></button>
                   </span>
@@ -53,7 +53,7 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
             </div>
          </div>
          <div class="row top-buffer">
-            <div class="col-md-3">Search for patient</div>
+            <div class="col-md-3">${ui.message("labtrackingapp.listpage.search")}</div>
             <div class="col-md-9">
                <div class='input-group date' id='search'>
                   <input type='text' class="form-control" ng-model="filter.patient.name" ng-change="handleFilterChange('patient')" />
@@ -67,13 +67,13 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
             <table id="example" class="table display" cellspacing="0" width="100%">
                <thead>
                   <tr>
-                     <th>Patient ID</th>
-                     <th>Name</th>
-                     <th>Status</th>
-                     <th>Request Date</th>
-                     <th>Sample Date</th>
-                     <th>Result Date</th>
-                     <th>Actions</th>
+                     <th>${ui.message("labtrackingapp.listpage.patient")}</th>
+                     <th>${ui.message("labtrackingapp.listpage.name")}</th>
+                     <th>${ui.message("labtrackingapp.listpage.status")}</th>
+                     <th>${ui.message("labtrackingapp.listpage.requestdate")}</th>
+                     <th>${ui.message("labtrackingapp.listpage.sampledate")}</th>
+                     <th>${ui.message("labtrackingapp.listpage.resultdate")}</th>
+                     <th>${ui.message("labtrackingapp.listpage.actions")}</th>
                   </tr>
                </thead>
                <tbody  ng-if="!data_loading">
@@ -85,9 +85,9 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
                      <td>{{a.sampleDate.value | date : 'shortDate'}}</td>
                      <td>{{a.resultDate.value | date : 'shortDate'}}</td>
                      <td>
-                        <button class="btn btn-sm btn-primary" ng-click="handleDetails(a)">details</button>
-                        <button class="btn btn-sm" ng-click="handlePrint(a)" >print</button>
-                        <button class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">cancel</button>
+                        <button class="btn btn-sm btn-primary" ng-click="handleDetails(a)">${ui.message("labtrackingapp.listpage.details")}</button>
+                        <button class="btn btn-sm" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
+                        <button class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
                      </td>
                   </tr>
                </tbody>
@@ -113,15 +113,15 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
        <div class="modal-content">
          <div class="modal-header">
            <button type="button" class="close" data-dismiss="modal">&times;</button>
-           <h4 class="modal-title">Order #{{selectedOrder.orderNumber.value}} for {{selectedOrder.patient.name}}</h4>
+           <h4 class="modal-title">Order #{{selectedOrder.orderNumber.value}} - {{selectedOrder.patient.name}}</h4>
          </div>
          <div class="modal-body">
-           <p>Please provide a reason for canceling the order</p>
+           <p>${ui.message("labtrackingapp.listpage.ordercancelreasonprompt")}</p>
            <textarea ng-model="orderCancelReason" class="form-control"></textarea>
          </div>
          <div class="modal-footer">
-           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="handleCancelOrder()" ng-disabled="orderCancelReason==null || orderCancelReason.length==0">OK</button>
-           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dismissCancelOrder()">Cancel</button>
+           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="handleCancelOrder()" ng-disabled="orderCancelReason==null || orderCancelReason.length==0">${ui.message("uicommons.save")}</button>
+           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dismissCancelOrder()">${ui.message("uicommons.cancel")}</button>
          </div>
        </div>
 

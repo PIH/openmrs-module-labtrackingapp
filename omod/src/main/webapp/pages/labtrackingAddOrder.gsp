@@ -68,9 +68,6 @@
 					<div class="alert alert-danger" ng-if="error">
 						<strong>Save failed!</strong> - {{error}}
 					</div>
-					<div class="alert alert-success" ng-if="was_saved">
-						<strong>The order was saved</strong>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -78,29 +75,15 @@
 
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
-            <h3 class="modal-title" id="modal-title">Saving Test Order</h3>
+            <h3 class="modal-title" id="modal-title">${ui.message("labtrackingapp.addorder.savingtitle")}</h3>
         </div>
         <div class="modal-body" id="modal-body">
             <img class="center-block"  src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" />
         </div>
     </script>
-
-    <style>
-.center-modal {
-    position: fixed;
-    top: 10%;
-    left: 18.5%;
-    z-index: 1050;
-    width: 80%;
-    height: 80%;
-    margin-left: -10%;
-}
-    </style>
 	<h1 ng-if="error">Debug info</h1>
 	<pre ng-if="error">debugInfo={{debugInfo | json }}</pre>
 	<pre ng-if="error">{{order | json }}</pre>
-
-
 </div>
 
 ${ ui.includeFragment("labtrackingapp", "translations") }

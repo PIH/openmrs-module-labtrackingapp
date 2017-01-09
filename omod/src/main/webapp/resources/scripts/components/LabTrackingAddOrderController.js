@@ -1,19 +1,16 @@
 angular.module("labTrackingAddOrderController", [])
-    .controller("addOrderController", ['$uibModal','$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'locationUuid',
-        function ($uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid) {
+    .controller("addOrderController", ['$window', '$uibModal','$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'locationUuid',
+        function ($window, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid) {
             $scope.savingModal = null;
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
-            $scope.was_saved = false;
             $scope.handleSaveOrder = function () {
                 $scope.savingModal = showSavingModal();
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
                     if (LabTrackingDataService.isOk(res)) {
-                        //for now we show a saved message, but we can change this and just
-                        // navigate to the queue page, if we want
-                        $scope.was_saved = true;
+                        $window.location.href = 'labtrackingViewQueue.page';
                     }
                     else if (res !== undefined && res.status !== undefined) {
                         $scope.error = res.data.error.message;
@@ -34,9 +31,9 @@ angular.module("labTrackingAddOrderController", [])
             };
 
 
-
-            $scope.animationsEnabled = true;
-
+            /*
+            shows the saving modal box, while the data is being saved
+            */
             function showSavingModal() {
                 return $uibModal.open({
                     animation: true,
@@ -48,7 +45,6 @@ angular.module("labTrackingAddOrderController", [])
 
 
             };
-
 
             /*
              loads the system care settings

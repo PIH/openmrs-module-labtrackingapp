@@ -7,6 +7,17 @@ $fontPath: "../../fonts";
 @import "bootstrap/assets/stylesheets/bootstrap-compass";
 @import "bootstrap/assets/stylesheets/bootstrap";
 
+/* used to center the modals on the screen */
+.center-modal {
+    position: fixed;
+    top: 10%;
+    left: 18.5%;
+    z-index: 1050;
+    width: 80%;
+    height: 80%;
+    margin-left: -10%;
+}
+
 /* used to create a space between form rows */
 .top-buffer {
     margin-top:20px;
@@ -20,3 +31,4 @@ $fontPath: "../../fonts";
 		width: 970px;
 	}
 }
+
