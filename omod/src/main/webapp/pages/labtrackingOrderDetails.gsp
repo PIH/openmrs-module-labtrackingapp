@@ -23,8 +23,8 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
     <div class="panel-body">
       <div class="panel-group">
         <order-details-panel order="order"></order-details-panel>
-        <order-specimen-panel order="order" locations="locations" providers="providers" concepts="concepts"></order-specimen-panel>
-        <order-results-panel order="order"></order-results-panel>
+        <order-specimen-panel order="order" locations="locations" providers="providers" concepts="concepts" cancel-specimen-details="cancelSpecimenDetails()"></order-specimen-panel>
+        <order-results-panel order="order" cancel-specimen-details="cancelSpecimenDetails()"></order-results-panel>
         <order-debug-panel order="order" providers="providers"></order-debug-panel>
       </div>
     </div>

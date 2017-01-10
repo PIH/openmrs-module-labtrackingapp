@@ -25,16 +25,19 @@ angular.module("labTrackingOrderDetailsController", [])
                     else {
                         $scope.errorMessage = resp.status.msg;
                     }
-
-                    console.log(resp);
                     return resp;
                 });
             };
 
+            /*
+             cancels the speciment details page and goes to the monitor page
+             * */
+            $scope.cancelSpecimenDetails = function () {
+                $window.location.href = 'labtrackingViewQueue.page';
+            };
 
             return $scope.loadOrder(orderUuid).then(function (resp) {
                 return LabTrackingDataService.loadProviders().then(function (resp2) {
-                    console.log(resp2);
                     if (resp2.status.code == 200) {
                         $scope.providers = resp2.data;
                     }
@@ -55,11 +58,6 @@ angular.module("labTrackingOrderDetailsController", [])
             scope: {
                 order: '=',
             },
-            controller: function ($scope) {
-                $scope.open1 = function () {
-                    $scope.popup1.opened = true;
-                };
-            },
             templateUrl: 'labtrackingOrderDetails-debug.page'
         };
     })
@@ -77,7 +75,8 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 providers: '=',
                 locations: '=',
-                concepts: '='
+                concepts: '=',
+                cancelSpecimenDetails: '&'
             },
             controller: function ($scope, $window, LabTrackingDataService) {
 
@@ -97,10 +96,6 @@ angular.module("labTrackingOrderDetailsController", [])
                     });
                 };
 
-                /* save the specimen details*/
-                $scope.cancelSpecimenDetails = function () {
-                    $window.location.href = 'labtrackingViewQueue.page';
-                }
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };
@@ -109,35 +104,29 @@ angular.module("labTrackingOrderDetailsController", [])
         return {
             scope: {
                 order: '=',
+                cancelSpecimenDetails: '&'
+            },
+            controller: function ($scope) {
+                $scope.resultsDate = {
+                    opened: false,
+                    value: $scope.order.resultDate.value,
+                    format: 'dd-MMM-yyyy',
+                    options: {
+                        dateDisabled: false,
+                        formatYear: 'yy',
+                        maxDate: new Date(),
+                        minDate: new Date(2010, 1, 1),
+                        startingDay: 1,
+                        showWeeks: false
+                    },
+                    altInputFormats: ['M!/d!/yyyy']
+                };
+                $scope.showResultsDateBox = function () {
+                    $scope.resultsDate.opened = true;
+                };
+
             },
             templateUrl: 'labtrackingOrderDetails-results.page'
         };
-    })
-    .directive("dateWithPopup", [function () {
-        return {
-            restrict: 'E',
-            scope: {
-                ngModel: '=',
-                minDate: '=',
-                maxDate: '='
-            },
-            controller: function ($scope) {
-                $scope.now = new Date();
-                $scope.opened = false;
-                $scope.open = function (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    $scope.opened = true;
-                };
-                $scope.options = { // for some reason setting this via attribute doesn't work
-                    showWeeks: false
-                }
-            },
-            template: '<span class="angular-datepicker">' +
-            '<input type="text" is-open="opened" ng-model="ngModel" datepicker-popup="dd-MMM-yyyy" readonly ' +
-            'datepicker-options="options" min-date="minDate" max-date="maxDate" ng-click="open($event)"/>' +
-            '<i class="icon-calendar small add-on" ng-click="open($event)" ></i>' +
-            '</span>'
-        }
-    }]);
+    });
 

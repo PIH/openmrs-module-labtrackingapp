@@ -1,35 +1,25 @@
-
 <div class="panel panel-default">
-  <div class="panel-heading">
-    <h4 class="panel-title">
-      <a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.orderdetailslabel")} - {{order.orderNumber.value}}</a>
-    </h4>
-  </div>
-  <div id="order_panel" class="panel-collapse ">
-    <div class="panel-body">
-    <div class="row">
-      <div class="col-md-6">
-        <p class="input-group">
-          <input type="text" class="form-control" uib-datepicker-popup="{{format}}" ng-model="dt" is-open="popup1.opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" />
-          <span class="input-group-btn">
-            <button type="button" class="btn btn-default" ng-click="open1()"><i class="glyphicon glyphicon-calendar"></i></button>
-          </span>
-        </p>
-      </div>
-      <div class="row">
-        <label class="control-label form-control-static text-right col-sm-3">Date of Initial Consult</label>
-        <div class="col-sm-9">
-          <p class="form-control-static">{{order.requestDate.value | date : 'shortDate'}}</p>
-        </div>
-      </div>
-      <div class="row">
-        <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
-        <div class="col-sm-9">
-          <p class="form-control-static" ng-repeat="a in order.procedures | orderBy:'label'" >{{a.label}}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="panel-heading">
+		<h4 class="panel-title">
+			<a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.orderdetailslabel")} - {{order.orderNumber.value}}</a>
+		</h4>
+	</div>
+	<div id="order_panel" class="panel-collapse ">
+		<div class="panel-body">
+            <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">Date of Initial Consult</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{order.requestDate.value | date : 'shortDate'}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" ng-repeat="a in order.procedures | orderBy:'label'" >{{a.label}}</p>
+                </div>
+            </div>
+		</div>
+	</div>
 </div>
 
 
