@@ -146,7 +146,11 @@ angular.module("labTrackingOrderFactory", [])
             if (webServiceResult['encounter.obs'] != null && webServiceResult['encounter.obs'].length > 0) {
                 var obs = webServiceResult['encounter.obs'];
                 for (var i = 0; i < obs.length; ++i) {
-                    procs.push({value: obs[i].value.uuid, label: obs[i].value.display, obsUuid: obs[i].uuid});
+                    //TODO:  this is so that we don't error out on old data, once the old data is removed, we can remove this line
+                    if(obs[i].value != null){
+                        procs.push({value: obs[i].value.uuid, label: obs[i].value.display, obsUuid: obs[i].uuid});
+                    }
+
                 }
             }
             order.procedures = procs;
