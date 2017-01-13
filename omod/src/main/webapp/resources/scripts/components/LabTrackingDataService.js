@@ -4,12 +4,15 @@ angular.module("labTrackingDataService", [])
             var _self = this;
             var ORDER_FIELDS = "uuid,dateActivated,orderReason,orderNumber,instructions,clinicalHistory,urgency,encounter,encounter.obs,concept,patient,patient.identifiers";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
+            var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
+            var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
             var CONSTANTS = {
                 MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
                 URLS: {
                     FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
                     CANCEL_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/labtrackingapp/labtrackingServices.page?orderUuid=ORDER_UUID&action=cancel&data=REASON",
                     SAVE_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order",
+                    VIEW_CONCEPT_SET: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/concept/CONCEPT_UUID?v=custom:(setMembers:(uuid,display))",
                     VIEW_LOCATIONS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/location?v=custom:(uuid,display)&tag=" + LOCATION_CONSULT_NOTE_UUID,
                     VIEW_CARE_SETTINGS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/caresetting",
                     VIEW_PROVIDERS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/provider?v=custom:(uuid,display,person)",
@@ -57,7 +60,7 @@ angular.module("labTrackingDataService", [])
             /*
              loads the Locations in the system, so that we can show them in the list with the correct
              id/display valies
-             @return An Array of objects with uuid:diplay props
+             @return An Array of objects with uuid,:diplay props
              */
             this.loadLocations = function () {
                 var url = CONSTANTS.URLS.VIEW_LOCATIONS;
@@ -71,6 +74,45 @@ angular.module("labTrackingDataService", [])
 
                 }, function (err) {
                     return {status: {code: 500, msg: "Error loading locations " + err}, data: []};
+                });
+            };
+
+            /*
+            load the procedures that are available
+            * */
+            this.loadProcedures = function(){
+                return _self.loadConceptSet(PROCEDURES_CONCEPT_SET_UUID);
+            };
+
+
+            /*
+             load the dianosis that are available
+             * */
+            this.loadDiagnonses = function(){
+                return _self.loadConceptSet(DIAGNOSIS_CONCEPT_SET_UUID);
+            };
+            /*
+             loads the the concepts in a concept set
+              @param conceptUUID = the concept UUID
+             @return An Array of objects with label, value props
+             */
+            this.loadConceptSet = function (conceptUuid) {
+                var url = CONSTANTS.URLS.VIEW_CONCEPT_SET.replace("CONCEPT_UUID", conceptUuid);
+                return $http.get(url).then(function (resp) {
+                    if (resp.status == 200) {
+                        var data = [];
+                        for(var i=0;i<resp.data.setMembers.length;++i){
+                            var c = resp.data.setMembers[i];
+                            data.push({value:c.uuid, label:c.display})
+                        }
+                        return {status: {code: resp.status, msg: null}, data: data};
+                    }
+                    else {
+                        return {status: {code: resp.status, msg: "Error loading ConceptSet " + resp.status}, data: []};
+                    }
+
+                }, function (err) {
+                    return {status: {code: 500, msg: "Error loading ConceptSet " + err}, data: []};
                 });
             };
 

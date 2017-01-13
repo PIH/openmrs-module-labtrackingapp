@@ -22,11 +22,10 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 
 import org.hibernate.criterion.Subqueries;
-import org.openmrs.Encounter;
-import org.openmrs.Obs;
-import org.openmrs.Order;
-import org.openmrs.OrderType;
+import org.openmrs.*;
 import org.openmrs.api.db.OrderDAO;
+import org.openmrs.api.db.hibernate.HibernatePersonDAO;
+import org.openmrs.api.db.hibernate.PatientSearchCriteria;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 
 import java.util.Calendar;
@@ -58,28 +57,82 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
     /*
     * gets all  encounters at a current location for a patient
     * */
-    public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid) {
+    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status){
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");
-
-        //Calendar now = Calendar.getInstance();
-        //        now.add(Calendar.HOUR, hoursBack * -1);
-        //        criteria.add(Restrictions.ge("enc.encounterDatetime", now.getTime()));
-        //        criteria.add(Restrictions.eq("enc.voided", Boolean.FALSE));
-
         criteria.createAlias("encounter", "enc");
+        criteria.createAlias("ord.patient", "pat");
         criteria.createAlias("ord.orderType", "orderType");
+
         criteria.add(Restrictions.eq("orderType.uuid", LabTrackingConstants.LAB_TRACKING_TESTORDER_TYPE_UUID));
         criteria.add(Restrictions.eq("ord.voided", Boolean.FALSE));
 
-        if (locationUuid != null && locationUuid.length() > 0) {
-            criteria.createAlias("enc.location", "loc");
-            criteria.add(Restrictions.eq("loc.uuid", locationUuid));
+
+        if(startDate > 0){
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(startDate);
+            criteria.add(Restrictions.ge("enc.encounterDatetime", c.getTime()));
+        }
+
+        if(endDate > 0){
+            Calendar c = Calendar.getInstance();
+            c.setTimeInMillis(endDate);
+            criteria.add(Restrictions.le("enc.encounterDatetime", c.getTime()));
         }
 
         if (patientUuid != null && patientUuid.length() > 0) {
-            criteria.createAlias("ord.patient", "pat");
             criteria.add(Restrictions.eq("pat.uuid", patientUuid));
+        }
+
+        if (patientName != null && patientName.length() > 0) {
+            criteria.createAlias("patient.names", "pname");
+            criteria.add(Restrictions.or(Restrictions.like("pname.givenName", "%" + patientName + "%"),
+                    Restrictions.like("pname.familyName", "%" + patientName + "%")));
+        }
+
+        if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
+            //this is all orders that have been requested but without any samples or results
+            DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("valueText"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID));
+
+
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyNotIn("orderNumber", samples));
+        }
+        else if (LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId() == status) {
+           // all orders that have a samples encounter
+            DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("valueText"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID));
+
+
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyIn("orderNumber", samples));
+
+
+        }  else if (LabTrackingConstants.LabTrackingOrderStatus.RESULTS.getId() == status){
+            // all orders that have a results encounter
+            DetachedCriteria resultsObs = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("enc.id"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID));
+
+            DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("valueText"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+                   // .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyIn("enc.id", resultsObs));
+
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyIn("orderNumber", samples));
         }
 
         //criteria.addOrder(Order.desc("enc.encounterDatetime"));
@@ -127,20 +180,6 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         return ret;
     }
 
-    public boolean updateOrderUrgency(String orderUuid, boolean urgent) {
-        boolean ret = false;
-        Order o = getOrderByUuid(orderUuid);
-        if (o != null) {
-            Order.Urgency urgency = urgent ? Order.Urgency.STAT : Order.Urgency.ROUTINE;
-            if(o.getUrgency() != urgency) {
-                o.setUrgency(urgent ? Order.Urgency.STAT : Order.Urgency.ROUTINE);
-            }
-
-            ret = true;
-        }
-
-        return ret;
-    }
 
     private Order getOrderByUuid(String orderUuid) {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");

@@ -4,16 +4,15 @@ angular.module("labTrackingOrderDetailsController", [])
         function ($scope, $window, LabTrackingOrder, LabTrackingDataService, orderUuid) {
             // used to determine if we should disable things
             $scope.concepts = LabTrackingOrder.concepts;
-
             $scope.order = new LabTrackingOrder();
-            $scope.foo = new Date();
             $scope.errorMessage = null;
-            $scope.providers = [];
-            $scope.locations = [];
-
-             /*
-             loads the queue from the openmrs web services
-             */
+            $scope.providers = []; // the proviers in the system
+            $scope.locations = []; //the locations in the system
+            $scope.diagnoses = []; //the diagnoses in the system
+            $scope.procedures = []; //the procedures in the system
+            /*
+            loads the queue from the openmrs web services
+            */
             $scope.loadOrder = function (orderUuid) {
                 $scope.lastUpdatedAtInMillis = new Date().getTime();
 
@@ -42,11 +41,14 @@ angular.module("labTrackingOrderDetailsController", [])
                     }
                     return LabTrackingDataService.loadLocations().then(function (resp3) {
                         if (resp3.status.code == 200) {
-                            for (var i = 0; i < resp3.data.length; ++i) {
-                                $scope.simpleLocations.push(resp3.data[i].display);
-                            }
                             $scope.locations = resp3.data;
                         }
+                        return LabTrackingDataService.loadProcedures().then(function(res2){
+                            $scope.procedures = res2.data;
+                            return LabTrackingDataService.loadDiagnonses().then(function(res3){
+                                $scope.diagnoses = res3.data;
+                            })
+                        })
                     });
                 });
             });
@@ -74,6 +76,8 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 providers: '=',
                 locations: '=',
+                procedures: '=',
+                diagnoses: '=',
                 concepts: '=',
                 cancelSpecimenDetails: '&'
             },

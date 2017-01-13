@@ -1,5 +1,6 @@
 package org.openmrs.module.labtrackingapp.rest.web.v1_0.search.openmrs1_10;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.context.Context;
@@ -24,11 +25,14 @@ import java.util.List;
 public class TestOrderSearchHandler1_10 implements SearchHandler {
 	
 	private static final String REQUEST_PARAM_PATIENT = "patient";
-	
-	private static final String REQUEST_PARAM_LOCATION = "location";
-	
+	private static final String REQUEST_PARAM_PATIENT_NAME = "name";
+	private static final String REQUEST_PARAM_START_DATE = "startDateInMillis";
+	private static final String REQUEST_PARAM_END_DATE = "endDateInMillis";
+	private static final String REQUEST_PARAM_STATUS = "status";
+
 	private final SearchQuery searchQuery = new SearchQuery.Builder("Gets active test orders in the system")
-	        .withRequiredParameters(REQUEST_PARAM_PATIENT, REQUEST_PARAM_LOCATION).build();
+	        .withRequiredParameters(REQUEST_PARAM_PATIENT, REQUEST_PARAM_PATIENT_NAME,
+					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getActiveOrders", RestConstants.VERSION_1 + "/order",
 	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"), searchQuery);
@@ -46,10 +50,40 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 	 */
 	//@Override
 	public PageableResult search(RequestContext context) throws ResponseException {
-		String patient = context.getParameter(REQUEST_PARAM_PATIENT);
-		String location = context.getParameter(REQUEST_PARAM_LOCATION);
-		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(24, location, patient);
+		String patientUuid = context.getParameter(REQUEST_PARAM_PATIENT);
+		String patientName = context.getParameter(REQUEST_PARAM_PATIENT_NAME);
+		int status = toInt(context.getParameter(REQUEST_PARAM_STATUS), 0);
+		long startDate = toLong(context.getParameter(REQUEST_PARAM_START_DATE), 0);
+		long endDate = toLong(context.getParameter(REQUEST_PARAM_END_DATE), 0);
+
+		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(startDate, endDate, patientUuid, patientName, status);
 		return new NeedsPaging<Order>(orders, context);
 	}
-	
+
+	public int toInt(String v, int defaultVal){
+		int ret = defaultVal;
+		if(v == null){
+			return ret;
+		}
+		try{
+			ret = Integer.parseInt(v);
+		}   catch(Exception e){
+			//return default
+		}
+		return ret;
+	}
+
+	public long toLong(String v, long defaultVal){
+		long ret = defaultVal;
+		if(v == null){
+			return ret;
+		}
+		try{
+			ret = Long.parseLong(v);
+		}   catch(Exception e){
+			//return default
+		}
+		return ret;
+	}
+
 }

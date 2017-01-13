@@ -1,7 +1,10 @@
 angular.module("labTrackingAddOrderController", [])
     .controller("addOrderController", ['$window', '$uibModal','$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'locationUuid',
         function ($window, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid) {
-            $scope.savingModal = null;
+            $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
+            $scope.procedures = []; //the list of procedures in the system
+            $scope.careSettings = [];  //the list of care settings in the system
+            $scope.diagnoses = []; // the diagnosis in the system
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid);
             $scope.error = null; // when not null, this message will show on the screen
@@ -51,6 +54,13 @@ angular.module("labTrackingAddOrderController", [])
              */
             return LabTrackingDataService.loadCareSettings().then(function (res) {
                 $scope.careSettings = res.data;
+                return LabTrackingDataService.loadProcedures().then(function(res2){
+                    $scope.procedures = res2.data;
+                    return LabTrackingDataService.loadDiagnonses().then(function(res3){
+                        $scope.diagnoses = res3.data;
+                    })
+                })
+
             });
         }]);
 

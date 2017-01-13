@@ -17,6 +17,7 @@ import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 
@@ -47,16 +48,15 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private LabTrackingAppService service;
 	private OrderService orderService;
 
-
-	private static final int TOTAL_ALL_ORDERS = 2;
-	
-	private static final int TOTAL_ACTIVE_ORDERS = 4;
-	
-	private static final String TEST_LOCATION = "11111111-0b6d-4481-b979-ccdd38c76cb4";
-	private static final String TEST_PATIENT = "da7f524f-27ce-4bb2-86d6-6d1d05312bd5";
-	private static final String TEST_ENCOUNTER_DATE = "2016-06-09 12:00:00.0";
+	private static final int TOTAL_ACTIVE_ORDERS = 3;
+	private static final int TOTAL_SAMPLED_ORDERS = 2;
+	private static final int TOTAL_REQUESTED_ORDERS = 1;
+	private static final int TOTAL_RESULTS_ORDERS = 1;
+	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
+	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
 	private static final String TEST_ORDER_NUMBER="ORD-999";
-	private static final String TEST_ORDER_UUID="f4740b0b-206c-48a4-a5b7-8a9024cb75d9";
+	private static final String TEST_ORDER_UUID="f4740b0b-206c-48a4-a5b7-111111111112";
+	private static final String TEST_ORDER_UUID_TO_CANCEL="f4740b0b-206c-48a4-a5b7-111111111111";
 
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
@@ -68,56 +68,89 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "should get active orders at location", method = "getActiveOrders()")
-	public void getActiveOrders_shouldGetAll() throws Exception {
-		List<Order> list = service.getActiveOrders(getHoursBack(), null, null);
+	@Verifies(value = "should get orders by date", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByDate() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = null;
+		String patientName = null;
+		int status = 0;
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
 	}
 
 	@Test
-	@Verifies(value = "should get active orders at location", method = "getActiveOrders()")
+	@Verifies(value = "should get orders by patient info", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByDateAndPatient() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = TEST_PATIENT;
+		String patientName = "milt";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		assertEquals(TOTAL_REQUESTED_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value = "should get orders by status with sample", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByDateWithSample() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = TEST_PATIENT;
+		String patientName = "milt";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		assertEquals(TOTAL_SAMPLED_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value = "should get orders by status with results", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByDateWithResults() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = TEST_PATIENT;
+		String patientName = "milt";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.RESULTS.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		assertEquals(TOTAL_RESULTS_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value = "should get encounters by order number", method = "getSpecimenDetailsEncounter()")
 	public void getSpecimenDetailsEncounter_shouldGetOne() throws Exception {
 		Encounter enc = service.getSpecimenDetailsEncounter(TEST_ORDER_NUMBER);
 		assertNotNull(enc);
 	}
 
-	@Test
-	@Verifies(value = "should set order to urgent", method = "getActiveOrders()")
-	public void updateOrderUrgency() throws Exception {
-		boolean ok = service.updateOrderUrgency(TEST_ORDER_UUID, true);
-		assertTrue(ok);
-
-
-		//now get the order and see if it's urgency has changed
-	//	Order order = orderService.getOrderByUuid(TEST_ORDER_UUID);
-//		assertTrue(order.getUrgency() == Order.Urgency.STAT);
-	}
 
 	@Test
-	@Verifies(value = "should cancel order", method = "getActiveOrders()")
-	public void cancelOrderUrgency() throws Exception {
+	@Verifies(value = "should cancel order", method = "cancelOrder()")
+	public void cancelOrder() throws Exception {
 		boolean ok = service.cancelOrder(TEST_ORDER_UUID, "the quick brown fox jumps over the lazy dog");
 		assertTrue(ok);
 
 		Order order = orderService.getOrderByUuid(TEST_ORDER_UUID);
 		assertTrue(order.isVoided());
 
+
+
 	}
 
 
 	/* gets the hours back for testing, b/c the test data date is static*/
-	private static int getHoursBack() {
-		int ret = 0;
+	private static Date getTestEncounterDate() {
 		try {
-			Date asOf = FMT.parse(TEST_ENCOUNTER_DATE);
-			Date now = new Date();
-			ret = (int) ((now.getTime() - asOf.getTime()) / (60 * 60 * 1000)) + 2;
+			return FMT.parse(TEST_ENCOUNTER_DATE);
 		}
 		catch (ParseException e) {
 			//should never happen
 		}
 		
-		return ret;
+		return null;
 	}
 
 

@@ -22,13 +22,7 @@ public class LabtrackingServicesPageController {
         int status = 200;
         //LabTrackingAppService labTrackingAppService = null;       uiSessionContext.
         if(labTrackingAppService != null){
-            if("make_urgent".equals(action)){
-                labTrackingAppService.updateOrderUrgency(orderUuid, true);
-            }
-            else if("make_routine".equals(action)){
-                labTrackingAppService.updateOrderUrgency(orderUuid, false);
-            }
-            else if("cancel".equals(action)){
+            if("cancel".equals(action)){
                 labTrackingAppService.cancelOrder(orderUuid, data);
             }
             else{

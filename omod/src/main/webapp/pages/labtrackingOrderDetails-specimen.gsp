@@ -41,7 +41,7 @@
 					<label class="control-label col-sm-3">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
 					<div class="col-sm-9">
 						<select class="form-control" id="prelabdiagnosis"
-                    ng-options="item as item.label disable when item.value=='?????' for item in concepts.preLabDiagnosis.answers | orderBy:'label' track by item.value "
+                    ng-options="item as item.label disable when item.value=='?????' for item in diagnoses | orderBy:'label' track by item.value "
                     ng-selected="order.preLabDiagnosis.value==item.value"
                     ng-model="order.preLabDiagnosis"></select>
 					</div>
@@ -50,7 +50,7 @@
 					<label class="control-label col-sm-3" for="procedure" >${ui.message("labtrackingapp.proceduresitelabel")}</label>
 					<div class="col-sm-9">
 						<select id="procedure" class="form-control" multiple
-                ng-options="item as item.label disable when item.value=='?????' for item in concepts.procedure.answers | orderBy:'label' track by item.value"
+                ng-options="item as item.label disable when item.value=='?????' for item in procedures | orderBy:'label' track by item.value"
                 ng-model="order.procedures" ></select>
 					</div>
 				</div>
@@ -58,7 +58,7 @@
 					<label class="control-label col-sm-3" for="urgentreviewlabel">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
 					<div class="col-sm-9">
 						<div class="btn-group btn-toggle">
-							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">Yes</button>
+							<button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">Yes</button>
 							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': !order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">No</button>
 						</div>
 					</div>
@@ -67,7 +67,7 @@
 					<label class="control-label col-sm-3"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
 					<div class="col-sm-9">
 						<select class="form-control" id="postopdiagnosis"
-                    ng-options="item as item.label disable when item.value=='?????' for item in concepts.preLabDiagnosis.answers | orderBy:'label' track by item.value "
+                    ng-options="item as item.label disable when item.value=='?????' for item in diagnoses | orderBy:'label' track by item.value "
                     ng-model="order.postopDiagnosis"></select>
 					</div>
 				</div>

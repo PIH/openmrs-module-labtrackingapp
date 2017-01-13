@@ -25,24 +25,18 @@ public interface LabTrackingAppDAO {
 	/*
 	 * gets all the Orders for a patient at a location, the location and or the patient are not provided
 	 *  then the filter will not be applied
-	 * @param hoursBack - how many hours back to look
-	 * @param locationUUid - (optional) the location UUID for the orders
+	 * @param startDate - (optional) the start date in millis since 1970, -1 if ignore
+	 * @param endDate - (optional) the end date in millis since 1970, -1 if ignore
 	 * @param patientUuid - (optional) the patient UUID for the orders
+	 * @param patientName - (optional) the patient name to search for
+	 * @param status - (optional) the status code to search for
 	 */
-	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientId);
+	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status);
 
 	/* gets the speciment details encounter for the test order
 	* @param orderNumber - the order number
 	* @return the Encounter if there is one, otherwise null*/
 	public Encounter getSpecimenDetailsEncounter(String orderNumber);
-
-
-	/* updates the urgency field for a order
-	* @param orderUuid - the order to udpate
-	* @return true/false depending on whether something was updated*
-	* @param urgent - whether to flag the order as urgent or not
-	* */
-	public boolean updateOrderUrgency(String orderUuid, boolean urgent);
 
 
 	/* cancels an order

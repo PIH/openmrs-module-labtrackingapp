@@ -20,29 +20,22 @@ import java.util.List;
  * moduleApplicationContext.xml on how it is wired up.
  */
 public interface LabTrackingAppService extends OpenmrsService {
-	
+
 	/*
-	 * gets the all oders for a patient at a location, if no patient provided, then get for all
-	 * @param hoursBack - how many hours back to look
-	 * @param locationUUid - (optional) the location UUID for the encounters
-	 * @param patientUuid - (optional) the patient UUID for the encounters
-	 */
-	public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid);
+	 * gets all the Orders for a patient at a location, the location and or the patient are not provided
+	 *  then the filter will not be applied
+	 * @param startDate - (optional) the start date in millis since 1970, -1 if ignore
+	 * @param endDate - (optional) the end date in millis since 1970, -1 if ignore
+	 * @param patientUuid - (optional) the patient UUID for the orders
+	 * @param patientName - (optional) the patient name to search for
+	 * @param status - (optional) the status code to search for
+	 */	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status);
 
 	/* gets the specimen details encounter associated with the Test order
 	* @param orderNumber - the Order orderNumber
 	* the Encounter
 	* */
 	public Encounter getSpecimenDetailsEncounter(String orderNumber);
-
-
-	/* updates the urgency field for a order
-	* @param orderUuid - the order to udpate
-	* @return true/false depending on whether something was updated*
-	* @param urgent - whether to flag the order as urgent or not
-	* */
-	public boolean updateOrderUrgency(String orderUuid, boolean urgent);
-
 
 	/* cancels an order
 	* @param orderUuid - the order to udpate

@@ -24,16 +24,12 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
 
     private LabTrackingAppDAO dao;
 
-    public List<Order> getActiveOrders(int hoursBack, String locationUuid, String patientUuid) {
-        return dao.getActiveOrders(hoursBack, locationUuid, patientUuid);
+    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status){
+        return dao.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
     }
 
     public Encounter getSpecimenDetailsEncounter(String orderNumber) {
         return dao.getSpecimenDetailsEncounter(orderNumber);
-    }
-
-    public boolean updateOrderUrgency(String orderUuid, boolean urgent) {
-        return dao.updateOrderUrgency(orderUuid, urgent);
     }
 
     public boolean cancelOrder(String orderUuid, String reason) {
