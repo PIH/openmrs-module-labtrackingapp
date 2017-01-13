@@ -98,6 +98,17 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
            <div class="col-sm-offset-4 col-sm-8">${ui.message("labtrackingapp.listpage.pleasewait")} <img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" /></div>
          </div>
 
+<div class="row">
+    <div class="col-sm-6">  <br/>
+          <label for="paging">Showing {{filter.paging.currentEntryStart}} to {{filter.paging.currentEntryEnd}} of {{filter.paging.totalItems}} entries</label>
+    </div>
+    <div class="col-sm-6 text-right">
+          <ul id="paging" uib-pagination total-items="filter.paging.totalItems" ng-model="filter.paging.currentPage" max-size="filter.paging.maxSize" ng-change="filter.paging.pageChanged()"
+          class="pagination-sm" boundary-link-numbers="true"></ul>
+    </div>
+
+
+</div>
        <div class="row" ng-if="errorMessage && !data_loading">
           <div class="col-sm-12">
              <div class="alert alert-danger" ng-if="error"><strong>There was an error loading the test orders</strong> - {{error}}</div>

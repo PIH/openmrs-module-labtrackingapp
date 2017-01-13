@@ -5,6 +5,7 @@ angular.module("labTrackingDataService", [])
             var ORDER_FIELDS = "uuid,dateActivated,orderReason,orderNumber,instructions,clinicalHistory,urgency,encounter,encounter.obs,concept,patient,patient.identifiers";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
             var CONSTANTS = {
+                MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
                 URLS: {
                     FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
                     CANCEL_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/labtrackingapp/labtrackingServices.page?orderUuid=ORDER_UUID&action=cancel&data=REASON",

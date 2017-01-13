@@ -6,11 +6,13 @@ angular.module("labTrackingViewQueueController", [])
             $scope.orderCancelReason = null;
             $scope.testOrderQueue = []; // hold the model
             $scope.errorMessage = null; // displays an error on the page if not null
+            var fromDate = new Date();
+            fromDate.setDate(fromDate.getDate()-LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
             $scope.filter = {
                 search: null, // the filter for the patient list
                 status: {value: null},
                 patient: {uuid: null, name: null},
-                from_date: {opened: false, value: null},
+                from_date: {opened: false, value: fromDate},
                 to_date: {opened: false, value: new Date()},
                 date_box: {
                     format: 'dd-MMM-yyyy',
@@ -23,6 +25,33 @@ angular.module("labTrackingViewQueueController", [])
                         showWeeks: false
                     },
                     altInputFormats: ['M!/d!/yyyy']
+                },
+                paging: {
+                    totalItems: 0,
+                    currentPage: 0,
+                    maxSize: 10,
+                    currentEntryStart:0,
+                    currentEntryEnd:0,
+                    setPage: function (pageNo, totalItems) {
+                        if(totalItems == 0){
+                            $scope.filter.paging.totalItems = 0;
+                            $scope.filter.paging.currentPage = 0;
+                            $scope.filter.paging.currentEntryStart = 0;
+                            $scope.filter.paging.currentEntryEnd = 0;
+                        }
+                        else{
+                            var sz = $scope.filter.paging.maxSize;
+                            $scope.filter.paging.totalItems = totalItems;
+                            $scope.filter.paging.currentPage = pageNo;
+                            $scope.filter.paging.currentEntryStart = pageNo*sz - sz+1;
+                            $scope.filter.paging.currentEntryEnd = totalItems<pageNo*sz?totalItems:pageNo*sz;
+
+                        }
+                    },
+                    pageChanged: function () {
+                        console.log('Page changed to: ' + $scope.filter.paging.currentPage);
+                        $scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.filter.paging.totalItems);
+                    }
                 }
             };
             /*
@@ -35,6 +64,7 @@ angular.module("labTrackingViewQueueController", [])
                 return LabTrackingDataService.loadQueue(locationUuid, patientUuid).then(function (resp) {
                     if (resp.status.code == 200) {
                         $scope.testOrderQueue = resp.data;
+                        $scope.filter.paging.setPage(1, resp.data.length);
                     }
                     else {
                         $scope.errorMessage = resp.status.msg;
@@ -170,6 +200,18 @@ angular.module("labTrackingViewQueueController", [])
                     console.log("dt=" + dt + " df=" + df + " requestDate=" + requestDate);
                 }
             }
+
+            var sz = arrayToReturn.length;
+            if(sz > filterData.paging.maxSize-1){
+                var pos1 = (filterData.paging.currentPage-1)*filterData.paging.maxSize;
+                var pos2 = pos1 + filterData.paging.maxSize;
+                if(pos2 > sz){
+                    pos2 = sz;
+                }
+                arrayToReturn = arrayToReturn.slice(pos1, pos2);
+            }
+
+            filterData.paging.setPage(filterData.paging.currentPage, sz);
 
             return arrayToReturn;
         };
