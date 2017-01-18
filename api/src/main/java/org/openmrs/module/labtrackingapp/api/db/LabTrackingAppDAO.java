@@ -34,9 +34,10 @@ public interface LabTrackingAppDAO {
 	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status);
 
 	/* gets the speciment details encounter for the test order
-	* @param orderNumber - the order number
-	* @return the Encounter if there is one, otherwise null*/
-	public Encounter getSpecimenDetailsEncounter(String orderNumber);
+	* @param orderNumbers - an array of order number
+	* @return the list of Encounters if there is one, otherwise null
+	* */
+	public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers);
 
 
 	/* cancels an order

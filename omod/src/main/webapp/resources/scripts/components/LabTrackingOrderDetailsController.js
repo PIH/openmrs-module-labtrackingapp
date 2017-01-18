@@ -1,7 +1,7 @@
 angular.module("labTrackingOrderDetailsController", [])
-    .controller("orderDetailsController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService',
+    .controller("orderDetailsController", ['$scope', '$window', '$uibModal', 'LabTrackingOrder', 'LabTrackingDataService',
         'orderUuid',
-        function ($scope, $window, LabTrackingOrder, LabTrackingDataService, orderUuid) {
+        function ($scope, $window, $uibModal, LabTrackingOrder, LabTrackingDataService, orderUuid) {
             // used to determine if we should disable things
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder();
@@ -26,6 +26,35 @@ angular.module("labTrackingOrderDetailsController", [])
                     return resp;
                 });
             };
+
+            /* save the specimen details*/
+            $scope.saveSpecimenDetails = function () {
+                $scope.savingModal = showSavingModal();
+                return LabTrackingDataService.createOrUpdateOrderSpecimenEncounter($scope.order).then(function (resp) {
+                    if (resp.status != 200) {
+                        alert("Failed to save the specimen details");
+
+                    }
+                    $scope.savingModal.dismiss('cancel');
+                    return resp;
+                });
+            };
+
+            /*
+             shows the saving modal box, while the data is being saved
+             */
+            function showSavingModal() {
+                return $uibModal.open({
+                    animation: true,
+                    ariaLabelledBy: 'modal-title',
+                    ariaDescribedBy: 'modal-body',
+                    templateUrl: 'saveSpecimenDetails.html',
+                    size: 'sm'
+                });
+
+
+            };
+
 
             /*
              cancels the speciment details page and goes to the monitor page
@@ -79,26 +108,6 @@ angular.module("labTrackingOrderDetailsController", [])
                 procedures: '=',
                 diagnoses: '=',
                 concepts: '=',
-                cancelSpecimenDetails: '&'
-            },
-            controller: function ($scope, $window, LabTrackingDataService) {
-
-                $scope.originalOrderUrgency = $scope.order.urgency;
-                /* save the specimen details*/
-                $scope.saveSpecimenDetails = function () {
-                    return LabTrackingDataService.createOrUpdateOrderSpecimenEncounter($scope.order).then(function (resp) {
-                        if (resp.status == 200) {
-                            if ($scope.originalOrderUrgency) {
-                                //we need to update the urgency for the order
-                            }
-                        }
-                        else {
-                            return resp;
-                        }
-
-                    });
-                };
-
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };
@@ -107,27 +116,30 @@ angular.module("labTrackingOrderDetailsController", [])
         return {
             scope: {
                 order: '=',
-                cancelSpecimenDetails: '&'
             },
             controller: function ($scope) {
-                $scope.resultsDate = {
+                $scope.dateBoxOptions = {
                     opened: false,
-                    value: $scope.order.resultDate.value,
                     format: 'dd-MMM-yyyy',
                     options: {
                         dateDisabled: false,
                         formatYear: 'yy',
-                        maxDate: new Date(),
-                        minDate: new Date(2010, 1, 1),
+                        minDate: $scope.minDate,
                         startingDay: 1,
                         showWeeks: false
                     },
                     altInputFormats: ['M!/d!/yyyy']
                 };
                 $scope.showResultsDateBox = function () {
-                    $scope.resultsDate.opened = true;
+                    //for some reason the value isn't binding, if it does, then you can remove this line
+                    if( $scope.order.sampleDate.value == null){
+                        $scope.dateBoxOptions.options.minDate = new Date();
+                    }
+                    else{
+                        $scope.dateBoxOptions.options.minDate = $scope.order.sampleDate.value;
+                    }
+                    $scope.dateBoxOptions.opened = true;
                 };
-
             },
             templateUrl: 'labtrackingOrderDetails-results.page'
         };

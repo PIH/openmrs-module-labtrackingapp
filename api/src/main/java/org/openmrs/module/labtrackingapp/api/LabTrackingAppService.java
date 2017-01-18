@@ -32,11 +32,10 @@ public interface LabTrackingAppService extends OpenmrsService {
 	 */	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status);
 
 	/* gets the specimen details encounter associated with the Test order
-	* @param orderNumber - the Order orderNumber
+	* @param orderNumber - an array of order numbers to look up
 	* the Encounter
 	* */
-	public Encounter getSpecimenDetailsEncounter(String orderNumber);
-
+	public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers);
 	/* cancels an order
 	* @param orderUuid - the order to udpate
 	* @return true/false depending on whether something was updated

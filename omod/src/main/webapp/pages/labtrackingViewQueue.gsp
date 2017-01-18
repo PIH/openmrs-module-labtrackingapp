@@ -22,11 +22,8 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
          <div class="row">
             <div class="col-md-4">
                <label for="status">${ui.message("labtrackingapp.listpage.status")}:</label>
-               <select class="form-control" id="status" ng-model="filter.status.value" ng-change="handleFilterChange('status')">
-                  <option>All</option>
-                  <option>Requested</option>
-                  <option>Reported</option>
-                  <option>Taken</option>
+               <select class="form-control" id="status" ng-model="filter.status" ng-change="handleFilterChange('status')"
+                    ng-options="item as item.label for item in statusCodes">
                </select>
             </div>
             <div class="col-md-4">

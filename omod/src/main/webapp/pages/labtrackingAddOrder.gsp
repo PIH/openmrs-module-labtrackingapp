@@ -25,7 +25,7 @@
 					<label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
 					<div class="col-sm-10">
 						<select class="form-control" id="site" ng-required="true"
-                  ng-options="item as item.label disable when item.value=='?????' for item in diagnoses | orderBy:'label' track by item.value "
+                  ng-options="item as item.label for item in diagnoses | orderBy:'label' track by item.value"
                   ng-model="order.preLabDiagnosis"></select>
 					</div>
 				</div>
@@ -38,10 +38,16 @@
 					</div>
 				</div>
 				<div class="form-group row">
+					<label for="procedurenoncoded" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.procedureNonCoded")}</label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" id="procedurenoncoded" placeholder="" ng-model="order.procedureNonCoded.value"></input>
+					</div>
+				</div>
+				<div class="form-group row">
 					<label for="caresetting" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.caresettinglabel")}</label>
 					<div class="col-sm-10">
 						<select class="form-control" id="caresetting"  ng-required="true"
-                    ng-options="item as item.label for item in concepts.careSetting.answers | orderBy:'label' track by item.value "
+                    ng-options="item as item.label for item in careSettings | orderBy:'label' track by item.value "
                     ng-model="order.careSetting"></select>
 					</div>
 				</div>

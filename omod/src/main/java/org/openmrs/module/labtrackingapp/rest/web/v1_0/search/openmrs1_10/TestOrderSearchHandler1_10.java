@@ -6,6 +6,7 @@ import org.openmrs.Order;
 import org.openmrs.api.context.Context;
 
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
+import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
@@ -16,10 +17,7 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class TestOrderSearchHandler1_10 implements SearchHandler {
@@ -29,10 +27,12 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 	private static final String REQUEST_PARAM_START_DATE = "startDateInMillis";
 	private static final String REQUEST_PARAM_END_DATE = "endDateInMillis";
 	private static final String REQUEST_PARAM_STATUS = "status";
+	private static final String REQUEST_PARAM_TOTAL_COUNT = "totalCount";
+
 
 	private final SearchQuery searchQuery = new SearchQuery.Builder("Gets active test orders in the system")
 	        .withRequiredParameters(REQUEST_PARAM_PATIENT, REQUEST_PARAM_PATIENT_NAME,
-					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS).build();
+					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS, REQUEST_PARAM_TOTAL_COUNT).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getActiveOrders", RestConstants.VERSION_1 + "/order",
 	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"), searchQuery);

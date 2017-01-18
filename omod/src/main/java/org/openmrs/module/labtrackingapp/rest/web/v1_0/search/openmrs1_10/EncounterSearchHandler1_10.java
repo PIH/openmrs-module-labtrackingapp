@@ -21,7 +21,7 @@ import java.util.List;
 @Component
 public class EncounterSearchHandler1_10 implements SearchHandler {
 	
-	private static final String REQUEST_PARAM_ORDER_NUMBER = "orderNumber";
+	private static final String REQUEST_PARAM_ORDER_NUMBER = "orderNumbers";
 	
 	private final SearchQuery searchQuery = new SearchQuery.Builder("Gets the specimen details associated with an encounter")
 	        .withRequiredParameters(REQUEST_PARAM_ORDER_NUMBER).build();
@@ -42,11 +42,16 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 	 */
 	//@Override
 	public PageableResult search(RequestContext context) throws ResponseException {
-		String orderNumber = context.getParameter(REQUEST_PARAM_ORDER_NUMBER);
-		Encounter encounter = Context.getService(LabTrackingAppService.class).getSpecimenDetailsEncounter(orderNumber);
+		String temp = context.getParameter(REQUEST_PARAM_ORDER_NUMBER);
+		List<Encounter> ret = null;
+		if(temp != null){
+			String[] orderNumbers = temp.split(",");
+			ret = Context.getService(LabTrackingAppService.class).getSpecimenDetailsEncountersByOrderNumbers(orderNumbers);
+		}
+
 
 		//TODO:  how do you just return one in search, for now wrap in a list
-		return new NeedsPaging<Encounter>(Collections.singletonList(encounter), context);
+		return new NeedsPaging<Encounter>(ret, context);
 	}
 	
 }

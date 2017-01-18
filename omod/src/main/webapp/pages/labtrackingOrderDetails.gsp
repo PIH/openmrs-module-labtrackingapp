@@ -17,19 +17,31 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
 </script>
 
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
-<input type="text" ng-model="selected" uib-typeahead="state for state in states | filter:${'$'}viewValue | limitTo:8" class="form-control">
   <div class="panel panel-primary" id="details_box">
     <div class="panel-heading">${ui.message("labtrackingapp.orderdetailstitle")} Patient ABC123</div>
     <div class="panel-body">
       <div class="panel-group">
         <order-details-panel order="order"></order-details-panel>
         <order-specimen-panel order="order" locations="locations" providers="providers" procedures="procedures"
-            diagnoses="diagnoses" concepts="concepts" cancel-specimen-details="cancelSpecimenDetails()"></order-specimen-panel>
-        <order-results-panel order="order" cancel-specimen-details="cancelSpecimenDetails()"></order-results-panel>
-        <order-debug-panel order="order" providers="providers"></order-debug-panel>
+            diagnoses="diagnoses" concepts="concepts"></order-specimen-panel>
+        <order-results-panel order="order"></order-results-panel>
       </div>
     </div>
   </div>
+    <div class="row" >
+        <div class="col-sm-12 text-right">
+            <button type="button" class="btn btn-primary" ng-click="cancelSpecimenDetails()">${ui.message("uicommons.cancel")}</button>
+            <button type="button" class="btn btn-default" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
+        </div>
+    </div>
+    <script type="text/ng-template" id="saveSpecimenDetails.html">
+        <div class="modal-header">
+            <h3 class="modal-title" id="modal-title">${ui.message("labtrackingapp.addorder.savingtitle")}</h3>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <img class="center-block"  src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" />
+        </div>
+    </script>
 </div>
 
 ${ ui.includeFragment("labtrackingapp", "translations") }
@@ -47,3 +59,5 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
         });
     });
 </script>
+
+

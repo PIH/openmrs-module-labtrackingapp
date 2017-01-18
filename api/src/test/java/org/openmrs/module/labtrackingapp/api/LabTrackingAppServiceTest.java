@@ -122,8 +122,8 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	@Verifies(value = "should get encounters by order number", method = "getSpecimenDetailsEncounter()")
 	public void getSpecimenDetailsEncounter_shouldGetOne() throws Exception {
-		Encounter enc = service.getSpecimenDetailsEncounter(TEST_ORDER_NUMBER);
-		assertNotNull(enc);
+		List<Encounter> list = service.getSpecimenDetailsEncountersByOrderNumbers(new String[]{TEST_ORDER_NUMBER});
+		assertTrue(list.size()>0);
 	}
 
 

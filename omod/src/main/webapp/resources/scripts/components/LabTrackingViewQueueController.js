@@ -1,6 +1,7 @@
 angular.module("labTrackingViewQueueController", [])
     .controller("viewQueueController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService',
         function ($scope, $window, LabTrackingOrder, LabTrackingDataService) {
+            $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
             $scope.data_loading = true;
             $scope.selectedOrder = null;
             $scope.orderCancelReason = null;
@@ -10,7 +11,7 @@ angular.module("labTrackingViewQueueController", [])
             fromDate.setDate(fromDate.getDate()-LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
             $scope.filter = {
                 search: null, // the filter for the patient list
-                status: {value: null},
+                status: LabTrackingOrder.concepts.statusCodes[0],
                 patient: {uuid: null, name: null},
                 from_date: {opened: false, value: fromDate},
                 to_date: {opened: false, value: new Date()},
@@ -28,8 +29,8 @@ angular.module("labTrackingViewQueueController", [])
                 },
                 paging: {
                     totalItems: 0,
-                    currentPage: 0,
-                    maxSize: 10,
+                    currentPage: 1,
+                    maxSize: LabTrackingDataService.CONSTANTS.MAX_QUEUE_SIZE,
                     currentEntryStart:0,
                     currentEntryEnd:0,
                     setPage: function (pageNo, totalItems) {
@@ -50,7 +51,8 @@ angular.module("labTrackingViewQueueController", [])
                     },
                     pageChanged: function () {
                         console.log('Page changed to: ' + $scope.filter.paging.currentPage);
-                        $scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.filter.paging.totalItems);
+                        return $scope.loadQueue();
+                        //$scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.filter.paging.totalItems);
                     }
                 }
             };
@@ -58,18 +60,29 @@ angular.module("labTrackingViewQueueController", [])
              loads the queue from the openmrs web services
              */
             $scope.loadQueue = function () {
+                $scope.data_loading = true;
                 $scope.lastUpdatedAtInMillis = new Date().getTime();
-                var locationUuid = "";
+                var pageNumber = $scope.filter.paging.currentPage;
+                var startDate = $scope.filter.from_date.value;
+                var endDate = $scope.filter.to_date.value;
+                var status = $scope.filter.status.value;
                 var patientUuid = "";
-                return LabTrackingDataService.loadQueue(locationUuid, patientUuid).then(function (resp) {
+                var patientName = $scope.filter.search;
+
+                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status, patientUuid, patientName).then(function (resp) {
                     if (resp.status.code == 200) {
-                        $scope.testOrderQueue = resp.data;
-                        $scope.filter.paging.setPage(1, resp.data.length);
+                        var cnt = resp.data.totalCount;
+                        return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function(resp2){
+                            $scope.testOrderQueue = resp2.data;
+                            $scope.filter.paging.setPage(pageNumber, cnt);
+                            $scope.data_loading = false;
+                        })
                     }
                     else {
                         $scope.errorMessage = resp.status.msg;
                     }
                     $scope.data_loading = false;
+
                 });
             };
 
@@ -128,6 +141,7 @@ angular.module("labTrackingViewQueueController", [])
                     $scope.data_loading = false;
                     $scope.selectedOrder=null;
                     $scope.orderCancelReason=null;
+                    $scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.testOrderQueue.length);
                 })
             };
 
@@ -149,19 +163,16 @@ angular.module("labTrackingViewQueueController", [])
              this is called whenever the filter changes
              */
             $scope.handleFilterChange = function (filterSource) {
-                $scope.filter.search = {
-                    requestDate: {
-                        value: null
-                    },
-                    patient: {
-                        name: $scope.filter.patient.name
-                    }
-                };
+                if(filterSource == 'from_date' || filterSource == 'to_date'
+                    || filterSource == 'status' || filterSource == 'patient' ){
+                    return $scope.loadQueue();
+                }
             };
             return $scope.loadQueue();
         }])
     .filter("testOrderFilter", function () {
         return function (items, filterData) {
+            return items;
             var df = filterData.from_date.value;
             if (df != null) {
                 //set the date from to the beginning of the day

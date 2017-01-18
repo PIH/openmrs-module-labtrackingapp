@@ -28,8 +28,8 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         return dao.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
     }
 
-    public Encounter getSpecimenDetailsEncounter(String orderNumber) {
-        return dao.getSpecimenDetailsEncounter(orderNumber);
+    public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers) {
+        return dao.getSpecimenDetailsEncountersByOrderNumbers(orderNumbers);
     }
 
     public boolean cancelOrder(String orderUuid, String reason) {

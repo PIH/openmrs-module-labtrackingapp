@@ -4,7 +4,7 @@
 			<a data-toggle="collapse" href="#specimen_panel">${ui.message("labtrackingapp.pathologyspecimendetailslabel")}</a>
 		</h4>
 	</div>
-	<div id="specimen_panel" class="panel-collapse">
+	<div id="specimen_panel" class="panel-collapse in">
 		<div class="panel-body">
 			<form class="form-horizontal">
 				<div class="row">
@@ -16,34 +16,25 @@
 				<div class="form-group">
 					<label class="control-label form-control-static text-right col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
 					<div class="col-sm-9">
-						<input type="text" ng-model="order.location"  uib-typeahead="loc as loc.display for loc in locations| filter:{display:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
+						<input type="text" ng-model="order.locationWhereSpecimenCollected"  uib-typeahead="loc as loc.label for loc in locations| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label text-right col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
 					<div class="col-sm-9">
-						<input id="surgeon" type="text" ng-model="order.surgeon"  uib-typeahead="a as a.name for a in providers| filter:{name:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
+						<input id="surgeon" type="text" ng-model="order.surgeon"  uib-typeahead="a as a.label for a in providers| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="resident">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
 					<div class="col-sm-9">
-						<input id="resident" type="text" ng-model="order.resident"  uib-typeahead="a as a.name for a in providers| filter:{name:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
+						<input id="resident" type="text" ng-model="order.resident"  uib-typeahead="a as a.label for a in providers| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="mdtonotify">${ui.message("labtrackingapp.orderdetails.mdtonotifylabel")}</label>
 					<div class="col-sm-9">
-						<input type='text' class="form-control" id="mdtonotify" ng-model="order.md.value"  />
-					</div>
-				</div>
-				<div class="form-group">
-					<label class="control-label col-sm-3">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
-					<div class="col-sm-9">
-						<select class="form-control" id="prelabdiagnosis"
-                    ng-options="item as item.label disable when item.value=='?????' for item in diagnoses | orderBy:'label' track by item.value "
-                    ng-selected="order.preLabDiagnosis.value==item.value"
-                    ng-model="order.preLabDiagnosis"></select>
+						<input type='text' class="form-control" id="mdtonotify" ng-model="order.mdToNotify.value"  />
 					</div>
 				</div>
 				<div class="form-group">
@@ -51,15 +42,21 @@
 					<div class="col-sm-9">
 						<select id="procedure" class="form-control" multiple
                 ng-options="item as item.label disable when item.value=='?????' for item in procedures | orderBy:'label' track by item.value"
-                ng-model="order.procedures" ></select>
+                ng-model="order.proceduresForSpecimen" ></select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="procedurenoncodedforspecimen" class="control-label col-sm-3">${ui.message("labtrackingapp.procedureNonCoded")}</label>
+					<div class="col-sm-9">
+						<input type="text" class="form-control" id="procedurenoncodedforspecimen" placeholder="" ng-model="order.procedureNonCodedForSpecimen.value"></input>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="urgentreviewlabel">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
 					<div class="col-sm-9">
 						<div class="btn-group btn-toggle">
-							<button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">Yes</button>
-							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': !order.urgency.value}" ng-click="order.urgency.value=!order.urgency.value">No</button>
+							<button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgentReview.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">Yes</button>
+							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgentReview.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value=''">No</button>
 						</div>
 					</div>
 				</div>
@@ -67,14 +64,14 @@
 					<label class="control-label col-sm-3"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
 					<div class="col-sm-9">
 						<select class="form-control" id="postopdiagnosis"
-                    ng-options="item as item.label disable when item.value=='?????' for item in diagnoses | orderBy:'label' track by item.value "
-                    ng-model="order.postopDiagnosis"></select>
+                    ng-options="item as item.label for item in diagnoses | orderBy:'label' track by item.value "
+                    ng-model="order.postopDiagnosis.diagnosis"></select>
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-3"  for="clinicalhistory">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
 					<div class="col-sm-9">
-						<textarea class="form-control" id="clinicalhistory" ng-model="order.clinicalHistory.value"></textarea>
+						<textarea class="form-control" id="clinicalhistory" ng-model="order.clinicalHistoryForSpecimen.value"></textarea>
 					</div>
 				</div>
 				<div class="form-group">
@@ -86,12 +83,6 @@
 								<input type="text" class="form-control" ng-model="order.specimenDetails[${'$'}index].value"></input>
 							</div>
 						</div>
-					</div>
-				</div>
-				<div class="form-group" >
-					<div class="col-sm-offset-2 col-sm-9 text-right">
-						<button type="button" class="btn btn-primary" ng-click="cancelSpecimenDetails()">${ui.message("uicommons.cancel")}</button>
-						<button type="button" class="btn btn-default" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
 					</div>
 				</div>
 			</form>

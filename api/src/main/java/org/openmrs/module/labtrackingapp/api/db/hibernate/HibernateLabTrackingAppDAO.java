@@ -143,7 +143,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         return orders;
     }
 
-    public Encounter getSpecimenDetailsEncounter(String orderNumber) {
+    public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers) {
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Encounter.class, "enc");
 
@@ -152,20 +152,13 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                 .createAlias("encounter", "enc")
                 .setProjection(Property.forName("enc.id"))
                 .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
-                .add(Restrictions.eq("valueText", orderNumber));
-
-        ;
+                .add(Restrictions.in("valueText", orderNumbers));
 
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                 .add(Subqueries.propertyIn("id", orderNumberObservation));
 
 
-        List<Encounter> list = criteria.list();
-        if (list.size() > 0) {
-            return list.get(0);
-        }
-
-        return null;
+        return criteria.list();
     }
 
 
