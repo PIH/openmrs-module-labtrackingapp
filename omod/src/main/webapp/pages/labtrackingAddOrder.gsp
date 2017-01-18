@@ -81,7 +81,7 @@
 
     <script type="text/ng-template" id="myModalContent.html">
         <div class="modal-header">
-            <h3 class="modal-title" id="modal-title">${ui.message("labtrackingapp.addorder.savingtitle")}</h3>
+            <h3 class="modal-title" id="modal-title">${ui.message("labtrackingapp.savingtitle")}</h3>
         </div>
         <div class="modal-body" id="modal-body">
             <img class="center-block"  src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" />
