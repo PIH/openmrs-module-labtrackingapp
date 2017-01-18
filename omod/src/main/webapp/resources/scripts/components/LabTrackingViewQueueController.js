@@ -64,7 +64,9 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.lastUpdatedAtInMillis = new Date().getTime();
                 var pageNumber = $scope.filter.paging.currentPage;
                 var startDate = $scope.filter.from_date.value;
+                startDate.setHours(0,0,0,0);
                 var endDate = $scope.filter.to_date.value;
+                endDate.setHours(23,59,59,999);
                 var status = $scope.filter.status.value;
                 var patientUuid = "";
                 var patientName = $scope.filter.search;
