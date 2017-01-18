@@ -23,7 +23,7 @@ angular.module("labTrackingOrderFactory", [])
             this.specimenDetailsEncounter = {uuid: null};  // used to keep track of whether to create/update the details
             this.orderNumber = {value: null};
             this.preLabDiagnosis = {label: null,value: null};
-            this.postopDiagnosis = {originalDiagnosisUuid:null, obsUuid:null, groupMemmberParentUuid:null,
+            this.postopDiagnosis = { obsUuid:null, groupMemmberParentUuid:null,
                 diagnosis: {label: null, value: null},
                 certainty:{value:LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONFIRMED}};
             this.procedures = [];  //this is an array of values
@@ -214,7 +214,6 @@ angular.module("labTrackingOrderFactory", [])
                                     labTrackingOrder.postopDiagnosis.diagnosis.value = obs2.value.uuid;
                                     labTrackingOrder.postopDiagnosis.diagnosis.label = obs2.value.display;
                                     labTrackingOrder.postopDiagnosis.obsUuid = obs2.uuid;
-                                    labTrackingOrder.postopDiagnosis.originalDiagnosisUuid = obs2.uuid;
                                 }
                                 else if(conceptUuid2 == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID){
                                     labTrackingOrder.postopDiagnosis.certainty.obsUuid = obs2.uuid;
@@ -347,21 +346,6 @@ angular.module("labTrackingOrderFactory", [])
                     labTrackingOrder.postopDiagnosis.certainty.obsUuid));
 
                 var groupMembers = {groupMembers:v, concept:LabTrackingOrder.concepts.postopDiagnosis.constructUuid, uuid: labTrackingOrder.postopDiagnosis.groupMemmberParentUuid};
-
-
-
-                if(labTrackingOrder.postopDiagnosis.originalDiagnosisUuid != labTrackingOrder.postopDiagnosis.diagnosis.obsUuid && labTrackingOrder.postopDiagnosis.originalDiagnosisUuid != null){
-                    //this diagnosis set has changed, delete all the old obs and reload them
-                   // obsIdsToDelete.push(labTrackingOrder.postopDiagnosis.originalDiagnosisUuid);
-                   // obsIdsToDelete.push(labTrackingOrder.postopDiagnosis.certainty.obsUuid);
-                   // obsIdsToDelete.push(labTrackingOrder.postopDiagnosis.groupMemmberParentUuid); //need to delete the parent
-
-                    //then we need to reset the obsUUIDs on the diagnosis objects
-                    // groupMembers.uuid = null;
-                    // for(var i=0;i<groupMembers.groupMembers.length;++i){
-                    //     groupMembers.groupMembers[i].uuid = null;
-                    // }
-                }
 
                 obs.push(groupMembers);
             }

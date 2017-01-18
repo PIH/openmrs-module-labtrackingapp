@@ -23,6 +23,11 @@ $fontPath: "../../fonts";
     margin-top:20px;
 }
 
+/* used for the urency icon*/
+.urgent-icon{
+    color: #ff3d3d;
+}
+
 /* fix so that the 1000px max size works with bootstrap
    if the UI changes, we can remove this
 */
@@ -31,4 +36,5 @@ $fontPath: "../../fonts";
 		width: 970px;
 	}
 }
+
 

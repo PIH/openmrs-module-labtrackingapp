@@ -106,7 +106,8 @@ angular.module("labTrackingViewQueueController", [])
              */
             $scope.handlePrint = function (order) {
                 console.log(order);
-                alert("TBD");
+                var url = 'labtrackingOrderPrint.page?orderUuid=' + order.uuid;
+                $window.open(url, '_blank');
             };
 
             /*

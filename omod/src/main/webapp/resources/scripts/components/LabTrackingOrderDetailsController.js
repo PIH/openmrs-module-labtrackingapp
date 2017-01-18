@@ -125,6 +125,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         dateDisabled: false,
                         formatYear: 'yy',
                         minDate: $scope.minDate,
+                        maxDate: new Date(),
                         startingDay: 1,
                         showWeeks: false
                     },

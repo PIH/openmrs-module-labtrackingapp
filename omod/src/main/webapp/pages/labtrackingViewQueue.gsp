@@ -79,7 +79,7 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
                      <td>{{a.patient.name}}</td>
                      <td>{{a.status.display}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
-                     <td>{{a.sampleDate.value | date : 'shortDate'}}</td>
+                     <td><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span> {{a.sampleDate.value | date : 'shortDate'}}</td>
                      <td>{{a.resultDate.value | date : 'shortDate'}}</td>
                      <td>
                         <button class="btn btn-sm btn-primary" ng-click="handleDetails(a)">${ui.message("labtrackingapp.listpage.details")}</button>

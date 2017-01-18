@@ -8,19 +8,19 @@
 		<div class="panel-body">
 			<form class="form-horizontal">
 				<div class="row">
-					<label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
+					<label class="control-label form-control-static col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
 					<div class="col-sm-9">
 						<p class="form-control-static">{{(order.sampleDate.value==null?"New":order.sampleDate.value) | date : 'shortDate'}}</p>
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label form-control-static text-right col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
+					<label class="control-label form-control-static col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
 					<div class="col-sm-9">
 						<input type="text" ng-model="order.locationWhereSpecimenCollected"  uib-typeahead="loc as loc.label for loc in locations| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label text-right col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
+					<label class="control-label col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
 					<div class="col-sm-9">
 						<input id="surgeon" type="text" ng-model="order.surgeon"  uib-typeahead="a as a.label for a in providers| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
 					</div>
