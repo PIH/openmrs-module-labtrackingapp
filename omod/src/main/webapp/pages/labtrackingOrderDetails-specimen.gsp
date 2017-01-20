@@ -22,13 +22,15 @@
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
 					<div class="col-sm-9">
-						<input id="surgeon" type="text" ng-model="order.surgeon"  uib-typeahead="a as a.label for a in providers| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
+						<select id="surgeon" type="text" ng-model="order.surgeon"  ng-options="a as a.label for a in providers | orderBy:'label' track by a.value" class="form-control"></select>
+						order.surgeon={{order.surgeon | json}}
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="resident">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
 					<div class="col-sm-9">
-						<input id="resident" type="text" ng-model="order.resident"  uib-typeahead="a as a.label for a in providers| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
+						<select id="resident" type="text" ng-model="order.resident"  ng-options="a as a.label for a in providers | orderBy:'label' track by a.value"  class="form-control"></select>
+						order.resident={{order.resident | json}}
 					</div>
 				</div>
 				<div class="form-group">
@@ -41,7 +43,7 @@
 					<label class="control-label col-sm-3" for="procedure" >${ui.message("labtrackingapp.proceduresitelabel")}</label>
 					<div class="col-sm-9">
 						<select id="procedure" class="form-control" multiple
-                ng-options="item as item.label disable when item.value=='?????' for item in procedures | orderBy:'label' track by item.value"
+                ng-options="item as item.label for item in procedures | orderBy:'label' track by item.value"
                 ng-model="order.proceduresForSpecimen" ></select>
 					</div>
 				</div>

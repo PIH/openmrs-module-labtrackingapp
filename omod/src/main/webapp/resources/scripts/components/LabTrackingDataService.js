@@ -21,7 +21,8 @@ angular.module("labTrackingDataService", [])
                                 + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS"
                                 + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
                     VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
-                    VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(person),encounterRole:(uuid)))",
+                    VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid)))",
+                    UPLOAD_FILE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs",
                     PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
                     ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
                 }
@@ -313,31 +314,47 @@ angular.module("labTrackingDataService", [])
              @return the saved encounter
              */
             this.createOrUpdateOrderSpecimenEncounter = function (labTrackingOrder) {
+                var msg = "";
                 var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
-
                 var data = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(labTrackingOrder, provider);
                 return Encounter.deleteObs(data.obsIdsToDelete).then(function(res){
                     return Encounter.save(data.encounter, labTrackingOrder.specimenDetailsEncounter.uuid).then(function(resp){
                         if (_self.isOk(resp)){
                             //need to update the labtracking orders spec id
                             labTrackingOrder.specimenDetailsEncounter.uuid = resp.data.uuid;
-                            // var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
-                            // return Encounter.createOrUpdateProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function(resp2){
-                            //     return Encounter.createOrUpdateProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function(resp3){
-                            //         if(resp2.data != null){
-                            //             //update the surgeon uuid
-                            //             labTrackingOrder.surgeon.encounterProviderUuid = resp2.data.uuid;
-                            //
-                            //         }
-                            //         if(resp3.data != null){
-                            //             //update the resident uuid
-                            //             labTrackingOrder.resident.encounterProviderUuid = resp3.data.uuid;
-                            //         }
-                            //         return {status:200, data:labTrackingOrder};
-                            //     });
-                            // });
+                            var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
+                            //if the providers have changed then remove the old ones and add the new ones
+                            var changed = Encounter.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
+                            if(changed){
+                                var encounterProvidersToDelete = [labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid,
+                                    labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid];
 
-                            return {status:200, data:labTrackingOrder};
+                                return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete ).then(function(){
+                                    return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function(resp2){
+                                        if(resp2.data != null){
+                                            //update the surgeon uuid
+                                            labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid  = resp2.data.uuid;
+                                            msg += "surgeon is " + labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid+ "\n";
+
+                                        }
+                                        return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function(resp3){
+                                            if(resp3.data != null){
+                                                //update the resident uuid
+                                                labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid  = resp3.data.uuid;
+                                                msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
+                                            }
+                                            labTrackingOrder.debug.message = msg;
+                                            //reset this with the updated values
+                                            labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
+
+                                            return {status:200, data:labTrackingOrder};
+                                        });
+                                    });
+                                });
+                            }
+                            else{
+                                return {status:200, data:labTrackingOrder};
+                            }
                         }
                         else{
                             return resp;
@@ -380,6 +397,8 @@ angular.module("labTrackingDataService", [])
                     })
 
             };
+
+
 
 
             this.isOk = function (res) {

@@ -20,7 +20,7 @@ angular.module("labTrackingOrderFactory", [])
             this.location = {value: locationUuid}; //this is the location where the order was created
             this.patient = {value: patientUuid, name: null, id: null};
             this.uuid = null;
-            this.specimenDetailsEncounter = {uuid: null};  // used to keep track of whether to create/update the details
+            this.specimenDetailsEncounter = {uuid: null, surgeonEncounterProviderUuid:null, residentEncounterProviderUuid:null};  // used to keep track of whether to create/update the details
             this.orderNumber = {value: null};
             this.preLabDiagnosis = {label: null,value: null};
             this.postopDiagnosis = { obsUuid:null, groupMemmberParentUuid:null,
@@ -40,6 +40,7 @@ angular.module("labTrackingOrderFactory", [])
             this.locationWhereSpecimenCollected = {value:null};
             this.surgeon = {value: null, label: null};
             this.resident = {value: null, label: null};
+            this.orginalSurgeonAndResident = {surgeon:null, resident:null};
             this.mdToNotify = {value: null};
             this.urgentReview = {value: false};
             this.status = {value: null};
@@ -47,6 +48,7 @@ angular.module("labTrackingOrderFactory", [])
             this.sampleDate = {value: null};
             this.resultDate = {value: null, obsUuid: null};
             this.notes = {value: null};
+            this.file = {valueBase64:null, url:null, obsUuid:null};
             this.debug = {};
         }
 
@@ -71,6 +73,7 @@ angular.module("labTrackingOrderFactory", [])
                 {value:'873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'}],
             notes:{value:'65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             resultDate:{value:'68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
+            file:{value:'1124baab-6fb8-4f5d-a131-0ee09cccc87d'},
             statusCodes: [{label:'All', value:'-1'},{label:'Requested', value:'1'},{label:'Sampled', value:'2'},{label:'With Results', value:'3'}]
         };
 
@@ -174,7 +177,7 @@ angular.module("labTrackingOrderFactory", [])
 
 
             if (webServiceResult.obs != null && webServiceResult.obs.length > 0) {
-                labTrackingOrder.debug.specimentDetails = {
+                labTrackingOrder.debug.specimenDetails = {
                     totalObs: webServiceResult.obs.length,
                     //obs:webServiceResult.obs,
                 };
@@ -223,7 +226,12 @@ angular.module("labTrackingOrderFactory", [])
                         else if(conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
                             labTrackingOrder.resultDate.value = new Date($filter('serverDate')(v));
                             labTrackingOrder.resultDate.obsUuid = uuid;
+                        }
+                        else if(conceptUuid == LabTrackingOrder.concepts.file.value) {
+                                labTrackingOrder.file.url = v;
+                                labTrackingOrder.file.obsUuid = uuid;
                         }else{
+
                             //finally update the specimen details
                             for (var j = 0; j < LabTrackingOrder.concepts.specimenDetails.length; ++j) {
                                 if (conceptUuid == LabTrackingOrder.concepts.specimenDetails[j].value) {
@@ -243,24 +251,36 @@ angular.module("labTrackingOrderFactory", [])
 
                 }
 
-
+                var msg = "there are " + webServiceResult.encounterProviders.length + " providers, there ids are:\n";
                 for(var i = 0;i<webServiceResult.encounterProviders.length;++i){
                     var p = webServiceResult.encounterProviders[i];
                     if(p.provider != null && p.provider.person != null){
                         var nm = p.provider.person.display;
-                        var uuid = p.provider.person.uuid;
+                        var uuid = p.provider.uuid;
+                        msg += p.uuid + " " + nm  + " role="  + p.encounterRole.uuid + "\n";
                         if(p.encounterRole.uuid == LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE){
                             labTrackingOrder.surgeon.label = nm;
                             labTrackingOrder.surgeon.value = uuid;
-                            labTrackingOrder.surgeon.encounterProviderUuid  = p.uuid;
+                            labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid  = p.uuid;
                         }
                         else if(p.encounterRole.uuid == LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE){
                             labTrackingOrder.resident.label = nm;
                             labTrackingOrder.resident.value = uuid;
-                            labTrackingOrder.resident.encounterProviderUuid  = p.uuid;
+                            labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid  = p.uuid;
                         }
                     }
                 }
+
+                //keep tracking of the original surgeon/resident, so that we can tell if they have changed
+                labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
+
+                msg += "surgeon is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE + "\n";
+                msg += "redident is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE + "\n";
+
+
+                labTrackingOrder.debug.message = msg;
+
+                console.log(labTrackingOrder.debug.message);
             }
 
             return labTrackingOrder;
@@ -391,26 +411,37 @@ angular.module("labTrackingOrderFactory", [])
 
             }
 
+            if(labTrackingOrder.file.valueBase64 != null){
+                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.file.value,
+                    labTrackingOrder.file.valueBase64, labTrackingOrder.file.obsUuid));
+            }
+
 
             var encounter = new Encounter(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID, currentProviderUUID,
                 LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
                 labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs);
 
-            //the surgeon and resident are just providers for the encounter
-            //encounter_provider.provider_id  using encounterRole="9b135b19-7ebe-4a51-aea2-69a53f9383af" and providerRoles="3182ee51-b895-4804-a342-5f261e995222,556ceee6-d899-43d4-a98b-7973ebc85b75"
-            if (labTrackingOrder.surgeon != null && labTrackingOrder.surgeon.value != null) {
-                encounter.encounterProviders.push({
-                    provider: labTrackingOrder.surgeon.value,
-                    encounterRole: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE
-                })
-            }
+            //we don't need to add the surgeon/resident here, we will add them after the encounter is created
+            //  for consistencies sake
 
-            if (labTrackingOrder.resident != null && labTrackingOrder.resident.value != null) {
-                encounter.encounterProviders.push({
-                    provider: labTrackingOrder.resident.value,
-                    encounterRole: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE
-                })
-            }
+            // if(labTrackingOrder.specimenDetailsEncounter.uuid == null){
+            //     if (labTrackingOrder.surgeon != null && labTrackingOrder.surgeon.value != null) {
+            //         encounter.encounterProviders.push({
+            //             provider: labTrackingOrder.surgeon.value,
+            //             encounterRole: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE,
+            //             uuid: labTrackingOrder.specimenDetails.surgeonEncounterProviderUuid
+            //
+            //         })
+            //     }
+            //
+            //     if (labTrackingOrder.resident != null && labTrackingOrder.resident.value != null) {
+            //         encounter.encounterProviders.push({
+            //             provider: labTrackingOrder.resident.value,
+            //             encounterRole: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE,
+            //             uuid: labTrackingOrder.specimenDetails.residentEncounterProviderUuid
+            //         })
+            //     }
+            //}
 
             return {encounter: encounter, obsIdsToDelete:obsIdsToDelete};
         };
@@ -421,19 +452,17 @@ angular.module("labTrackingOrderFactory", [])
         @return - the surgeon and resident providers
         * */
         LabTrackingOrder.getEncounterProviders = function (labTrackingOrder){
-            var providers = {surgeon: null, resident:null};
+            var providers = {surgeon:null, resident:null};
             //the surgeon and resident are just providers for the encounter
             //encounter_provider.provider_id  using encounterRole="9b135b19-7ebe-4a51-aea2-69a53f9383af" and providerRoles="3182ee51-b895-4804-a342-5f261e995222,556ceee6-d899-43d4-a98b-7973ebc85b75"
             if (labTrackingOrder.surgeon != null && labTrackingOrder.surgeon.value != null) {
                 providers.surgeon = Encounter.toEncounterProvider(labTrackingOrder.surgeon.value,
-                    LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE,
-                    labTrackingOrder.surgeon.encounterProviderUuid);
+                    LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE);
             }
 
             if (labTrackingOrder.resident != null && labTrackingOrder.resident.value != null) {
                 providers.resident = Encounter.toEncounterProvider(labTrackingOrder.resident.value,
-                    LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE,
-                    labTrackingOrder.resident.encounterProviderUuid);
+                    LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE);
             }
 
             return providers;

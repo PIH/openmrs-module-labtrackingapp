@@ -5,6 +5,7 @@
 		</h4>
 	</div>
 	<div id="results_panel" class="panel-collapse in">
+	<form class="form-horizontal" name="resultsForm" id="resultsForm">
 		<div class="panel-body">
 			<div class="row">
 				<label class="control-label col-sm-3 text-right" for="date_of_results">${ui.message("labtrackingapp.orderdetails.resultsdatelabel")}</label>
@@ -31,10 +32,25 @@
 			<div class="row top-buffer">
 				<label class="control-label col-sm-3 text-right" for="upload_file">${ui.message("labtrackingapp.orderdetails.uploadfilelabel")}</label>
 				<div class="col-sm-9">
-					<input type="file" class="form-control" id="upload_file" />
-					<a href="">[TODO: file link here if exists]</a>
+
+					      <input type="file" ngf-select ng-model="order.fileData" name="file"
+                                 accept="application/pdf" ngf-max-size="2MB" required
+                                 ngf-model-invalid="errorFile">
+                          <i ng-show="resultsForm.file.${'$'}error.maxSize">File too large
+                              {{errorFile.size / 1000000|number:1}}MB: max 2M</i>
+                          <button ng-disabled="!resultsForm.${'$'}valid"
+                                  ng-click="uploadPdf(order.fileData)">Submit</button>
+                          <span class="progress" ng-show="order.fileData.progress >= 0">
+                            <div style="width:{{order.fileData.progress}}%" 
+                                ng-bind="order.fileData.progress + '%'"></div>
+                          </span>
+                          <span ng-show="order.fileData.result">Upload Successful</span>
+                          <div ng-show="errorMsg" class="alert alert-danger" >{{errorMsg}}</div>
+      
+					<button ng-click="downloadPdf()" class="btn btn-primary">download PDF <i class="glyphicon glyphicon-list-alt" aria-hidden="true"></i></button>
 				</div>
 			</div>
 		</div>
+		</form>
 	</div>
 </div>

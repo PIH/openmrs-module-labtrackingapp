@@ -1,7 +1,8 @@
 angular.module("labTrackingOrderDetailsController", [])
-    .controller("orderDetailsController", ['$scope', '$window', '$uibModal', 'LabTrackingOrder', 'LabTrackingDataService',
-        'orderUuid',
-        function ($scope, $window, $uibModal, LabTrackingOrder, LabTrackingDataService, orderUuid) {
+    .controller("orderDetailsController", ['$scope', '$window', '$http','$uibModal','Upload',
+        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid',
+        function ($scope, $window, $http, $uibModal, Upload,
+                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid) {
             // used to determine if we should disable things
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder();
@@ -117,7 +118,7 @@ angular.module("labTrackingOrderDetailsController", [])
             scope: {
                 order: '=',
             },
-            controller: function ($scope) {
+            controller: function ($scope, $http, Upload, Encounter, LabTrackingDataService, LabTrackingOrder) {
                 $scope.dateBoxOptions = {
                     opened: false,
                     format: 'dd-MMM-yyyy',
@@ -141,6 +142,67 @@ angular.module("labTrackingOrderDetailsController", [])
                     }
                     $scope.dateBoxOptions.opened = true;
                 };
+
+                $scope.downloadPdf = function () {
+                    var fileName = "test.pdf";
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.style = "display: none";
+                    var file = new Blob([$scope.order.fileData], {type: 'application/pdf'});
+                    var fileURL = window.URL.createObjectURL(file);
+                    a.href = fileURL;
+                    a.download = fileName;
+                    a.click();
+                };
+
+                $scope.uploadPdf = function(file) {
+                    //see https://www.npmjs.com/package/ng-file-upload for docs
+                    var fileReader = new FileReader();
+                    fileReader.readAsDataURL(file);
+                    fileReader.onload = function (e) {
+                        dataUrl = e.target.result;
+                        // var obs = {
+                        //     person:$scope.order.patient.value,
+                        //     obsDatetime: Encounter.toObsDate(new Date()),
+                        //     concept:LabTrackingOrder.concepts.file.value,
+                        //     value: dataUrl
+                        // };
+
+                        $scope.order.file.valueBase64 = dataUrl;
+
+                        // return $http.post(LabTrackingDataService.CONSTANTS.URLS.UPLOAD_FILE, obs).then(function (resp) {
+                        //     if (LabTrackingDataService.isOk(resp)){
+                        //         alert("all set");
+                        //         return {status: {code: resp.status, msg: null}, data: resp};
+                        //     }
+                        //     else {
+                        //         $scope.errorMsg = response.status + ': ' + response.data.error.message;// + " : " + response.data.error.detail;
+                        //         return {status: {code: resp.status, msg:$scope.errorMsg}, data: []};
+                        //     }
+                        //
+                        // }, function (err) {
+                        //     $scope.errorMsg = "Error uploading file " + err.status + ': ' + err.data.error.message + " : " + err.data.error.detail;
+                        //     return {status: {code: 500, msg: $scope.errorMsg}, data: []};
+                        // });
+
+                    };
+
+                    // file.upload.then(function (response) {
+                    //     $timeout(function () {
+                    //         file.result = response.data;
+                    //     });
+                    // }, function (response) {
+                    //     if (response.status > 0)
+                    //         $scope.errorMsg = response.status + ': ' + response.data.error.message;// + " : " + response.data.error.detail;
+                    // }, function (evt) {
+                    //     // Math.min is to fix IE which reports 200% sometimes
+                    //     file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                    // });
+                }
+
+
+
+
             },
             templateUrl: 'labtrackingOrderDetails-results.page'
         };
