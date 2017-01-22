@@ -127,8 +127,8 @@ angular.module("labTrackingViewQueueController", [])
             $scope.handleCancelOrder = function () {
                 var order = $scope.selectedOrder;
                 $scope.data_loading = true;
-                LabTrackingDataService.cancelOrder(order.uuid, $scope.orderCancelReason).then(function(res){
-                    if(res.status.code == 200){
+                LabTrackingDataService.cancelOrder(order.uuid).then(function(res){
+                    if(res.status.code < 400){
                         for(var i=0;i<$scope.testOrderQueue.length;++i){
                             if($scope.testOrderQueue[i].uuid == order.uuid){
                                 $scope.testOrderQueue.splice(i, 1);

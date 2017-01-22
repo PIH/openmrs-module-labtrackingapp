@@ -205,9 +205,9 @@ angular.module("encounterFactory", [])
         };
 
         /* aren't they all!! */
-        Encounter.emptyPromise = function(){
+        Encounter.emptyPromise = function(data){
             var deferred = $q.defer();
-            deferred.resolve({status:200});
+            deferred.resolve({status:200, data: data});
             return deferred.promise;
         }
 

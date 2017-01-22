@@ -1,6 +1,6 @@
 angular.module("labTrackingDataService", [])
-    .service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'LabTrackingOrder', 'Encounter',
-        function ($q, $http, SessionInfo, LabTrackingOrder, Encounter) {
+    .service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'Upload', 'LabTrackingOrder', 'Encounter',
+        function ($q, $http, SessionInfo, Upload, LabTrackingOrder, Encounter) {
             var _self = this;
             var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderNumber,instructions,clinicalHistory,encounter,encounter:(obs,location),patient:(uuid,person:(uuid,display),identifiers:(identifier))";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
@@ -11,7 +11,7 @@ angular.module("labTrackingDataService", [])
                 MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
                 URLS: {
                     FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
-                    CANCEL_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/labtrackingapp/labtrackingServices.page?orderUuid=ORDER_UUID&action=cancel&data=REASON",
+                    CANCEL_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID",
                     SAVE_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order",
                     VIEW_CONCEPT_SET: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/concept/CONCEPT_UUID?v=custom:(setMembers:(uuid,display))",
                     VIEW_LOCATIONS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/location?v=custom:(uuid,display)&tag=" + LOCATION_CONSULT_NOTE_UUID,
@@ -280,12 +280,11 @@ angular.module("labTrackingDataService", [])
 
             /* cancels the order
              *  @param {String} orderUuid - the order uuid
-             *  @param {String} reason - the reason
              * @returns none
              * */
-            this.cancelOrder = function (orderUuid, reason) {
-                var url = CONSTANTS.URLS.CANCEL_ORDER.replace("ORDER_UUID", orderUuid).replace("REASON", reason);
-                return $http.get(url).then(function (resp) {
+            this.cancelOrder = function (orderUuid) {
+                var url = CONSTANTS.URLS.CANCEL_ORDER.replace("ORDER_UUID", orderUuid);
+                return $http.delete(url).then(function (resp) {
                     if (_self.isOk(resp)){
                         return {status: {code: resp.status, msg: null}, data: null};
                     }
@@ -322,39 +321,9 @@ angular.module("labTrackingDataService", [])
                         if (_self.isOk(resp)){
                             //need to update the labtracking orders spec id
                             labTrackingOrder.specimenDetailsEncounter.uuid = resp.data.uuid;
-                            var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
-                            //if the providers have changed then remove the old ones and add the new ones
-                            var changed = Encounter.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
-                            if(changed){
-                                var encounterProvidersToDelete = [labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid,
-                                    labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid];
-
-                                return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete ).then(function(){
-                                    return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function(resp2){
-                                        if(resp2.data != null){
-                                            //update the surgeon uuid
-                                            labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid  = resp2.data.uuid;
-                                            msg += "surgeon is " + labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid+ "\n";
-
-                                        }
-                                        return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function(resp3){
-                                            if(resp3.data != null){
-                                                //update the resident uuid
-                                                labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid  = resp3.data.uuid;
-                                                msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
-                                            }
-                                            labTrackingOrder.debug.message = msg;
-                                            //reset this with the updated values
-                                            labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
-
-                                            return {status:200, data:labTrackingOrder};
-                                        });
-                                    });
-                                });
-                            }
-                            else{
-                                return {status:200, data:labTrackingOrder};
-                            }
+                            return _self.handleEncounterProviders(labTrackingOrder).then(function(res){
+                                return _self.uploadResultsPdf(labTrackingOrder);
+                            });
                         }
                         else{
                             return resp;
@@ -364,6 +333,79 @@ angular.module("labTrackingDataService", [])
                 });
             };
 
+            /* handles saving/updating the surgeon and resident encounter providers*/
+            this.handleEncounterProviders = function(labTrackingOrder){
+                var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
+                //if the providers have changed then remove the old ones and add the new ones
+                var changed = false; //Encounter.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
+
+                if(!changed) {
+                    return Encounter.emptyPromise(labTrackingOrder);
+                }
+                else{
+                    var encounterProvidersToDelete = [labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid,
+                        labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid];
+
+                    return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete ).then(function(){
+                        return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function(resp2){
+                            if(resp2.data != null){
+                                //update the surgeon uuid
+                                labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid  = resp2.data.uuid;
+                                msg += "surgeon is " + labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid+ "\n";
+
+                            }
+                            return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function(resp3){
+                                if(resp3.data != null){
+                                    //update the resident uuid
+                                    labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid  = resp3.data.uuid;
+                                    msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
+                                }
+                                labTrackingOrder.debug.message = msg;
+                                //reset this with the updated values
+                                labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
+
+                                return {status:200, data:labTrackingOrder};
+                            });
+                        });
+                    });
+                }
+
+            };
+
+
+            /*  uploads the PDF to the server*/
+            this.uploadResultsPdf= function (labTrackingOrder) {
+
+                if(labTrackingOrder.file.value == null){
+                    return Encounter.emptyPromise(labTrackingOrder);
+                }
+
+                var obs = {
+                    person:labTrackingOrder.patient.value,
+                    obsDatetime: Encounter.toObsDate(new Date()),
+                    concept:LabTrackingOrder.concepts.file.value,
+                    encounter:labTrackingOrder.specimenDetailsEncounter.uuid
+                    //file: file
+                    //value: dataUrl
+                };
+
+                return Upload.upload({
+                    url: CONSTANTS.URLS.UPLOAD_FILE,
+                    data: {json:JSON.stringify(obs), file:labTrackingOrder.file.value},
+                }).then(function (resp) {
+                    //console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+                    labTrackingOrder.file.url = resp.data.value.links.uri;
+                    labTrackingOrder.file.obsUuid = resp.data.uuid;
+
+                    return {status:200 , data:labTrackingOrder};
+                }, function (resp) {
+                    console.log('Error status: ' + resp.status);
+                    return {status:500 , data:resp};
+                }, function (evt) {
+                    //var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                    //console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                });
+            };
 
             /*
              saves an order for a patient

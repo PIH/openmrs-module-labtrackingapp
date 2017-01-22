@@ -1,9 +1,6 @@
 ${ ui.includeFragment("labtrackingapp", "libs") }
 <%
     ui.decorateWith("appui", "standardEmrPage")
-
-    ui.includeJavascript("labtrackingapp", "libs/ng-file-upload-shim.min.js")
-    ui.includeJavascript("labtrackingapp", "libs/ng-file-upload.min.js")
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderDetailsController.js")
     ui.includeJavascript("labtrackingapp", "app_order_details.js")
 %>
@@ -23,7 +20,7 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
     <div class="panel-heading">${ui.message("labtrackingapp.orderdetailstitle")} Patient ABC123</div>
     <div class="panel-body">
       <div class="panel-group">
-      <order-debug-panel order="order"></order-debug-panel>
+        <order-debug-panel order="order" ng-show="debug"></order-debug-panel>
         <order-details-panel order="order"></order-details-panel>
         <order-specimen-panel order="order" locations="locations" providers="providers" procedures="procedures"
             diagnoses="diagnoses" concepts="concepts"></order-specimen-panel>

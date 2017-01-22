@@ -23,14 +23,12 @@
 					<label class="control-label col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
 					<div class="col-sm-9">
 						<select id="surgeon" type="text" ng-model="order.surgeon"  ng-options="a as a.label for a in providers | orderBy:'label' track by a.value" class="form-control"></select>
-						order.surgeon={{order.surgeon | json}}
 					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="resident">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
 					<div class="col-sm-9">
 						<select id="resident" type="text" ng-model="order.resident"  ng-options="a as a.label for a in providers | orderBy:'label' track by a.value"  class="form-control"></select>
-						order.resident={{order.resident | json}}
 					</div>
 				</div>
 				<div class="form-group">

@@ -125,11 +125,10 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
          </div>
          <div class="modal-body">
            <p>${ui.message("labtrackingapp.listpage.ordercancelreasonprompt")}</p>
-           <textarea ng-model="orderCancelReason" class="form-control"></textarea>
          </div>
          <div class="modal-footer">
-           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="handleCancelOrder()" ng-disabled="orderCancelReason==null || orderCancelReason.length==0">${ui.message("uicommons.save")}</button>
-           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dismissCancelOrder()">${ui.message("uicommons.cancel")}</button>
+           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="handleCancelOrder()">${ui.message("uicommons.yes")}</button>
+           <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dismissCancelOrder()">${ui.message("uicommons.no")}</button>
          </div>
        </div>
 

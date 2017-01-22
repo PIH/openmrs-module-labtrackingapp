@@ -48,7 +48,7 @@ angular.module("labTrackingOrderFactory", [])
             this.sampleDate = {value: null};
             this.resultDate = {value: null, obsUuid: null};
             this.notes = {value: null};
-            this.file = {valueBase64:null, url:null, obsUuid:null};
+            this.file = {value:null, url:null, obsUuid:null};
             this.debug = {};
         }
 
@@ -74,6 +74,7 @@ angular.module("labTrackingOrderFactory", [])
             notes:{value:'65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             resultDate:{value:'68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
             file:{value:'1124baab-6fb8-4f5d-a131-0ee09cccc87d'},
+            fileImg:{value:'424844fd-f78d-4e62-8d11-2f27dd863e94'},
             statusCodes: [{label:'All', value:'-1'},{label:'Requested', value:'1'},{label:'Sampled', value:'2'},{label:'With Results', value:'3'}]
         };
 
@@ -228,7 +229,7 @@ angular.module("labTrackingOrderFactory", [])
                             labTrackingOrder.resultDate.obsUuid = uuid;
                         }
                         else if(conceptUuid == LabTrackingOrder.concepts.file.value) {
-                                labTrackingOrder.file.url = v;
+                                labTrackingOrder.file.url = v.links.uri;
                                 labTrackingOrder.file.obsUuid = uuid;
                         }else{
 
@@ -251,13 +252,13 @@ angular.module("labTrackingOrderFactory", [])
 
                 }
 
-                var msg = "there are " + webServiceResult.encounterProviders.length + " providers, there ids are:\n";
+                //var msg = "there are " + webServiceResult.encounterProviders.length + " providers, there ids are:\n";
                 for(var i = 0;i<webServiceResult.encounterProviders.length;++i){
                     var p = webServiceResult.encounterProviders[i];
                     if(p.provider != null && p.provider.person != null){
                         var nm = p.provider.person.display;
                         var uuid = p.provider.uuid;
-                        msg += p.uuid + " " + nm  + " role="  + p.encounterRole.uuid + "\n";
+                       // msg += p.uuid + " " + nm  + " role="  + p.encounterRole.uuid + "\n";
                         if(p.encounterRole.uuid == LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE){
                             labTrackingOrder.surgeon.label = nm;
                             labTrackingOrder.surgeon.value = uuid;
@@ -274,11 +275,11 @@ angular.module("labTrackingOrderFactory", [])
                 //keep tracking of the original surgeon/resident, so that we can tell if they have changed
                 labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
 
-                msg += "surgeon is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE + "\n";
-                msg += "redident is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE + "\n";
+               // msg += "surgeon is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE + "\n";
+               // msg += "redident is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE + "\n";
 
 
-                labTrackingOrder.debug.message = msg;
+                //labTrackingOrder.debug.message = msg;
 
                 console.log(labTrackingOrder.debug.message);
             }
@@ -414,6 +415,11 @@ angular.module("labTrackingOrderFactory", [])
             if(labTrackingOrder.file.valueBase64 != null){
                 obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.file.value,
                     labTrackingOrder.file.valueBase64, labTrackingOrder.file.obsUuid));
+                if(labTrackingOrder.file.obsUuid != null){
+                    //b/c of a bug in the web services, you cannot update a complex obs
+                    //so just delete the existing id
+                    //obsIdsToDelete.push(labTrackingOrder.file.obsUuid);
+                }
             }
 
 

@@ -4,6 +4,7 @@
 angular.module('labTrackingApp', [
     'ngAnimate', 'ngSanitize', 'ui.bootstrap', //used for the auto-complete widget
     'session',
+    'ngFileUpload', //used for the file uploads
     'labTrackingDataService',
     'encounterFactory',
     'labTrackingOrderFactory',

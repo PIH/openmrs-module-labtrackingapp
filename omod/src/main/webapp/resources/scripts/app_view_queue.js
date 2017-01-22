@@ -5,6 +5,7 @@ angular.module('labTrackingApp', [
     'ngDialog',
     'ngAnimate', 'ngSanitize', 'ui.bootstrap',
     'uicommons.filters',
+    'ngFileUpload', //used for the file uploads
     'session',
     'labTrackingDataService',
     'encounterFactory',
