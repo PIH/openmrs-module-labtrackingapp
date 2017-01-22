@@ -16,7 +16,7 @@
 				<div class="form-group">
 					<label class="control-label form-control-static col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
 					<div class="col-sm-9">
-						<input type="text" ng-model="order.locationWhereSpecimenCollected"  uib-typeahead="loc as loc.label for loc in locations| filter:{label:${'$viewValue'}} | limitTo:8" class="form-control" typeahead-editable="false" />
+					    <select id="surgeon" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
 					</div>
 				</div>
 				<div class="form-group">
@@ -63,9 +63,8 @@
 				<div class="form-group">
 					<label class="control-label col-sm-3"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
 					<div class="col-sm-9">
-						<select class="form-control" id="postopdiagnosis"
-                    ng-options="item as item.label for item in diagnoses | orderBy:'label' track by item.value "
-                    ng-model="order.postopDiagnosis.diagnosis"></select>
+                    <input type="text" ng-model="order.postopDiagnosis.diagnosis"  class="form-control"
+                        uib-typeahead="item as item.label for item in diagnoses | filter:{label:${'$viewValue'}} | limitTo:8" typeahead-editable="false" />
 					</div>
 				</div>
 				<div class="form-group">

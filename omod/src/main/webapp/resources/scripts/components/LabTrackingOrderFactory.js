@@ -73,8 +73,7 @@ angular.module("labTrackingOrderFactory", [])
                 {value:'873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'}],
             notes:{value:'65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             resultDate:{value:'68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
-            file:{value:'1124baab-6fb8-4f5d-a131-0ee09cccc87d'},
-            fileImg:{value:'424844fd-f78d-4e62-8d11-2f27dd863e94'},
+            file:{value:'4cad2286-f66e-44c3-ba17-9665b569c13d'},
             statusCodes: [{label:'All', value:'-1'},{label:'Requested', value:'1'},{label:'Sampled', value:'2'},{label:'With Results', value:'3'}]
         };
 

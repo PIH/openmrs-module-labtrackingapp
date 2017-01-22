@@ -27,6 +27,9 @@
 						<select class="form-control" id="site" ng-required="true"
                   ng-options="item as item.label for item in diagnoses | orderBy:'label' track by item.value"
                   ng-model="order.preLabDiagnosis"></select>
+                    <input type="text" ng-model="order.preLabDiagnosis"  class="form-control"
+                        uib-typeahead="item as item.label for item in diagnoses | filter:{label:${'$viewValue'}} | limitTo:8" typeahead-editable="false" />
+
 					</div>
 				</div>
 				<div class="form-group row">
