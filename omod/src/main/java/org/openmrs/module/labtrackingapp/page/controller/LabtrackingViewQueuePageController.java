@@ -13,6 +13,7 @@ public class LabtrackingViewQueuePageController {
 	        @RequestParam(value = "dashboardUrl", required = false) String dashboardUrl,
 	        @RequestParam(value = "search", required = false) String search,
 	        @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
+			@RequestParam(value="patientId", required=false) Patient patient,
 	        UiSessionContext uiSessionContext) {
 		
 		model.addAttribute("appId", app != null ? app.getId() : null);
@@ -21,8 +22,8 @@ public class LabtrackingViewQueuePageController {
 		model.addAttribute("breadcrumbOverride", breadcrumbOverride);
 		model.addAttribute("locale", uiSessionContext.getLocale());
 		model.addAttribute("location", uiSessionContext.getSessionLocation());
-		model.addAttribute("currentDateTimeInMillis", System.currentTimeMillis());
-		
+		model.addAttribute("patient", patient);
+
 		return null;
 		
 	}

@@ -2,6 +2,7 @@ angular.module("labTrackingPrintController", [])
     .controller("printController", ['$scope', '$window', '$timeout','LabTrackingOrder', 'LabTrackingDataService', 'orderUuid',
         function ($scope, $window, $timeout, LabTrackingOrder, LabTrackingDataService, orderUuid) {
             $scope.order = null;
+            $scope.concepts = LabTrackingOrder.concepts;
             $scope.loadOrder = function (orderUuid) {
                 return LabTrackingDataService.loadOrder(orderUuid).then(function (resp) {
                     if (resp.status.code == 200) {

@@ -16,6 +16,8 @@
     ];
 </script>
 
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
+
 <div class="container" ng-app="labTrackingApp" ng-controller="addOrderController">
 	<div class="panel panel-primary" id="order_box">
 		<div class="panel-heading">${ui.message("labtrackingapp.addorderpagetitle")}</div>
@@ -24,9 +26,6 @@
 				<div class="form-group row">
 					<label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
 					<div class="col-sm-10">
-						<select class="form-control" id="site" ng-required="true"
-                  ng-options="item as item.label for item in diagnoses | orderBy:'label' track by item.value"
-                  ng-model="order.preLabDiagnosis"></select>
                     <input type="text" ng-model="order.preLabDiagnosis"  class="form-control"
                         uib-typeahead="item as item.label for item in diagnoses | filter:{label:${'$viewValue'}} | limitTo:8" typeahead-editable="false" />
 
@@ -67,7 +66,7 @@
 					</div>
 				</div>
 				<div class="pull-right">
-					<button id="cancelB" class="btn btn-default cancel">${ui.message("uicommons.cancel")}</button>
+					<button id="cancelB" type="button" class="btn btn-default cancel" ng-click="handleCancelOrder()">${ui.message("uicommons.cancel")}</button>
 					<button class="btn btn-success" ng-click="handleSaveOrder()" ng-disabled="addOrderForm.${'$'}invalid" >${ui.message("uicommons.save")}</button>
 				</div>
 			</form>

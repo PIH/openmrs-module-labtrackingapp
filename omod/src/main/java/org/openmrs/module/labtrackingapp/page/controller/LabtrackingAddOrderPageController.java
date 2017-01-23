@@ -1,5 +1,6 @@
 package org.openmrs.module.labtrackingapp.page.controller;
 
+import org.openmrs.Patient;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.ui.framework.page.PageModel;
@@ -11,6 +12,7 @@ public class LabtrackingAddOrderPageController {
 	        @RequestParam(value = "dashboardUrl", required = false) String dashboardUrl,
 	        @RequestParam(value = "search", required = false) String search,
 	        @RequestParam(value = "breadcrumbOverride", required = false) String breadcrumbOverride,
+			@RequestParam(value="patientId") Patient patient,
 	        UiSessionContext uiSessionContext) {
 		
 		model.addAttribute("appId", app != null ? app.getId() : null);
@@ -19,8 +21,9 @@ public class LabtrackingAddOrderPageController {
 		model.addAttribute("breadcrumbOverride", breadcrumbOverride);
 		model.addAttribute("locale", uiSessionContext.getLocale());
 		model.addAttribute("location", uiSessionContext.getSessionLocation());
-		model.addAttribute("currentDateTimeInMillis", System.currentTimeMillis());
-		
+		model.addAttribute("patient", patient);
+		//model.addAttribute("currentDateTimeInMillis", System.currentTimeMillis());
+
 		return null;
 		
 	}

@@ -1,12 +1,13 @@
 angular.module("labTrackingViewQueueController", [])
-    .controller("viewQueueController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService',
-        function ($scope, $window, LabTrackingOrder, LabTrackingDataService) {
+    .controller("viewQueueController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService','patientUuid',
+        function ($scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid) {
             $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
             $scope.data_loading = true;
             $scope.selectedOrder = null;
             $scope.orderCancelReason = null;
             $scope.testOrderQueue = []; // hold the model
             $scope.errorMessage = null; // displays an error on the page if not null
+            $scope.patientUuid = (patientUuid == null || patientUuid == 'null')?null:patientUuid;
             var fromDate = new Date();
             fromDate.setDate(fromDate.getDate()-LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
             $scope.filter = {
@@ -68,10 +69,9 @@ angular.module("labTrackingViewQueueController", [])
                 var endDate = $scope.filter.to_date.value;
                 endDate.setHours(23,59,59,999);
                 var status = $scope.filter.status.value;
-                var patientUuid = "";
-                var patientName = $scope.filter.search;
+                var patientName = $scope.filter.patient.name;
 
-                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status, patientUuid, patientName).then(function (resp) {
+                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status,  $scope.patientUuid, patientName).then(function (resp) {
                     if (resp.status.code == 200) {
                         var cnt = resp.data.totalCount;
                         return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function(resp2){
@@ -96,7 +96,7 @@ angular.module("labTrackingViewQueueController", [])
              */
             $scope.handleDetails = function (order) {
                 console.log(order);
-                $window.location.href = 'labtrackingOrderDetails.page?orderUuid=' + order.uuid;
+                $window.location.href = 'labtrackingOrderDetails.page?orderUuid=' + order.uuid + "&patientId=" + order.patient.value;
             };
 
             /*
@@ -106,7 +106,7 @@ angular.module("labTrackingViewQueueController", [])
              */
             $scope.handlePrint = function (order) {
                 console.log(order);
-                var url = 'labtrackingOrderPrint.page?orderUuid=' + order.uuid;
+                var url = 'labtrackingOrderPrint.page?orderUuid=' + order.uuid +  "&patientId=" + order.patient.value;
                 $window.open(url, '_blank');
             };
 

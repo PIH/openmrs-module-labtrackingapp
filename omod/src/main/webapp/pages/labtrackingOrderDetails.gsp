@@ -9,16 +9,17 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
-            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=labtrackingapp.app.viewQueue") }"
-        }
-
+            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue") }"
+        },
+        {label: "${ ui.message("labtrackingapp.orderdetails.title") }", link: ""}
     ];
 </script>
 
+${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
+
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
-  <div class="panel panel-primary" id="details_box">
-    <div class="panel-heading">${ui.message("labtrackingapp.orderdetailstitle")} Patient ABC123</div>
-    <div class="panel-body">
+
+
       <div class="panel-group">
         <order-debug-panel order="order" ng-show="debug"></order-debug-panel>
         <order-details-panel order="order"></order-details-panel>
@@ -27,8 +28,8 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
         <order-results-panel order="order"></order-results-panel>
 
       </div>
-    </div>
-  </div>
+
+  
     <div class="row" >
         <div class="col-sm-12 text-right">
             <button type="button" class="btn btn-primary" ng-click="cancelSpecimenDetails()">${ui.message("uicommons.cancel")}</button>
@@ -51,6 +52,8 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
     angular.module('labTrackingApp')
             .value('patientDashboard', '')
             .value('orderUuid', '${ orderUuid }')
+			.value('patientUuid', '${ patient.uuid }')
+			.value('locationUuid', '${ location.uuid }')
             .value('translations', translations);
 
     jq(function () {

@@ -9,11 +9,22 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
-            label: "${ ui.message("labtrackingapp.test") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=edtriageapp.app.triageQueue") }"
+            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?patientId=patient?.uuid") }"
         }
 
     ];
 </script>
+
+${
+
+if(patient){
+    ui.includeFragment("coreapps", "patientHeader", [ patient: patient ])
+}
+else{
+  ''    
+}
+
+}
 
 <div class="container" ng-app="labTrackingApp" ng-controller="viewQueueController">
    <div class="panel panel-primary" id="monitor_box">
@@ -49,7 +60,7 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
                </div>
             </div>
          </div>
-         <div class="row top-buffer">
+         <div class="row top-buffer" ng-show="patientUuid==null">
             <div class="col-md-3">${ui.message("labtrackingapp.listpage.search")}</div>
             <div class="col-md-9">
                <div class='input-group date' id='search'>
@@ -64,8 +75,8 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
             <table id="example" class="table display" cellspacing="0" width="100%">
                <thead>
                   <tr>
-                     <th>${ui.message("labtrackingapp.listpage.patient")}</th>
-                     <th>${ui.message("labtrackingapp.listpage.name")}</th>
+                     <th ng-show="patientUuid==null">${ui.message("labtrackingapp.listpage.patient")}</th>
+                     <th ng-show="patientUuid==null">${ui.message("labtrackingapp.listpage.name")}</th>
                      <th>${ui.message("labtrackingapp.listpage.status")}</th>
                      <th>${ui.message("labtrackingapp.listpage.requestdate")}</th>
                      <th>${ui.message("labtrackingapp.listpage.sampledate")}</th>
@@ -75,8 +86,8 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
                </thead>
                <tbody  ng-if="!data_loading">
                   <tr ng-repeat="a in testOrderQueue | testOrderFilter:filter | orderBy:a.requestDate.value" >
-                     <td>{{a.patient.id}}</td>
-                     <td>{{a.patient.name}}</td>
+                     <td ng-show="patientUuid==null">{{a.patient.id}}</td>
+                     <td ng-show="patientUuid==null">{{a.patient.name}}</td>
                      <td>{{a.status.display}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
                      <td><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span> {{a.sampleDate.value | date : 'shortDate'}}</td>
@@ -142,9 +153,8 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
 
 <script type="text/javascript">
     angular.module('labTrackingApp')
-            .value('patientDashboard', '')
-            .value('serverDateTimeInMillis', '')
-            .value('locationUuid', '')
+			.value('patientUuid', '${ patient?.uuid }')
+			.value('locationUuid', '${ location.uuid }')
             .value('translations', translations);
 
     jq(function () {

@@ -28,6 +28,10 @@ angular.module("labTrackingDataService", [])
                 }
             };
 
+            this.getQueuePageUrl = function(patientUuid){
+                return "labtrackingViewQueue.page?patientId=" + patientUuid!=null?patientUuid:"";
+            }
+
             /*
              loads the Providers in the system, so that we can show them in the list with the correct
              id/display valies
