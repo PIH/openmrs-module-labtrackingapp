@@ -88,9 +88,8 @@
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
         <div class="col-sm-9">
             <div class="form-group" ng-repeat="a in concepts.specimenDetails">
-                <label class="control-label col-sm-1">{{${'$'}index+1 }}.</label>
-                <div class="col-sm-11">
-                    <p class="form-control-static" >{{order.specimenDetails[${'$'}index].value}}</p>
+                <div class="col-sm-12">
+                    <p class="form-control-static" >{{${'$'}index+1 }}. {{order.specimenDetails[${'$'}index].value}}</p>
                 </div>
             </div>
         </div>
