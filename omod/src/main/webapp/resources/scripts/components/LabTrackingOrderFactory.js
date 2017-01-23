@@ -446,7 +446,7 @@ angular.module("labTrackingOrderFactory", [])
             //             uuid: labTrackingOrder.specimenDetails.residentEncounterProviderUuid
             //         })
             //     }
-            //}
+            // }
 
             return {encounter: encounter, obsIdsToDelete:obsIdsToDelete};
         };

@@ -341,7 +341,7 @@ angular.module("labTrackingDataService", [])
             this.handleEncounterProviders = function(labTrackingOrder){
                 var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
                 //if the providers have changed then remove the old ones and add the new ones
-                var changed = false; //Encounter.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
+                var changed = Encounter.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
 
                 if(!changed) {
                     return Encounter.emptyPromise(labTrackingOrder);
@@ -355,16 +355,16 @@ angular.module("labTrackingDataService", [])
                             if(resp2.data != null){
                                 //update the surgeon uuid
                                 labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid  = resp2.data.uuid;
-                                msg += "surgeon is " + labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid+ "\n";
+                                //msg += "surgeon is " + labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid+ "\n";
 
                             }
                             return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function(resp3){
                                 if(resp3.data != null){
                                     //update the resident uuid
                                     labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid  = resp3.data.uuid;
-                                    msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
+                                  //  msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
                                 }
-                                labTrackingOrder.debug.message = msg;
+                                //labTrackingOrder.debug.message = msg;
                                 //reset this with the updated values
                                 labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
 
