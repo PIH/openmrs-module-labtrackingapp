@@ -15,7 +15,7 @@
         </div>
     </div>
     <div class="row">
-        <label class="control-label form-control-static text-right col-sm-3">Patient Information:</label>
+        <label class="control-label form-control-static text-right col-sm-3">${ui.message("uicommons.patient")}</label>
         <div class="col-sm-9">
             <p class="form-control-static">
                 {{order.patient.name}} <br/>
@@ -56,7 +56,7 @@
         </div>
     </div>
     <div class="row">
-        <label class="control-label form-control-static text-right col-sm-3">Date Of procedure</label>
+        <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static">{{order.sampleDate.value | date : 'shortDate'}}</p>
         </div>
@@ -110,7 +110,7 @@
     <div class="row">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
         <div class="col-sm-9">
-            <p class="form-control-static" >{{order.urgentReview.value == "3cd6f600-26fe-102b-80cb-0017a47871b2"?"${ui.message("uicommons.yes")}":"${ui.message("uicommons.yes")}"}}</p>
+            <p class="form-control-static" >{{order.urgentReview.value == "3cd6f600-26fe-102b-80cb-0017a47871b2"?"${ui.message("uicommons.yes")}":"${ui.message("uicommons.no")}"}}</p>
         </div>
     </div>
 
