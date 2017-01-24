@@ -15,7 +15,7 @@ angular.module("labTrackingAddOrderController", [])
                 $scope.savingModal = showSavingModal();
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
                     if (LabTrackingDataService.isOk(res)) {
-                        $window.location.href = 'labtrackingViewQueue.page?patientId=' + patientUuid;
+                        $window.location.href = LabTrackingDataService.getQueuePageUrl(patientUuid);
                     }
                     else if (res !== undefined && res.status !== undefined) {
                         $scope.error = res.data.error.message;
@@ -39,7 +39,7 @@ angular.module("labTrackingAddOrderController", [])
             /* cancels adding a test order*/
             $scope.handleCancelOrder = function () {
                 $window.history.go(-1);
-            }
+            };
 
 
             /*
@@ -55,7 +55,7 @@ angular.module("labTrackingAddOrderController", [])
                 });
 
 
-            };
+            }
 
             /*
              loads the system care settings

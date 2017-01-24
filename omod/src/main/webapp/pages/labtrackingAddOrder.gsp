@@ -94,14 +94,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 	<pre ng-if="error">{{order | json }}</pre>
 </div>
 
-${ ui.includeFragment("labtrackingapp", "translations") }
-
-
 <script type="text/javascript">
     angular.module('labTrackingApp')
 			.value('patientUuid', '${ patient.uuid }')
-			.value('locationUuid', '${ location.uuid }')
-            .value('translations', translations);
+			.value('locationUuid', '${ location.uuid }');
 
     jq(function () {
         // make sure we reload the page if the location is changes; this custom event is emitted by by the location selector in the header

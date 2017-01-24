@@ -1,8 +1,8 @@
 angular.module("labTrackingOrderDetailsController", [])
     .controller("orderDetailsController", ['$scope', '$window', '$http', '$uibModal', 'Upload',
-        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid',
+        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'returnUrl',
         function ($scope, $window, $http, $uibModal, Upload,
-                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid) {
+                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid,returnUrl) {
             // used to determine if we should disable things
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder();
@@ -37,7 +37,8 @@ angular.module("labTrackingOrderDetailsController", [])
 
                     }
                     $scope.savingModal.dismiss('cancel');
-                    return resp;
+                    $window.location.href = returnUrl;
+                    //return resp;
                 });
             };
 
@@ -57,12 +58,57 @@ angular.module("labTrackingOrderDetailsController", [])
             };
 
 
+
+            $scope.returnToList = function(){
+                $window.location.href = returnUrl;
+            };
+
+
+            /* prints the order*/
+            $scope.printOrder = function(){
+                $window.open(LabTrackingDataService.getPrintPageUrl($scope.order.uuid, $scope.order.patient.value), '_blank');
+            };
+
+
             /*
              cancels the speciment details page and goes to the monitor page
              * */
             $scope.cancelSpecimenDetails = function () {
-                $window.location.href = 'labtrackingViewQueue.page';
+                $window.location.href = returnUrl;
             };
+
+            /*
+             shows the cancel dialog
+             @param order - the order to view the details for
+             @return none
+             */
+            $scope.showCancelOrder = function (order) {
+                //nothing to do
+            };
+
+            /*
+             handles canceling an order
+             @param order - the order to view the details for
+             @return none
+             */
+            $scope.handleCancelOrder = function () {
+                var order = $scope.order;
+
+                LabTrackingDataService.cancelOrder(order.uuid).then(function(res){
+                    if(res.status.code < 400){
+                        $scope.returnToList();
+                    }
+                    else{
+                        alert("There was some sort of error");
+                    }
+                })
+            };
+
+            /* dismisses the cancel dialog*/
+            $scope.dismissCancelOrder = function(){
+                //nothing to do
+            };
+
 
             return $scope.loadOrder(orderUuid).then(function (resp) {
                 return LabTrackingDataService.loadProviders().then(function (resp2) {

@@ -28,8 +28,35 @@ angular.module("labTrackingDataService", [])
                 }
             };
 
+
+            /* gets the print page
+             * @param  orderUuid - the order
+             * @param  patientUuid - the patient
+             * @return String the url
+             * */
+            this.getPrintPageUrl = function(orderUuid, patientUuid){
+                 return 'labtrackingOrderPrint.page?orderUuid=' + orderUuid +  "&patientId=" + patientUuid;
+            };
+
+            /* gets the view queue page
+            * @param {optional} patientUuid - the patient to show the queue for
+            * @param {optional} returnUrl - the URL to return to, if coming from the visit page
+            * @return String the url
+            * */
             this.getQueuePageUrl = function(patientUuid){
-                return "labtrackingViewQueue.page?patientId=" + patientUuid!=null?patientUuid:"";
+                var queryString = "";
+                if(patientUuid != null){
+                    queryString += "patientId=" + patientUuid;
+                }
+
+                // if(returnUrl != null){
+                //     if(url.length > 0){
+                //         url += "&";
+                //     }
+                //     url += "returnUrl=" + returnUrl;
+                // }
+
+                return "labtrackingViewQueue.page?" + queryString;
             }
 
             /*

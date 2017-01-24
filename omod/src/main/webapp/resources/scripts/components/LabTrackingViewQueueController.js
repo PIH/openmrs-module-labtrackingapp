@@ -95,8 +95,11 @@ angular.module("labTrackingViewQueueController", [])
              @return none, navigates to the order details page
              */
             $scope.handleDetails = function (order) {
-                console.log(order);
-                $window.location.href = 'labtrackingOrderDetails.page?orderUuid=' + order.uuid + "&patientId=" + order.patient.value;
+                var url = "labtrackingOrderDetails.page?";
+                url += "patientId=" + order.patient.value;
+                url += "&orderUuid=" + order.uuid;
+                url += "&returnUrl=" + encodeURI(LabTrackingDataService.getQueuePageUrl(patientUuid));
+                $window.location.href = url;
             };
 
             /*
@@ -105,9 +108,7 @@ angular.module("labTrackingViewQueueController", [])
              @return none, navigates to the order print page
              */
             $scope.handlePrint = function (order) {
-                console.log(order);
-                var url = 'labtrackingOrderPrint.page?orderUuid=' + order.uuid +  "&patientId=" + order.patient.value;
-                $window.open(url, '_blank');
+                $window.open(LabTrackingDataService.getPrintPageUrl(order.uuid, order.patient.value), '_blank');
             };
 
             /*

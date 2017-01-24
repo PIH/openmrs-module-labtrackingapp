@@ -32,8 +32,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
   
     <div class="row" >
         <div class="col-sm-12 text-right">
-            <button type="button" class="btn btn-primary" ng-click="cancelSpecimenDetails()">${ui.message("uicommons.cancel")}</button>
-            <button type="button" class="btn btn-default" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
+            <button type="button" class="btn btn-default" ng-click="returnToList()">${ui.message("labtrackingapp.returnToListPage")}</button>
+            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>
+            <button type="button" class="btn btn-default" ng-click="printOrder()">${ui.message("uicommons.print")}</button>
+            <button type="button" class="btn btn-primary" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
         </div>
     </div>
     <script type="text/ng-template" id="saveSpecimenDetails.html">
@@ -44,13 +46,35 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <img class="center-block"  src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" />
         </div>
     </script>
+
+      <div id="cancelOrderDialog" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Order #{{order.orderNumber.value}} - {{order.patient.name}}</h4>
+            </div>
+            <div class="modal-body">
+              <p>${ui.message("labtrackingapp.listpage.ordercancelreasonprompt")}</p>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="handleCancelOrder()">${ui.message("uicommons.yes")}</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="dismissCancelOrder()">${ui.message("uicommons.no")}</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
 </div>
 
 ${ ui.includeFragment("labtrackingapp", "translations") }
 
 <script type="text/javascript">
     angular.module('labTrackingApp')
-            .value('patientDashboard', '')
+            .value('returnUrl', '${ returnUrl }')
             .value('orderUuid', '${ orderUuid }')
 			.value('patientUuid', '${ patient.uuid }')
 			.value('locationUuid', '${ location.uuid }')

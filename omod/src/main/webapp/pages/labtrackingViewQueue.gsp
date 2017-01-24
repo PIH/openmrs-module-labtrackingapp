@@ -155,6 +155,7 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
     angular.module('labTrackingApp')
 			.value('patientUuid', '${ patient?.uuid }')
 			.value('locationUuid', '${ location.uuid }')
+			.value('returnUrl', '${ returnUrl }')
             .value('translations', translations);
 
     jq(function () {
