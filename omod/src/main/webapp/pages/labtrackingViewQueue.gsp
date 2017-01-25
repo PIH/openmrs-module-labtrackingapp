@@ -86,7 +86,7 @@ else{
                      <td>{{a.status.label}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
                      <td><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span> {{a.sampleDate.value | date : 'shortDate'}}</td>
-                     <td>{{a.resultDate.value | date : 'shortDate'}}</td>
+                     <td><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i> </span>{{a.resultDate.value | date : 'shortDate'}}</td>
                      <td>
                         <button class="btn btn-sm btn-primary" ng-click="handleDetails(a)">${ui.message("labtrackingapp.listpage.details")}</button>
                         <button class="btn btn-sm" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>

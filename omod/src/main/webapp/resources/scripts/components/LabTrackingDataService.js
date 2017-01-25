@@ -408,6 +408,21 @@ angular.module("labTrackingDataService", [])
 
             };
 
+            /*handles downloading the PDF, see http://stackoverflow.com/questions/283956/is-there-any-way-to-specify-a-suggested-filename-when-using-data-uri/6943481#6943481
+             * for details about how/why it id done like this*/
+            this.downloadPdf = function (labTrackingOrder) {
+                return $http.get(labTrackingOrder.file.url, {responseType: 'arraybuffer'})
+                    .success(function (data) {
+                        var blob = new Blob([data], {type: 'application/pdf'});
+                        var fileURL = URL.createObjectURL(blob);
+                        var downloadLink = angular.element('<a></a>');
+                        downloadLink.attr('target', "_blank");
+                        downloadLink.attr('href', window.URL.createObjectURL(blob));
+                        downloadLink.attr('download', 'results.pdf');
+                        downloadLink[0].click();
+                    });
+            };
+
             /*  deletes the PDF to the server*/
             this.deleteResultsPdf= function (labTrackingOrder) {
 

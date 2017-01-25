@@ -88,6 +88,10 @@ angular.module("labTrackingViewQueueController", [])
                 });
             };
 
+            /*download the pdf*/
+            $scope.downloadPdf = function (order) {
+                LabTrackingDataService.downloadPdf(order);
+            };
 
             /*
              handles looking up the order details
