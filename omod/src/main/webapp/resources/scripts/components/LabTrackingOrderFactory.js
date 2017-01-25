@@ -158,9 +158,6 @@ angular.module("labTrackingOrderFactory", [])
             //default this to the order values ---------------------------
             order.locationWhereSpecimenCollected = order.location;
             order.proceduresForSpecimen = [];
-            // for(var i=0;i < order.procedures.length;++i){
-            //     order.proceduresForSpecimen.push({value: order.procedures[i].value, label: order.procedures[i].label, obsUuid: null});
-            // }
             order.procedureNonCodedForSpecimen.value = order.procedureNonCoded.value;
             order.postopDiagnosis.diagnosis.value = order.preLabDiagnosis.value;
             order.postopDiagnosis.diagnosis.label = order.preLabDiagnosis.label;

@@ -219,6 +219,14 @@ angular.module("labTrackingDataService", [])
                         if (resp.data.results != null && resp.data.results.length > 0 && resp.data.results[0] != null) {
                             LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject(resp.data.results[0], labTrackingOrder);
                         }
+                        else{
+                            if(labTrackingOrder.procedures.length > 0){
+                                for(var i=0;i < labTrackingOrder.procedures.length;++i){
+                                    labTrackingOrder.proceduresForSpecimen.push({value: labTrackingOrder.procedures[i].value, label: labTrackingOrder.procedures[i].label, obsUuid: null});
+                                }
+
+                            }
+                        }
                         return {status: {code: resp.status, msg: null}, data: labTrackingOrder};
                     }
                     else {

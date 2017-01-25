@@ -69,7 +69,6 @@
                    </div>
                 </div>
 
-
 				<div class="form-group">
 					<label for="procedurenoncodedforspecimen" class="control-label col-sm-3">${ui.message("labtrackingapp.procedureNonCoded")}</label>
 					<div class="col-sm-9">
