@@ -43,7 +43,7 @@
                    <label for="procedure" class="control-label col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                    <div class="col-sm-4">
                       <div class="panel panel-default">
-                         <div class="panel-heading">Available</div>
+                         <div class="panel-heading">${ui.message("labtrackingapp.proceduresAvailable")}</div>
                          <div class="panel-body">
                             <select id="procedure" class="form-control" multiple
                                ng-options="item as item.label for item in procedures | orderBy:'label' track by item.value "
@@ -59,7 +59,7 @@
                    </div>
                    <div class="col-sm-4">
                       <div class="panel panel-default">
-                         <div class="panel-heading">Selected</div>
+                         <div class="panel-heading">${ui.message("labtrackingapp.proceduresSelected")}</div>
                          <div class="panel-body">
                               <select id="procedure" class="form-control" multiple
                                  ng-options="item as item.label for item in order.proceduresForSpecimen | orderBy:'label' track by item.value "

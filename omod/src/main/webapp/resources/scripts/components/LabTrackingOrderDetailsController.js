@@ -2,7 +2,7 @@ angular.module("labTrackingOrderDetailsController", [])
     .controller("orderDetailsController", ['$scope', '$window', '$http', '$uibModal', 'Upload',
         'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'returnUrl',
         function ($scope, $window, $http, $uibModal, Upload,
-                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid,returnUrl) {
+                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid, returnUrl) {
             // used to determine if we should disable things
             $scope.data_loading = true;
             $scope.concepts = LabTrackingOrder.concepts;
@@ -37,7 +37,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         alert("Failed to save the specimen details");
 
                     }
-                    $scope.savingModal.dismiss('cancel');
+                    //$scope.savingModal.dismiss('cancel'); //don't need to dismiss, b/c we are just goint to the list page
                     $window.location.href = returnUrl;
                     //return resp;
                 });
@@ -58,15 +58,14 @@ angular.module("labTrackingOrderDetailsController", [])
 
             };
 
-
-
-            $scope.returnToList = function(){
+            /* returns to the list page */
+            $scope.returnToList = function () {
                 $window.location.href = returnUrl;
             };
 
 
             /* prints the order*/
-            $scope.printOrder = function(){
+            $scope.printOrder = function () {
                 $window.open(LabTrackingDataService.getPrintPageUrl($scope.order.uuid, $scope.order.patient.value), '_blank');
             };
 
@@ -95,18 +94,18 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.handleCancelOrder = function () {
                 var order = $scope.order;
 
-                LabTrackingDataService.cancelOrder(order.uuid).then(function(res){
-                    if(res.status.code < 400){
+                LabTrackingDataService.cancelOrder(order.uuid).then(function (res) {
+                    if (res.status.code < 400) {
                         $scope.returnToList();
                     }
-                    else{
+                    else {
                         alert("There was some sort of error");
                     }
                 })
             };
 
             /* dismisses the cancel dialog*/
-            $scope.dismissCancelOrder = function(){
+            $scope.dismissCancelOrder = function () {
                 //nothing to do
             };
 
@@ -158,15 +157,15 @@ angular.module("labTrackingOrderDetailsController", [])
                 diagnoses: '=',
                 concepts: '=',
             },
-            controller: function ($scope){
+            controller: function ($scope) {
                 $scope.selectedProcedures = $scope.order.proceduresForSpecimen; //the list of procedures available, used to manage the UI state
                 $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
 
                 /* init procedures */
-                $scope.initProcedures = function(){
-                    for(var i=0;i<$scope.selectedProcedures.length;++i){
-                        for(var j=0;j<$scope.procedures.length;++j){
-                            if($scope.procedures[j].value == $scope.selectedProcedures[i].value){
+                $scope.initProcedures = function () {
+                    for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
+                        for (var j = 0; j < $scope.procedures.length; ++j) {
+                            if ($scope.procedures[j].value == $scope.selectedProcedures[i].value) {
                                 $scope.procedures.splice(j, 1);
                                 break;
                             }
@@ -174,15 +173,15 @@ angular.module("labTrackingOrderDetailsController", [])
                     }
                 };
                 /* adds a procedures to the list*/
-                $scope.addProcedure = function(){
-                    for(var i=0;i<$scope.selectedProcedures.length;++i){
-                        if($scope.order.proceduresForSpecimen.length > 2){
+                $scope.addProcedure = function () {
+                    for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
+                        if ($scope.order.proceduresForSpecimen.length > 2) {
                             //we only allow 3, so get out
                             return;
                         }
                         $scope.order.proceduresForSpecimen.push($scope.selectedProcedures[i]);
-                        for(var j=0;j<$scope.procedures.length;++j){
-                            if($scope.procedures[j].value == $scope.selectedProcedures[i].value){
+                        for (var j = 0; j < $scope.procedures.length; ++j) {
+                            if ($scope.procedures[j].value == $scope.selectedProcedures[i].value) {
                                 $scope.procedures.splice(j, 1);
                                 break;
                             }
@@ -191,11 +190,11 @@ angular.module("labTrackingOrderDetailsController", [])
                 };
 
                 /*removes a procedure from the list*/
-                $scope.removeProcedure = function(){
-                    for(var i=0;i<$scope.tempProcedures.length;++i){
+                $scope.removeProcedure = function () {
+                    for (var i = 0; i < $scope.tempProcedures.length; ++i) {
                         $scope.procedures.push($scope.tempProcedures[i]);
-                        for(var j=0;j<$scope.order.proceduresForSpecimen.length;++j){
-                            if($scope.order.proceduresForSpecimen[j].value == $scope.tempProcedures[i].value){
+                        for (var j = 0; j < $scope.order.proceduresForSpecimen.length; ++j) {
+                            if ($scope.order.proceduresForSpecimen[j].value == $scope.tempProcedures[i].value) {
                                 $scope.order.proceduresForSpecimen.splice(j, 1);
                                 break;
                             }
@@ -255,11 +254,15 @@ angular.module("labTrackingOrderDetailsController", [])
                         });
                 };
 
+                $scope.removePdf = function () {
+                    return LabTrackingDataService.deleteResultsPdf($scope.order);
+                }
                 /*  uploads the PDF to the server
                  * @param file - the HTML form file elelemt*/
                 $scope.uploadPdf = function (file) {
                     //just set the value, we will update when we save the encounter
                     $scope.order.file.value = file;
+                    $scope.order.file.label = file.name;
                 };
 
             },

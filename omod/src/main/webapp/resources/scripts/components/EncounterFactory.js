@@ -157,7 +157,8 @@ angular.module("encounterFactory", [])
 
 
         /*
-        deletes a list of observations
+        deletes a list of observations based on a list
+        @param list - a list of obs UUIDS
         * */
         Encounter.deleteObs = function(list) {
 
@@ -180,7 +181,9 @@ angular.module("encounterFactory", [])
             deferred.resolve();
 
             return list.reduce(function(promise, obsUuid){
-                return promise.then(removeObservation(obsUuid));
+                return promise.then(removeObservation(obsUuid)).then(function(res){
+                    return {status:200, data:res} //assume it went ok
+                })
             }, promise);
         }
 

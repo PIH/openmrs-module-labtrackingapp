@@ -63,8 +63,16 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         criteria.createAlias("ord.orderType", "orderType");
 
         criteria.add(Restrictions.eq("orderType.uuid", LabTrackingConstants.LAB_TRACKING_TESTORDER_TYPE_UUID));
-        criteria.add(Restrictions.eq("ord.voided", Boolean.FALSE));
-
+        if(LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() == status){
+            criteria.add(Restrictions.eq("ord.voided", Boolean.TRUE));
+        }
+        else if(LabTrackingConstants.LabTrackingOrderStatus.ALL.getId() != status){
+            criteria.add(Restrictions.eq("ord.voided", Boolean.FALSE));
+        }
+        else{
+            //for all other all, just return all voided or not
+        }
+        
 
         if(startDate > 0){
             Calendar c = Calendar.getInstance();

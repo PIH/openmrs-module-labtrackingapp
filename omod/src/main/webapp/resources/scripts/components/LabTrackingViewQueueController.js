@@ -116,8 +116,9 @@ angular.module("labTrackingViewQueueController", [])
              @param order - the order to view the details for
              @return none
              */
-            $scope.showCancelOrder = function (order) {
+            $scope.showCancelOrder = function (order, shouldPurge) {
                 $scope.selectedOrder = order;
+                $scope.shouldPurge = shouldPurge;
             };
 
             /*
@@ -128,15 +129,10 @@ angular.module("labTrackingViewQueueController", [])
             $scope.handleCancelOrder = function () {
                 var order = $scope.selectedOrder;
                 $scope.data_loading = true;
-                LabTrackingDataService.cancelOrder(order.uuid).then(function(res){
+                LabTrackingDataService.cancelOrder(order.uuid, $scope.shouldPurge).then(function(res){
                     if(res.status.code < 400){
-                        for(var i=0;i<$scope.testOrderQueue.length;++i){
-                            if($scope.testOrderQueue[i].uuid == order.uuid){
-                                $scope.testOrderQueue.splice(i, 1);
-                                break;
-                            }
-
-                        }
+                        //if you canceled, then just reload the list
+                        return $scope.loadQueue();
                     }
                     else{
                         alert("There was some sort of error");

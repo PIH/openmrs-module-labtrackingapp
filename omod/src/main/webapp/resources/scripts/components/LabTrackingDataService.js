@@ -2,7 +2,7 @@ angular.module("labTrackingDataService", [])
     .service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'Upload', 'LabTrackingOrder', 'Encounter',
         function ($q, $http, SessionInfo, Upload, LabTrackingOrder, Encounter) {
             var _self = this;
-            var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderNumber,instructions,clinicalHistory,encounter,encounter:(obs,location),patient:(uuid,person:(uuid,display),identifiers:(identifier))";
+            var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderNumber,instructions,clinicalHistory,encounter,encounter:(obs,location),patient:(uuid,person:(uuid,display),identifiers:(identifier)),auditInfo";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
@@ -311,10 +311,15 @@ angular.module("labTrackingDataService", [])
 
             /* cancels the order
              *  @param {String} orderUuid - the order uuid
+             *  @param {optional bool) shouldPurge - whether to purge or just void the order
              * @returns none
              * */
-            this.cancelOrder = function (orderUuid) {
+            this.cancelOrder = function (orderUuid, shouldPurge) {
                 var url = CONSTANTS.URLS.CANCEL_ORDER.replace("ORDER_UUID", orderUuid);
+                if(shouldPurge != null && shouldPurge == true){
+                    url += "?purge";
+                }
+
                 return $http.delete(url).then(function (resp) {
                     if (_self.isOk(resp)){
                         return {status: {code: resp.status, msg: null}, data: null};
@@ -401,6 +406,18 @@ angular.module("labTrackingDataService", [])
                     });
                 }
 
+            };
+
+            /*  deletes the PDF to the server*/
+            this.deleteResultsPdf= function (labTrackingOrder) {
+
+                if(labTrackingOrder.file.obsUuid == null){
+                    return Encounter.emptyPromise(labTrackingOrder);
+                }
+
+                return Encounter.deleteObs([labTrackingOrder.file.obsUuid]).then(function(res){
+                    labTrackingOrder.file = {value:null, url:null, obsUuid:null};
+                });
             };
 
 

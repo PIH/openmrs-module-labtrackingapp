@@ -8,9 +8,11 @@ public class LabTrackingConstants {
 
 	/* used to tell what kind of order to return via the web services*/
 	public enum LabTrackingOrderStatus{
+		ALL(0),
 		REQUESTED(1),
 		SAMPLED(2),
-		RESULTS(3);
+		RESULTS(3),
+		CANCELED(4);
 		private int id;
 		LabTrackingOrderStatus(int id){
 			this.id = id;

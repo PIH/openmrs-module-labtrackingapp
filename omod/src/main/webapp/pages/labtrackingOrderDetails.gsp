@@ -38,6 +38,10 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <button type="button" class="btn btn-primary" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
         </div>
     </div>
+
+     <div class="row" ng-if="data_loading">
+        <div class="col-sm-offset-4 col-sm-8">${ui.message("labtrackingapp.loading")} <img src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" /></div>
+     </div>
     <script type="text/ng-template" id="saveSpecimenDetails.html">
         <div class="modal-header">
             <h3 class="modal-title" id="modal-title">${ui.message("labtrackingapp.savingtitle")}</h3>

@@ -20,6 +20,7 @@ angular.module("labTrackingOrderFactory", [])
             this.location = {value: locationUuid}; //this is the location where the order was created
             this.patient = {value: patientUuid, name: null, id: null};
             this.uuid = null;
+            this.canceled = false;
             this.specimenDetailsEncounter = {uuid: null, surgeonEncounterProviderUuid:null, residentEncounterProviderUuid:null};  // used to keep track of whether to create/update the details
             this.orderNumber = {value: null};
             this.preLabDiagnosis = {label: null,value: null};
@@ -75,7 +76,7 @@ angular.module("labTrackingOrderFactory", [])
             notes:{value:'65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             resultDate:{value:'68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
             file:{value:'4cad2286-f66e-44c3-ba17-9665b569c13d'},
-            statusCodes: [{label:'All', value:'-1'},{label:'Requested', value:'1'},{label:'Taken', value:'2'},{label:'Reported', value:'3'}]
+            statusCodes: [{label:'All', value:'0'},{label:'Requested', value:'1'},{label:'Taken', value:'2'},{label:'Reported', value:'3'},{label:'Canceled', value:'4'}]
         };
 
         /*
@@ -143,7 +144,15 @@ angular.module("labTrackingOrderFactory", [])
             order.patient.name = webServiceResult.patient.person.display;
             order.patient.id = webServiceResult.patient.identifiers[0].identifier;
             order.requestDate.value = new Date($filter('serverDate')(webServiceResult.dateActivated));
+
+            if(webServiceResult.auditInfo != null && webServiceResult.auditInfo.voidedBy != null){
+                order.canceled = true;
+            }
+
             order.status = calcStatus(order);
+
+
+
             //default this to the order values ---------------------------
             order.locationWhereSpecimenCollected = order.location;
             order.proceduresForSpecimen = [];
@@ -470,7 +479,10 @@ angular.module("labTrackingOrderFactory", [])
         /* gets the Test Order status */
         function calcStatus(order){
             var idx = 1;
-            if(order.specimenDetailsEncounter.uuid){
+            if(order.canceled){
+                idx = 4;
+            }
+            else if(order.specimenDetailsEncounter.uuid){
                 if(order.resultDate.value){
                     idx = 3
                 }
