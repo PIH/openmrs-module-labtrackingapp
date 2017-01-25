@@ -146,7 +146,29 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .add(Subqueries.propertyIn("orderNumber", samples));
+        } else if (LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() == status){
+            // all orders that have a results encounter
+            DetachedCriteria resultsObs = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("enc.id"))
+                    .add(Restrictions.or(
+                            Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_NOTES_UUID),
+                            Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_FILE_UUID)));
+
+            DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("valueText"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+                    // .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyNotIn("enc.id", resultsObs));
+
+            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyIn("orderNumber", samples));
         }
+
+
 
         criteria.addOrder(org.hibernate.criterion.Order.desc("enc.encounterDatetime"));
 

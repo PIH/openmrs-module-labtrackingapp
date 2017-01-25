@@ -52,11 +52,12 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private static final int TOTAL_SAMPLED_ORDERS = 1;
 	private static final int TOTAL_REQUESTED_ORDERS = 1;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
+	private static final int TOTAL_CANCELED_ORDERS = 0;
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
 	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
 	private static final String TEST_ORDER_NUMBER="ORD-999";
-	private static final String TEST_ORDER_UUID="f4740b0b-206c-48a4-a5b7-111111111112";
-	private static final String TEST_ORDER_UUID_TO_CANCEL="f4740b0b-206c-48a4-a5b7-111111111111";
+	//private static final String TEST_ORDER_UUID="f4740b0b-206c-48a4-a5b7-111111111112";
+	//private static final String TEST_ORDER_UUID_TO_CANCEL="f4740b0b-206c-48a4-a5b7-111111111111";
 
 	private static final SimpleDateFormat FMT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 	
@@ -119,6 +120,18 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		assertEquals(TOTAL_RESULTS_ORDERS, list.size());
 	}
 
+	@Test
+	@Verifies(value = "should get orders by status that are canceled", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByDateCanceled() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = TEST_PATIENT;
+		String patientName = "milt";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		assertEquals(TOTAL_CANCELED_ORDERS, list.size());
+	}
 	@Test
 	@Verifies(value = "should get encounters by order number", method = "getSpecimenDetailsEncounter()")
 	public void getSpecimenDetailsEncounter_shouldGetOne() throws Exception {
