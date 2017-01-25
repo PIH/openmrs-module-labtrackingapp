@@ -21,11 +21,11 @@ angular.module("encounterFactory", [])
         }
 
         /*creates an encounter provider object
-        * @param providerUUID = the provider UUID
-        * @param encounterRoleUuid = the provicder role UUID
-        * @param encounterProviderUuid = the uuid of the encounter provider (used for updating)
-        * */
-        Encounter.toEncounterProvider = function(providerUuid, encounterRoleUuid, encounterProviderUuid){
+         * @param providerUUID = the provider UUID
+         * @param encounterRoleUuid = the provicder role UUID
+         * @param encounterProviderUuid = the uuid of the encounter provider (used for updating)
+         * */
+        Encounter.toEncounterProvider = function (providerUuid, encounterRoleUuid, encounterProviderUuid) {
             return {
                 provider: providerUuid,
                 encounterRole: encounterRoleUuid,
@@ -55,13 +55,15 @@ angular.module("encounterFactory", [])
             });
         };
 
-        Encounter.createProvider = function(encounterUuid, encounterProvider){
+        /* creates a providers
+         * @param {String} encounterUuid - the encounter to create the provider for
+         * @param {WSObj} encounterProvider - the web service representation of the Provider
+         * */
+        Encounter.createProvider = function (encounterUuid, encounterProvider) {
 
-            if(encounterProvider == null){
+            if (encounterProvider == null) {
                 return Encounter.emptyPromise();
             }
-
-            //return Encounter.emptyPromise();
 
             var url = CONSTANTS.UPDATE_ENCOUNTER_PROVIDER.replace("ENCOUNTER_ID", encounterUuid);
             return $http.post(url, encounterProvider).then(function (resp) {
@@ -72,8 +74,11 @@ angular.module("encounterFactory", [])
 
         };
 
-        /* deletes an EncounterProvider*/
-        Encounter.deleteEncounterProvider = function(encounterUuid, encounterProviderUuid){
+        /* deletes an EncounterProvider
+         * @param {String} encounterUuid - the encounter to create the provider for
+         * @param {WSObj} encounterProviderUuid - the encounterProvider UUID
+         * */
+        Encounter.deleteEncounterProvider = function (encounterUuid, encounterProviderUuid) {
             var url = CONSTANTS.UPDATE_ENCOUNTER_PROVIDER.replace("ENCOUNTER_ID", encounterUuid) + "/" + encounterProviderUuid;
             return $http.delete(url, {}).then(function (resp) {
                 return resp;
@@ -81,12 +86,15 @@ angular.module("encounterFactory", [])
                 return err;
             });
         };
+
         /*
          deletes a list of observations
+         * @param {String} encounterUuid - the encounter to create the provider for
+         * @param {Array of UUID's} list - the list of EncounterProvider UUIDS
          * */
-        Encounter.deleteEncounterProviders = function(encounterUuid, list) {
+        Encounter.deleteEncounterProviders = function (encounterUuid, list) {
 
-            if(list == null || list.length == 0){
+            if (list == null || list.length == 0) {
                 return Encounter.emptyPromise();
             }
 
@@ -95,11 +103,11 @@ angular.module("encounterFactory", [])
 
             deferred.resolve();
 
-            return list.reduce(function(promise, encounterProviderUuid){
-                if(encounterProviderUuid != null){
+            return list.reduce(function (promise, encounterProviderUuid) {
+                if (encounterProviderUuid != null) {
                     return promise.then(Encounter.deleteEncounterProvider(encounterUuid, encounterProviderUuid));
                 }
-                else{
+                else {
                     return Encounter.emptyPromise();
                 }
 
@@ -108,20 +116,20 @@ angular.module("encounterFactory", [])
 
 
         /*
-        deletes a list of observations based on a list
-        @param list - a list of obs UUIDS
-        * */
-        Encounter.deleteObs = function(list) {
+         deletes a list of observations based on a list
+         @param list - a list of obs UUIDS
+         * */
+        Encounter.deleteObs = function (list) {
 
-            if(list == null || list.length == 0){
+            if (list == null || list.length == 0) {
                 return Encounter.emptyPromise();
             }
 
             var deferred = $q.defer();
             var promise = deferred.promise;
 
-            var removeObservation = function(obsUuid) {
-                return function(){
+            var removeObservation = function (obsUuid) {
+                return function () {
                     return $http({
                         url: CONSTANTS.OBSERVATION + "/" + obsUuid,
                         method: 'DELETE'
@@ -131,9 +139,9 @@ angular.module("encounterFactory", [])
 
             deferred.resolve();
 
-            return list.reduce(function(promise, obsUuid){
-                return promise.then(removeObservation(obsUuid)).then(function(res){
-                    return {status:200, data:res} //assume it went ok
+            return list.reduce(function (promise, obsUuid) {
+                return promise.then(removeObservation(obsUuid)).then(function (res) {
+                    return {status: 200, data: res} //assume it went ok
                 })
             }, promise);
         }
@@ -159,18 +167,18 @@ angular.module("encounterFactory", [])
         };
 
         /* aren't they all!! */
-        Encounter.emptyPromise = function(data){
+        Encounter.emptyPromise = function (data) {
             var deferred = $q.defer();
-            deferred.resolve({status:200, data: data});
+            deferred.resolve({status: 200, data: data});
             return deferred.promise;
         }
 
         /* converts a JavaScript date to an OpenMRS REST date
-        * like 2016-12-25T19:02:34.232+0700
-        * @param date - the Date object
-        * @return  the string date
-        * */
-        Encounter.toObsDate = function(date){
+         * like 2016-12-25T19:02:34.232+0700
+         * @param date - the Date object
+         * @return  the string date
+         * */
+        Encounter.toObsDate = function (date) {
             var OBS_DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss.sssZ";
             return $filter('date')(date, OBS_DATE_FORMAT);
         };

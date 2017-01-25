@@ -1,5 +1,5 @@
 angular.module("labTrackingViewQueueController", [])
-    .controller("viewQueueController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService','patientUuid',
+    .controller("viewQueueController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid',
         function ($scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid) {
             $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
             $scope.data_loading = true;
@@ -7,9 +7,9 @@ angular.module("labTrackingViewQueueController", [])
             $scope.orderCancelReason = null;
             $scope.testOrderQueue = []; // hold the model
             $scope.errorMessage = null; // displays an error on the page if not null
-            $scope.patientUuid = (patientUuid == null || patientUuid == 'null')?null:patientUuid;
+            $scope.patientUuid = (patientUuid == null || patientUuid == 'null') ? null : patientUuid;
             var fromDate = new Date();
-            fromDate.setDate(fromDate.getDate()-LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
+            fromDate.setDate(fromDate.getDate() - LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
             $scope.filter = {
                 search: null, // the filter for the patient list
                 status: LabTrackingOrder.concepts.statusCodes[0],
@@ -32,21 +32,21 @@ angular.module("labTrackingViewQueueController", [])
                     totalItems: 0,
                     currentPage: 1,
                     maxSize: LabTrackingDataService.CONSTANTS.MAX_QUEUE_SIZE,
-                    currentEntryStart:0,
-                    currentEntryEnd:0,
+                    currentEntryStart: 0,
+                    currentEntryEnd: 0,
                     setPage: function (pageNo, totalItems) {
-                        if(totalItems == 0){
+                        if (totalItems == 0) {
                             $scope.filter.paging.totalItems = 0;
                             $scope.filter.paging.currentPage = 0;
                             $scope.filter.paging.currentEntryStart = 0;
                             $scope.filter.paging.currentEntryEnd = 0;
                         }
-                        else{
+                        else {
                             var sz = $scope.filter.paging.maxSize;
                             $scope.filter.paging.totalItems = totalItems;
                             $scope.filter.paging.currentPage = pageNo;
-                            $scope.filter.paging.currentEntryStart = pageNo*sz - sz+1;
-                            $scope.filter.paging.currentEntryEnd = totalItems<pageNo*sz?totalItems:pageNo*sz;
+                            $scope.filter.paging.currentEntryStart = pageNo * sz - sz + 1;
+                            $scope.filter.paging.currentEntryEnd = totalItems < pageNo * sz ? totalItems : pageNo * sz;
 
                         }
                     },
@@ -65,16 +65,16 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.lastUpdatedAtInMillis = new Date().getTime();
                 var pageNumber = $scope.filter.paging.currentPage;
                 var startDate = $scope.filter.from_date.value;
-                startDate.setHours(0,0,0,0);
+                startDate.setHours(0, 0, 0, 0);
                 var endDate = $scope.filter.to_date.value;
-                endDate.setHours(23,59,59,999);
+                endDate.setHours(23, 59, 59, 999);
                 var status = $scope.filter.status.value;
                 var patientName = $scope.filter.patient.name;
 
-                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status,  $scope.patientUuid, patientName).then(function (resp) {
+                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName).then(function (resp) {
                     if (resp.status.code == 200) {
                         var cnt = resp.data.totalCount;
-                        return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function(resp2){
+                        return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function (resp2) {
                             $scope.testOrderQueue = resp2.data;
                             $scope.filter.paging.setPage(pageNumber, cnt);
                             $scope.data_loading = false;
@@ -133,26 +133,26 @@ angular.module("labTrackingViewQueueController", [])
             $scope.handleCancelOrder = function () {
                 var order = $scope.selectedOrder;
                 $scope.data_loading = true;
-                LabTrackingDataService.cancelOrder(order.uuid, $scope.shouldPurge).then(function(res){
-                    if(res.status.code < 400){
+                LabTrackingDataService.cancelOrder(order.uuid, $scope.shouldPurge).then(function (res) {
+                    if (res.status.code < 400) {
                         //if you canceled, then just reload the list
                         return $scope.loadQueue();
                     }
-                    else{
+                    else {
                         alert("There was some sort of error");
                         console.log(res);
                     }
                     $scope.data_loading = false;
-                    $scope.selectedOrder=null;
-                    $scope.orderCancelReason=null;
+                    $scope.selectedOrder = null;
+                    $scope.orderCancelReason = null;
                     $scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.testOrderQueue.length);
                 })
             };
 
             /* dismisses the cancel dialog*/
-            $scope.dismissCancelOrder = function(){
-                $scope.selectedOrder=null;
-                $scope.orderCancelReason=null;
+            $scope.dismissCancelOrder = function () {
+                $scope.selectedOrder = null;
+                $scope.orderCancelReason = null;
             };
 
             $scope.handleToDate = function () {
@@ -167,8 +167,8 @@ angular.module("labTrackingViewQueueController", [])
              this is called whenever the filter changes
              */
             $scope.handleFilterChange = function (filterSource) {
-                if(filterSource == 'from_date' || filterSource == 'to_date'
-                    || filterSource == 'status' || filterSource == 'patient' ){
+                if (filterSource == 'from_date' || filterSource == 'to_date'
+                    || filterSource == 'status' || filterSource == 'patient') {
                     return $scope.loadQueue();
                 }
             };
@@ -196,31 +196,31 @@ angular.module("labTrackingViewQueueController", [])
                 dt = new Date().getTime();
             }
 
-            var arrayToReturn = [];
-            for (var i = 0; i < items.length; i++) {
-                var requestDate = items[i].requestDate.value.getTime();
-                if (requestDate > df && requestDate < dt) {
-                    //the dates match, now check the patient name
-                    if (filterData.patient.name == null || items[i].patient.name.toLowerCase().indexOf(filterData.patient.name.toLowerCase()) > -1) {
-                        //finally check the status
-                        //TODO:  change the text to use the UUID's
-                        if (filterData.status.value == null || filterData.status.value == 'All' || items[i].status.display == filterData.status.value) {
-                            arrayToReturn.push(items[i]);
-                        }
-
-                    }
-
-                }
-                else {
-                    console.log("dt=" + dt + " df=" + df + " requestDate=" + requestDate);
-                }
-            }
+            var arrayToReturn = items;
+            // for (var i = 0; i < items.length; i++) {
+            //     var requestDate = items[i].requestDate.value.getTime();
+            //     if (requestDate > df && requestDate < dt) {
+            //         //the dates match, now check the patient name
+            //         if (filterData.patient.name == null || items[i].patient.name.toLowerCase().indexOf(filterData.patient.name.toLowerCase()) > -1) {
+            //             //finally check the status
+            //             //TODO:  change the text to use the UUID's
+            //             if (filterData.status.value == null || filterData.status.value == 'All' || items[i].status.display == filterData.status.value) {
+            //                 arrayToReturn.push(items[i]);
+            //             }
+            //
+            //         }
+            //
+            //     }
+            //     else {
+            //         console.log("dt=" + dt + " df=" + df + " requestDate=" + requestDate);
+            //     }
+            // }
 
             var sz = arrayToReturn.length;
-            if(sz > filterData.paging.maxSize-1){
-                var pos1 = (filterData.paging.currentPage-1)*filterData.paging.maxSize;
+            if (sz > filterData.paging.maxSize - 1) {
+                var pos1 = (filterData.paging.currentPage - 1) * filterData.paging.maxSize;
                 var pos2 = pos1 + filterData.paging.maxSize;
-                if(pos2 > sz){
+                if (pos2 > sz) {
                     pos2 = sz;
                 }
                 arrayToReturn = arrayToReturn.slice(pos1, pos2);

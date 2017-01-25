@@ -7,7 +7,7 @@ angular.module("labTrackingDataService", [])
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
             var CONSTANTS = {
-                MAX_QUEUE_SIZE:10,
+                MAX_QUEUE_SIZE: 10,
                 MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
                 URLS: {
                     FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
@@ -18,8 +18,8 @@ angular.module("labTrackingDataService", [])
                     VIEW_CARE_SETTINGS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/caresetting?v=custom:(uuid,display)",
                     VIEW_PROVIDERS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/provider?v=custom:(uuid,display,person)",
                     VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(" + ORDER_FIELDS
-                                + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS"
-                                + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
+                    + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS"
+                    + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
                     VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
                     VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid)))",
                     UPLOAD_FILE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs",
@@ -34,28 +34,19 @@ angular.module("labTrackingDataService", [])
              * @param  patientUuid - the patient
              * @return String the url
              * */
-            this.getPrintPageUrl = function(orderUuid, patientUuid){
-                 return 'labtrackingOrderPrint.page?orderUuid=' + orderUuid +  "&patientId=" + patientUuid;
+            this.getPrintPageUrl = function (orderUuid, patientUuid) {
+                return 'labtrackingOrderPrint.page?orderUuid=' + orderUuid + "&patientId=" + patientUuid;
             };
 
             /* gets the view queue page
-            * @param {optional} patientUuid - the patient to show the queue for
-            * @param {optional} returnUrl - the URL to return to, if coming from the visit page
-            * @return String the url
-            * */
-            this.getQueuePageUrl = function(patientUuid){
+             * @param {optional} patientUuid - the patient to show the queue for
+             * @return String the url
+             * */
+            this.getQueuePageUrl = function (patientUuid) {
                 var queryString = "";
-                if(patientUuid != null){
+                if (patientUuid != null) {
                     queryString += "patientId=" + patientUuid;
                 }
-
-                // if(returnUrl != null){
-                //     if(url.length > 0){
-                //         url += "&";
-                //     }
-                //     url += "returnUrl=" + returnUrl;
-                // }
-
                 return "labtrackingViewQueue.page?" + queryString;
             }
 
@@ -67,7 +58,7 @@ angular.module("labTrackingDataService", [])
             this.loadProviders = function () {
                 var url = CONSTANTS.URLS.VIEW_PROVIDERS;
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         var ret = [];
                         for (var i = 0; i < resp.data.results.length; ++i) {
                             var uuid = resp.data.results[i].uuid;
@@ -100,11 +91,11 @@ angular.module("labTrackingDataService", [])
             this.loadLocations = function () {
                 var url = CONSTANTS.URLS.VIEW_LOCATIONS;
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         var data = [];
-                        for(var i=0;i<resp.data.results.length;++i){
+                        for (var i = 0; i < resp.data.results.length; ++i) {
                             var c = resp.data.results[i];
-                            data.push({value:c.uuid, label:c.display})
+                            data.push({value: c.uuid, label: c.display})
                         }
                         return {status: {code: resp.status, msg: null}, data: data};
                     }
@@ -118,9 +109,9 @@ angular.module("labTrackingDataService", [])
             };
 
             /*
-            load the procedures that are available
-            * */
-            this.loadProcedures = function(){
+             load the procedures that are available
+             * */
+            this.loadProcedures = function () {
                 return _self.loadConceptSet(PROCEDURES_CONCEPT_SET_UUID);
             };
 
@@ -128,22 +119,22 @@ angular.module("labTrackingDataService", [])
             /*
              load the dianosis that are available
              * */
-            this.loadDiagnonses = function(){
+            this.loadDiagnonses = function () {
                 return _self.loadConceptSet(DIAGNOSIS_CONCEPT_SET_UUID);
             };
             /*
              loads the the concepts in a concept set
-              @param conceptUUID = the concept UUID
+             @param conceptUUID = the concept UUID
              @return An Array of objects with label, value props
              */
             this.loadConceptSet = function (conceptUuid) {
                 var url = CONSTANTS.URLS.VIEW_CONCEPT_SET.replace("CONCEPT_UUID", conceptUuid);
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         var data = [];
-                        for(var i=0;i<resp.data.setMembers.length;++i){
+                        for (var i = 0; i < resp.data.setMembers.length; ++i) {
                             var c = resp.data.setMembers[i];
-                            data.push({value:c.uuid, label:c.display})
+                            data.push({value: c.uuid, label: c.display})
                         }
                         return {status: {code: resp.status, msg: null}, data: data};
                     }
@@ -164,11 +155,11 @@ angular.module("labTrackingDataService", [])
             this.loadCareSettings = function () {
                 var url = CONSTANTS.URLS.VIEW_CARE_SETTINGS;
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         var list = [];
-                        for(var i=0;i<resp.data.results.length;++i){
+                        for (var i = 0; i < resp.data.results.length; ++i) {
                             var s = resp.data.results[i];
-                            list.push({label:s.display, value:s.uuid})
+                            list.push({label: s.display, value: s.uuid})
                         }
                         return {status: {code: resp.status, msg: null}, data: list};
                     }
@@ -191,7 +182,7 @@ angular.module("labTrackingDataService", [])
             this.loadOrder = function (orderUuid) {
                 var url = CONSTANTS.URLS.VIEW_ORDER.replace("ORDER_UUID", orderUuid);
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         var labTrackingOrder = LabTrackingOrder.fromWebServiceObject(resp.data);
 
                         return _self.loadSpecimenDetailsForOrder(labTrackingOrder);
@@ -215,14 +206,18 @@ angular.module("labTrackingDataService", [])
                 var url = CONSTANTS.URLS.VIEW_SPECIMEN_DETAILS.replace("ORDER_NUMBER", labTrackingOrder.orderNumber.value);
                 return $http.get(url).then(function (resp) {
 
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         if (resp.data.results != null && resp.data.results.length > 0 && resp.data.results[0] != null) {
                             LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject(resp.data.results[0], labTrackingOrder);
                         }
-                        else{
-                            if(labTrackingOrder.procedures.length > 0){
-                                for(var i=0;i < labTrackingOrder.procedures.length;++i){
-                                    labTrackingOrder.proceduresForSpecimen.push({value: labTrackingOrder.procedures[i].value, label: labTrackingOrder.procedures[i].label, obsUuid: null});
+                        else {
+                            if (labTrackingOrder.procedures.length > 0) {
+                                for (var i = 0; i < labTrackingOrder.procedures.length; ++i) {
+                                    labTrackingOrder.proceduresForSpecimen.push({
+                                        value: labTrackingOrder.procedures[i].value,
+                                        label: labTrackingOrder.procedures[i].label,
+                                        obsUuid: null
+                                    });
                                 }
 
                             }
@@ -246,21 +241,21 @@ angular.module("labTrackingDataService", [])
             this.loadSpecimenDetailsForQueue = function (list) {
                 var orderNumbers = [];
                 var orderNumberMap = {};
-                if(list != null){
-                    for(var i=0;i < list.length ;++i){
+                if (list != null) {
+                    for (var i = 0; i < list.length; ++i) {
                         orderNumbers.push(list[i].orderNumber.value);
                         orderNumberMap[list[i].orderNumber.value] = i;
                     }
                 }
                 var url = CONSTANTS.URLS.VIEW_SPECIMEN_DETAILS.replace("ORDER_NUMBER", orderNumbers.toString());
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         if (resp.data.results != null && resp.data.results.length > 0) {
-                            for(var i=0;i<resp.data.results.length;++i){
+                            for (var i = 0; i < resp.data.results.length; ++i) {
                                 var orderNumber = getObsByConceptId(resp.data.results[i].obs, LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER);
-                                if(orderNumber != null){
-                                    for(var j=0;j<list.length;++j){
-                                        if(list[j].orderNumber.value == orderNumber.value){
+                                if (orderNumber != null) {
+                                    for (var j = 0; j < list.length; ++j) {
+                                        if (list[j].orderNumber.value == orderNumber.value) {
                                             LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject(resp.data.results[i], list[j]);
                                             break;
                                         }
@@ -290,8 +285,8 @@ angular.module("labTrackingDataService", [])
              * */
             this.loadQueue = function (pageNumber, startDate, endDate, status, patientUuid, patientName) {
                 var startIndex = 0;
-                if(pageNumber != null && pageNumber > 0){
-                    startIndex = (pageNumber-1) * CONSTANTS.MAX_QUEUE_SIZE;
+                if (pageNumber != null && pageNumber > 0) {
+                    startIndex = (pageNumber - 1) * CONSTANTS.MAX_QUEUE_SIZE;
                 }
                 var url = CONSTANTS.URLS.VIEW_QUEUE
                     .replace("START_DATE", (startDate == null ? "" : startDate.getTime()))
@@ -302,11 +297,14 @@ angular.module("labTrackingDataService", [])
                     .replace("MAX_QUEUE_SIZE", CONSTANTS.MAX_QUEUE_SIZE)
                     .replace("START_INDEX", startIndex);
                 return $http.get(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         var list = resp.data.results;
                         var testOrders = LabTrackingOrder.buildList(list);
 
-                        return {status: {code: resp.status, msg: null}, data: {orders:testOrders, totalCount:resp.data.totalCount}};
+                        return {
+                            status: {code: resp.status, msg: null},
+                            data: {orders: testOrders, totalCount: resp.data.totalCount}
+                        };
                     }
                     else {
                         return {status: {code: resp.status, msg: "Error loading queue " + resp.status}, data: []};
@@ -324,12 +322,12 @@ angular.module("labTrackingDataService", [])
              * */
             this.cancelOrder = function (orderUuid, shouldPurge) {
                 var url = CONSTANTS.URLS.CANCEL_ORDER.replace("ORDER_UUID", orderUuid);
-                if(shouldPurge != null && shouldPurge == true){
+                if (shouldPurge != null && shouldPurge == true) {
                     url += "?purge";
                 }
 
                 return $http.delete(url).then(function (resp) {
-                    if (_self.isOk(resp)){
+                    if (_self.isOk(resp)) {
                         return {status: {code: resp.status, msg: null}, data: null};
                     }
                     else {
@@ -360,16 +358,16 @@ angular.module("labTrackingDataService", [])
                 var msg = "";
                 var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
                 var data = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(labTrackingOrder, provider);
-                return Encounter.deleteObs(data.obsIdsToDelete).then(function(res){
-                    return Encounter.save(data.encounter, labTrackingOrder.specimenDetailsEncounter.uuid).then(function(resp){
-                        if (_self.isOk(resp)){
+                return Encounter.deleteObs(data.obsIdsToDelete).then(function (res) {
+                    return Encounter.save(data.encounter, labTrackingOrder.specimenDetailsEncounter.uuid).then(function (resp) {
+                        if (_self.isOk(resp)) {
                             //need to update the labtracking orders spec id
                             labTrackingOrder.specimenDetailsEncounter.uuid = resp.data.uuid;
-                            return _self.handleEncounterProviders(labTrackingOrder).then(function(res){
+                            return _self.handleEncounterProviders(labTrackingOrder).then(function (res) {
                                 return _self.uploadResultsPdf(labTrackingOrder);
                             });
                         }
-                        else{
+                        else {
                             return resp;
                         }
                     });
@@ -377,38 +375,40 @@ angular.module("labTrackingDataService", [])
                 });
             };
 
-            /* handles saving/updating the surgeon and resident encounter providers*/
-            this.handleEncounterProviders = function(labTrackingOrder){
+            /* handles saving/updating the surgeon and resident encounter providers
+             * @param {LabTrackingOrder} labTrackingOrder - the order that contains the providers that you want to save
+             * */
+            this.handleEncounterProviders = function (labTrackingOrder) {
                 var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
                 //if the providers have changed then remove the old ones and add the new ones
                 var changed = LabTrackingOrder.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
 
-                if(!changed) {
+                if (!changed) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
-                else{
+                else {
                     var encounterProvidersToDelete = [labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid,
                         labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid];
 
-                    return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete ).then(function(){
-                        return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function(resp2){
-                            if(resp2.data != null){
+                    return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete).then(function () {
+                        return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function (resp2) {
+                            if (resp2.data != null) {
                                 //update the surgeon uuid
-                                labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid  = resp2.data.uuid;
+                                labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid = resp2.data.uuid;
                                 //msg += "surgeon is " + labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid+ "\n";
 
                             }
-                            return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function(resp3){
-                                if(resp3.data != null){
+                            return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.resident).then(function (resp3) {
+                                if (resp3.data != null) {
                                     //update the resident uuid
-                                    labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid  = resp3.data.uuid;
-                                  //  msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
+                                    labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid = resp3.data.uuid;
+                                    //  msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
                                 }
                                 //labTrackingOrder.debug.message = msg;
                                 //reset this with the updated values
                                 labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
 
-                                return {status:200, data:labTrackingOrder};
+                                return {status: 200, data: labTrackingOrder};
                             });
                         });
                     });
@@ -417,7 +417,9 @@ angular.module("labTrackingDataService", [])
             };
 
             /*handles downloading the PDF, see http://stackoverflow.com/questions/283956/is-there-any-way-to-specify-a-suggested-filename-when-using-data-uri/6943481#6943481
-             * for details about how/why it id done like this*/
+             * for details about how/why it id done like this
+             * @param {LabTrackingOrder} labTrackingOrder - the order that contains the PDF you want to download
+             * */
             this.downloadPdf = function (labTrackingOrder) {
                 return $http.get(labTrackingOrder.file.url, {responseType: 'arraybuffer'})
                     .success(function (data) {
@@ -431,47 +433,51 @@ angular.module("labTrackingDataService", [])
                     });
             };
 
-            /*  deletes the PDF to the server*/
-            this.deleteResultsPdf= function (labTrackingOrder) {
+            /*  deletes the PDF to the server
+             * @param {LabTrackingOrder} labTrackingOrder - the order that contains the PDF you want to delete
+             *             */
+            this.deleteResultsPdf = function (labTrackingOrder) {
 
-                if(labTrackingOrder.file.obsUuid == null){
+                if (labTrackingOrder.file.obsUuid == null) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
 
-                return Encounter.deleteObs([labTrackingOrder.file.obsUuid]).then(function(res){
-                    labTrackingOrder.file = {value:null, url:null, obsUuid:null};
+                return Encounter.deleteObs([labTrackingOrder.file.obsUuid]).then(function (res) {
+                    labTrackingOrder.file = {value: null, url: null, obsUuid: null};
                 });
             };
 
 
-            /*  uploads the PDF to the server*/
-            this.uploadResultsPdf= function (labTrackingOrder) {
+            /*  uploads the PDF to the server
+             * @param {LabTrackingOrder} labTrackingOrder - the order that contains the PDF that you want to save
+             * */
+            this.uploadResultsPdf = function (labTrackingOrder) {
 
-                if(labTrackingOrder.file.value == null){
+                if (labTrackingOrder.file.value == null) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
 
                 var obs = {
-                    person:labTrackingOrder.patient.value,
+                    person: labTrackingOrder.patient.value,
                     obsDatetime: Encounter.toObsDate(new Date()),
-                    concept:LabTrackingOrder.concepts.file.value,
-                    encounter:labTrackingOrder.specimenDetailsEncounter.uuid
+                    concept: LabTrackingOrder.concepts.file.value,
+                    encounter: labTrackingOrder.specimenDetailsEncounter.uuid
                     //file: file
                     //value: dataUrl
                 };
 
                 return Upload.upload({
                     url: CONSTANTS.URLS.UPLOAD_FILE,
-                    data: {json:JSON.stringify(obs), file:labTrackingOrder.file.value},
+                    data: {json: JSON.stringify(obs), file: labTrackingOrder.file.value},
                 }).then(function (resp) {
                     //console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
                     labTrackingOrder.file.url = resp.data.value.links.uri;
                     labTrackingOrder.file.obsUuid = resp.data.uuid;
 
-                    return {status:200 , data:labTrackingOrder};
+                    return {status: 200, data: labTrackingOrder};
                 }, function (resp) {
                     console.log('Error status: ' + resp.status);
-                    return {status:500 , data:resp};
+                    return {status: 500, data: resp};
                 }, function (evt) {
                     //var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
                     //console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
@@ -480,6 +486,7 @@ angular.module("labTrackingDataService", [])
 
             /*
              saves an order for a patient
+             * @param {LabTrackingOrder} labTrackingOrder - the order that you want to save
              * */
             this.saveOrder = function (labTrackingOrder) {
 
@@ -512,23 +519,25 @@ angular.module("labTrackingDataService", [])
             };
 
 
-
-
+            /* helper function to determine if REST response is ok
+             * @param {WSResps} res - the response from the server
+             * @return true/false
+             * */
             this.isOk = function (res) {
                 return res !== null && res.status != null && res.status < 300;
             };
 
             this.CONSTANTS = CONSTANTS; //expose the constants
-            this.session = SessionInfo.get();
+            this.session = SessionInfo.get(); // we use this to get the current provider
 
             //internal functions -----------------------------------------
 
             /*  gets an obs from a list based on the concept uuid
-            * @param list - the list of observations
-            * @param conceptUuid - the conceptUUid*/
-            function getObsByConceptId(list, conceptUuid){
-                for(var i=0;i<list.length;++i){
-                    if(list[i].concept.uuid == conceptUuid){
+             * @param list - the list of observations
+             * @param conceptUuid - the conceptUUid*/
+            function getObsByConceptId(list, conceptUuid) {
+                for (var i = 0; i < list.length; ++i) {
+                    if (list[i].concept.uuid == conceptUuid) {
                         return list[i];
                     }
                 }
@@ -537,9 +546,9 @@ angular.module("labTrackingDataService", [])
             }
 
             /* makes sure that there is a an active visit for this session
-            * @param patient - the patient uuid
-            * @param location - the location uuid
-            * */
+             * @param patient - the patient uuid
+             * @param location - the location uuid
+             * */
             function ensureActiveVisit(patient, location) {
                 return $http.post(CONSTANTS.URLS.ACTIVE_VISIT + "?patient=" + patient + "&location=" + location);
             }

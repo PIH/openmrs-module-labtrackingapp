@@ -7,7 +7,6 @@ angular.module("labTrackingAddOrderController", [])
             $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
             $scope.careSettings = [];  //the list of care settings in the system
             $scope.diagnoses = []; // the diagnosis in the system
-            $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
@@ -38,15 +37,15 @@ angular.module("labTrackingAddOrderController", [])
             };
 
             /* adds a procedures to the list*/
-            $scope.addProcedure = function(){
-                for(var i=0;i<$scope.selectedProcedures.length;++i){
-                    if($scope.order.procedures.length > 2){
+            $scope.addProcedure = function () {
+                for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
+                    if ($scope.order.procedures.length > 2) {
                         //we only allow 3, so get out
                         return;
                     }
                     $scope.order.procedures.push($scope.selectedProcedures[i]);
-                    for(var j=0;j<$scope.procedures.length;++j){
-                        if($scope.procedures[j].value == $scope.selectedProcedures[i].value){
+                    for (var j = 0; j < $scope.procedures.length; ++j) {
+                        if ($scope.procedures[j].value == $scope.selectedProcedures[i].value) {
                             $scope.procedures.splice(j, 1);
                             break;
                         }
@@ -55,11 +54,11 @@ angular.module("labTrackingAddOrderController", [])
             };
 
             /*removes a procedure from the list*/
-            $scope.removeProcedure = function(){
-                for(var i=0;i<$scope.tempProcedures.length;++i){
+            $scope.removeProcedure = function () {
+                for (var i = 0; i < $scope.tempProcedures.length; ++i) {
                     $scope.procedures.push($scope.tempProcedures[i]);
-                    for(var j=0;j<$scope.order.procedures.length;++j){
-                        if($scope.order.procedures[j].value == $scope.tempProcedures[i].value){
+                    for (var j = 0; j < $scope.order.procedures.length; ++j) {
+                        if ($scope.order.procedures[j].value == $scope.tempProcedures[i].value) {
                             $scope.order.procedures.splice(j, 1);
                             break;
                         }
@@ -68,9 +67,11 @@ angular.module("labTrackingAddOrderController", [])
 
             };
 
-            /* checkes if you can submit the form*/
-            $scope.readyToSubmit = function(){
-                return $scope.order.procedures.length > 0 && $scope.order.preLabDiagnosis != null && $scope.order.preLabDiagnosis.value != null;
+            /* checks if you can submit the form*/
+            $scope.readyToSubmit = function () {
+                return ($scope.order.procedures.length > 0
+                    || ($scope.order.procedureNonCoded.value != null && $scope.order.procedureNonCoded.value.length > 0))
+                    && ($scope.order.preLabDiagnosis != null && $scope.order.preLabDiagnosis.value != null);
             };
 
 

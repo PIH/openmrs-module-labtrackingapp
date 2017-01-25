@@ -1,8 +1,11 @@
 angular.module("labTrackingPrintController", [])
-    .controller("printController", ['$scope', '$window', '$timeout','LabTrackingOrder', 'LabTrackingDataService', 'orderUuid',
+    .controller("printController", ['$scope', '$window', '$timeout', 'LabTrackingOrder', 'LabTrackingDataService', 'orderUuid',
         function ($scope, $window, $timeout, LabTrackingOrder, LabTrackingDataService, orderUuid) {
             $scope.order = null;
             $scope.concepts = LabTrackingOrder.concepts;
+            /* loads the order on the page
+             * @param {String} orderUuid - the order uuid
+             * */
             $scope.loadOrder = function (orderUuid) {
                 return LabTrackingDataService.loadOrder(orderUuid).then(function (resp) {
                     if (resp.status.code == 200) {
@@ -16,10 +19,11 @@ angular.module("labTrackingPrintController", [])
                 });
             };
 
-
-
-            return $scope.loadOrder(orderUuid).then(function(){
-                $timeout(function(){$window.print()}, 500);
+            /* loads the order then tells the window to print */
+            return $scope.loadOrder(orderUuid).then(function () {
+                $timeout(function () {
+                    $window.print()
+                }, 500);
             });
 
         }]);
