@@ -114,6 +114,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 </div>
 <script type="text/javascript">
    angular.module('labTrackingApp')
+   .value('returnUrl', '${ returnUrl }')
    .value('patientUuid', '${ patient.uuid }')
    .value('locationUuid', '${ location.uuid }');
    

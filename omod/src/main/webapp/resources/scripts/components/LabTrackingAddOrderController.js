@@ -1,6 +1,6 @@
 angular.module("labTrackingAddOrderController", [])
-    .controller("addOrderController", ['$window', '$uibModal', '$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'locationUuid',
-        function ($window, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid) {
+    .controller("addOrderController", ['$window', '$uibModal', '$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'locationUuid', 'returnUrl',
+        function ($window, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid, returnUrl) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.procedures = []; //the list of procedures in the system
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
@@ -17,7 +17,7 @@ angular.module("labTrackingAddOrderController", [])
                 $scope.savingModal = showSavingModal();
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
                     if (LabTrackingDataService.isOk(res)) {
-                        $window.location.href = LabTrackingDataService.getQueuePageUrl(patientUuid);
+                        $window.location.href = returnUrl; // LabTrackingDataService.getQueuePageUrl(patientUuid);
                     }
                     else if (res !== undefined && res.status !== undefined) {
                         $scope.error = res.data.error.message;

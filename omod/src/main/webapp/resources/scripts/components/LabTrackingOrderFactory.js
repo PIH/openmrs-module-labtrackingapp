@@ -428,29 +428,34 @@ angular.module("labTrackingOrderFactory", [])
                 LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
                 labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs);
 
-            //we don't need to add the surgeon/resident here, we will add them after the encounter is created
-            //  for consistencies sake
-
-            // if(labTrackingOrder.specimenDetailsEncounter.uuid == null){
-            //     if (labTrackingOrder.surgeon != null && labTrackingOrder.surgeon.value != null) {
-            //         encounter.encounterProviders.push({
-            //             provider: labTrackingOrder.surgeon.value,
-            //             encounterRole: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE,
-            //             uuid: labTrackingOrder.specimenDetails.surgeonEncounterProviderUuid
-            //
-            //         })
-            //     }
-            //
-            //     if (labTrackingOrder.resident != null && labTrackingOrder.resident.value != null) {
-            //         encounter.encounterProviders.push({
-            //             provider: labTrackingOrder.resident.value,
-            //             encounterRole: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE,
-            //             uuid: labTrackingOrder.specimenDetails.residentEncounterProviderUuid
-            //         })
-            //     }
-            // }
-
             return {encounter: encounter, obsIdsToDelete:obsIdsToDelete};
+        };
+
+
+        /* checks whether a lab order providers has changed, see getEncounterProviders() for the objects
+         * @param provider - the provider objects,
+         * @param orginalSurgeonAndResident - the original provider objects
+         * */
+        LabTrackingOrder.haveProvidersChanged = function(provider, orginalSurgeonAndResident){
+            var ret = false;
+            if((provider.surgeon == null && orginalSurgeonAndResident.surgeon != null)
+                || (provider.surgeon != null && orginalSurgeonAndResident.surgeon == null)
+                || (provider.resident == null && orginalSurgeonAndResident.resident != null)
+                || (provider.resident != null && orginalSurgeonAndResident.resident == null)){
+                //handle all the nulls
+                ret = true;
+            }
+            else if(provider.surgeon == null && orginalSurgeonAndResident.surgeon == null
+                && provider.resident == null && orginalSurgeonAndResident.resident == null){
+                //they are both null and haven't changed
+                ret = false
+            }
+            else if(provider.surgeon.provider != orginalSurgeonAndResident.surgeon.provider
+                || provider.resident.provider != orginalSurgeonAndResident.resident.provider){
+                ret = true;
+            }
+
+            return ret;
         };
 
         /*

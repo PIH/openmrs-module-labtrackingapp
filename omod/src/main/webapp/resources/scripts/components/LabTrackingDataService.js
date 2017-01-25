@@ -381,7 +381,7 @@ angular.module("labTrackingDataService", [])
             this.handleEncounterProviders = function(labTrackingOrder){
                 var providers = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
                 //if the providers have changed then remove the old ones and add the new ones
-                var changed = Encounter.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
+                var changed = LabTrackingOrder.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
 
                 if(!changed) {
                     return Encounter.emptyPromise(labTrackingOrder);

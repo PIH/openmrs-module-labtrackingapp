@@ -55,55 +55,6 @@ angular.module("encounterFactory", [])
             });
         };
 
-        /*  save an encounter provider
-         @param encounterUuid- the encounter uuid
-         @param encounterProvider - the encounter provider info
-         */
-        // Encounter.createOrUpdateProvider = function (encounterUuid, encounterProvider) {
-        //
-        //     if(encounterProvider == null){
-        //         return Encounter.emptyPromise();
-        //
-        //     }
-        //     var encounterProviderUuid = encounterProvider.uuid;
-        //     if(encounterProvider.uuid!= null){
-        //         //we need to delete it first
-        //         var url = CONSTANTS.UPDATE_ENCOUNTER_PROVIDER.replace("ENCOUNTER_ID", encounterUuid) + "/" + encounterProvider.uuid;
-        //         return $http.delete(url, encounterProvider).then(function (resp) {
-        //             encounterProvider.uuid = null; //set this to null, so that we create a new one
-        //             return Encounter.createProvider(encounterUuid, encounterProvider);
-        //         }, function (err) {
-        //             return err;
-        //         });
-        //     }
-        //     else{
-        //         return Encounter.createProvider(encounterUuid, encounterProvider);
-        //     }
-        //
-        // };
-
-        Encounter.haveProvidersChanged = function(provider, orginalSurgeonAndResident){
-            var ret = false;
-            if((provider.surgeon == null && orginalSurgeonAndResident.surgeon != null)
-                || (provider.surgeon != null && orginalSurgeonAndResident.surgeon == null)
-                || (provider.resident == null && orginalSurgeonAndResident.resident != null)
-                || (provider.resident != null && orginalSurgeonAndResident.resident == null)){
-                //handle all the nulls
-                ret = true;
-            }
-            else if(provider.surgeon == null && orginalSurgeonAndResident.surgeon == null
-                    && provider.resident == null && orginalSurgeonAndResident.resident == null){
-                //they are both null and haven't changed
-                ret = false
-            }
-            else if(provider.surgeon.provider != orginalSurgeonAndResident.surgeon.provider
-                    || provider.resident.provider != orginalSurgeonAndResident.resident.provider){
-                ret = true;
-            }
-
-            return ret;
-        };
-
         Encounter.createProvider = function(encounterUuid, encounterProvider){
 
             if(encounterProvider == null){
