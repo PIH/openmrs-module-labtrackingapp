@@ -72,7 +72,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         else{
             //for all other all, just return all voided or not
         }
-        
+
 
         if(startDate > 0){
             Calendar c = Calendar.getInstance();

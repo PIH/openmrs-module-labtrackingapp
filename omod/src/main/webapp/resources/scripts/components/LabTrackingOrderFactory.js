@@ -129,8 +129,10 @@ angular.module("labTrackingOrderFactory", [])
                 }
             }
             order.procedures = procs;
-            order.preLabDiagnosis.value = webServiceResult.orderReason.uuid;
-            order.preLabDiagnosis.label = webServiceResult.orderReason.display;
+            if( webServiceResult.orderReason != null){
+                order.preLabDiagnosis.value = webServiceResult.orderReason.uuid;
+                order.preLabDiagnosis.label = webServiceResult.orderReason.display;
+            }
             order.instructions.value = webServiceResult.instructions;
             order.clinicalHistory.value = webServiceResult.clinicalHistory;
             if (webServiceResult.careSetting) {
