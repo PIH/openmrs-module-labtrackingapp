@@ -257,6 +257,9 @@ angular.module("labTrackingOrderDetailsController", [])
                     //just set the value, we will update when we save the encounter
                     $scope.order.file.value = file;
                     $scope.order.file.label = file.name;
+                    if($scope.order.resultDate.value == null){
+                        $scope.order.resultDate.value = new Date();
+                    }
                 };
 
             },
