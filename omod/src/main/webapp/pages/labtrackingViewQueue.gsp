@@ -80,7 +80,7 @@ else{
                   </tr>
                </thead>
                <tbody  ng-if="!data_loading">
-                  <tr ng-repeat="a in testOrderQueue | testOrderFilter:filter" >
+                  <tr ng-repeat="a in testOrderQueue" >
                      <td ng-show="patientUuid==null">{{a.patient.id}}</td>
                      <td ng-show="patientUuid==null">{{a.patient.name}}</td>
                      <td>{{a.status.label}}</td>
