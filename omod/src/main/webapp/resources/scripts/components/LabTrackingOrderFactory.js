@@ -501,7 +501,7 @@ angular.module("labTrackingOrderFactory", [])
         /* gets the Test Order status */
         function calcStatus(order) {
             var idx = 1;
-            if (order.canceled) {
+            if (order.canceled && order.notes.value == null && order.file.url == null) {
                 idx = 4;
             }
             else if (order.specimenDetailsEncounter.uuid) {
