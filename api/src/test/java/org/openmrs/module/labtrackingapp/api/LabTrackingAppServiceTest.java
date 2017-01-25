@@ -49,7 +49,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private OrderService orderService;
 
 	private static final int TOTAL_ACTIVE_ORDERS = 3;
-	private static final int TOTAL_SAMPLED_ORDERS = 2;
+	private static final int TOTAL_SAMPLED_ORDERS = 1;
 	private static final int TOTAL_REQUESTED_ORDERS = 1;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
@@ -125,22 +125,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		List<Encounter> list = service.getSpecimenDetailsEncountersByOrderNumbers(new String[]{TEST_ORDER_NUMBER});
 		assertTrue(list.size()>0);
 	}
-
-
-	@Test
-	@Verifies(value = "should cancel order", method = "cancelOrder()")
-	public void cancelOrder() throws Exception {
-		boolean ok = service.cancelOrder(TEST_ORDER_UUID, "the quick brown fox jumps over the lazy dog");
-		assertTrue(ok);
-
-		Order order = orderService.getOrderByUuid(TEST_ORDER_UUID);
-		assertTrue(order.isVoided());
-
-
-
-	}
-
-
+	
 	/* gets the hours back for testing, b/c the test data date is static*/
 	private static Date getTestEncounterDate() {
 		try {

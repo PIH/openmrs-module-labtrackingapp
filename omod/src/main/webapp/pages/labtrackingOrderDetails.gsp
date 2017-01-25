@@ -20,7 +20,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
 
 
-      <div class="panel-group">
+      <div class="panel-group" ng-if="data_loading == false">
         <order-debug-panel order="order" ng-show="debug"></order-debug-panel>
         <order-details-panel order="order"></order-details-panel>
         <order-specimen-panel order="order" locations="locations" providers="providers" procedures="procedures"
@@ -30,7 +30,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
       </div>
 
   
-    <div class="row" >
+    <div class="row" ng-if="data_loading == false">
         <div class="col-sm-12 text-right">
             <button type="button" class="btn btn-default" ng-click="returnToList()">${ui.message("labtrackingapp.returnToListPage")}</button>
             <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>

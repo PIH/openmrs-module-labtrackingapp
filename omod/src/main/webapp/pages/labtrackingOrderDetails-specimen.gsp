@@ -37,14 +37,39 @@
 						<input type='text' class="form-control" id="mdtonotify" ng-model="order.mdToNotify.value"  />
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="control-label col-sm-3" for="procedure" >${ui.message("labtrackingapp.proceduresitelabel")}</label>
-					<div class="col-sm-9">
-						<select id="procedure" class="form-control" multiple
-                ng-options="item as item.label for item in procedures | orderBy:'label' track by item.value"
-                ng-model="order.proceduresForSpecimen" ></select>
-					</div>
-				</div>
+
+
+                <div class="form-group">
+                   <label for="procedure" class="control-label col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
+                   <div class="col-sm-4">
+                      <div class="panel panel-default">
+                         <div class="panel-heading">Available</div>
+                         <div class="panel-body">
+                            <select id="procedure" class="form-control" multiple
+                               ng-options="item as item.label for item in procedures | orderBy:'label' track by item.value "
+                               ng-model="selectedProcedures" ></select>
+                         </div>
+                      </div>
+                   </div>
+                   <div class="col-sm-1">
+                      <p>&nbsp;</p>
+                      <button class="btn button-wrapper" type="button" ng-disabled="order.proceduresForSpecimen.length > 2" ng-click="addProcedure()"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                      <p>&nbsp;</p>
+                      <button class="btn button-wrapper" type="button" ng-disabled="order.proceduresForSpecimen.length == 0" ng-click="removeProcedure()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+                   </div>
+                   <div class="col-sm-4">
+                      <div class="panel panel-default">
+                         <div class="panel-heading">Selected</div>
+                         <div class="panel-body">
+                              <select id="procedure" class="form-control" multiple
+                                 ng-options="item as item.label for item in order.proceduresForSpecimen | orderBy:'label' track by item.value "
+                                 ng-model="tempProcedures" ></select>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+
+
 				<div class="form-group">
 					<label for="procedurenoncodedforspecimen" class="control-label col-sm-3">${ui.message("labtrackingapp.procedureNonCoded")}</label>
 					<div class="col-sm-9">

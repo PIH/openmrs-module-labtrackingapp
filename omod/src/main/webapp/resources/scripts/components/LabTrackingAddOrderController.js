@@ -3,6 +3,8 @@ angular.module("labTrackingAddOrderController", [])
         function ($window, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.procedures = []; //the list of procedures in the system
+            $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
+            $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
             $scope.careSettings = [];  //the list of care settings in the system
             $scope.diagnoses = []; // the diagnosis in the system
             $scope.concepts = LabTrackingOrder.concepts;
@@ -33,6 +35,42 @@ angular.module("labTrackingAddOrderController", [])
                     $scope.savingModal.dismiss('cancel');
 
                 });
+            };
+
+            /* adds a procedures to the list*/
+            $scope.addProcedure = function(){
+                for(var i=0;i<$scope.selectedProcedures.length;++i){
+                    if($scope.order.procedures.length > 2){
+                        //we only allow 3, so get out
+                        return;
+                    }
+                    $scope.order.procedures.push($scope.selectedProcedures[i]);
+                    for(var j=0;j<$scope.procedures.length;++j){
+                        if($scope.procedures[j].value == $scope.selectedProcedures[i].value){
+                            $scope.procedures.splice(j, 1);
+                            break;
+                        }
+                    }
+                }
+            };
+
+            /*removes a procedure from the list*/
+            $scope.removeProcedure = function(){
+                for(var i=0;i<$scope.tempProcedures.length;++i){
+                    $scope.procedures.push($scope.tempProcedures[i]);
+                    for(var j=0;j<$scope.order.procedures.length;++j){
+                        if($scope.order.procedures[j].value == $scope.tempProcedures[i].value){
+                            $scope.order.procedures.splice(j, 1);
+                            break;
+                        }
+                    }
+                }
+
+            };
+
+            /* checkes if you can submit the form*/
+            $scope.readyToSubmit = function(){
+                return $scope.order.procedures.length > 0 && $scope.order.preLabDiagnosis != null && $scope.order.preLabDiagnosis.value != null;
             };
 
 

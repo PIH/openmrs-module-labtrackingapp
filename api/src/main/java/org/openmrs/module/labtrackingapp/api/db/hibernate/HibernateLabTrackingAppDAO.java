@@ -17,12 +17,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Property;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.*;
 
-import org.hibernate.criterion.Subqueries;
 import org.openmrs.*;
+import org.openmrs.Order;
 import org.openmrs.api.db.OrderDAO;
 import org.openmrs.api.db.hibernate.HibernatePersonDAO;
 import org.openmrs.api.db.hibernate.PatientSearchCriteria;
@@ -103,12 +101,19 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     .add(Subqueries.propertyNotIn("orderNumber", samples));
         }
         else if (LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId() == status) {
-           // all orders that have a samples encounter
+           // all orders that have a samples encounter and no results
+            DetachedCriteria resultsObs = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("enc.id"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID));
+
             DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
                     .createAlias("concept", "con")
                     .createAlias("encounter", "enc")
                     .setProjection(Property.forName("valueText"))
-                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID));
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+                    .add(Subqueries.propertyNotIn("enc.id", resultsObs));
 
 
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
@@ -135,11 +140,11 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     .add(Subqueries.propertyIn("orderNumber", samples));
         }
 
-        //criteria.addOrder(Order.desc("enc.encounterDatetime"));
+        criteria.addOrder(org.hibernate.criterion.Order.desc("enc.encounterDatetime"));
 
         List<Order> orders = criteria.list();
 
-        debug(orders);
+
         return orders;
     }
 

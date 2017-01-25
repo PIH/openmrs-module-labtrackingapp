@@ -4,6 +4,7 @@ angular.module("labTrackingOrderDetailsController", [])
         function ($scope, $window, $http, $uibModal, Upload,
                   LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid,returnUrl) {
             // used to determine if we should disable things
+            $scope.data_loading = true;
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder();
             $scope.errorMessage = null;
@@ -123,6 +124,7 @@ angular.module("labTrackingOrderDetailsController", [])
                             $scope.procedures = res2.data;
                             return LabTrackingDataService.loadDiagnonses().then(function (res3) {
                                 $scope.diagnoses = res3.data;
+                                $scope.data_loading = false;
                             })
                         })
                     });
@@ -155,6 +157,54 @@ angular.module("labTrackingOrderDetailsController", [])
                 procedures: '=',
                 diagnoses: '=',
                 concepts: '=',
+            },
+            controller: function ($scope){
+                $scope.selectedProcedures = $scope.order.proceduresForSpecimen; //the list of procedures available, used to manage the UI state
+                $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
+
+                /* init procedures */
+                $scope.initProcedures = function(){
+                    for(var i=0;i<$scope.selectedProcedures.length;++i){
+                        for(var j=0;j<$scope.procedures.length;++j){
+                            if($scope.procedures[j].value == $scope.selectedProcedures[i].value){
+                                $scope.procedures.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
+                };
+                /* adds a procedures to the list*/
+                $scope.addProcedure = function(){
+                    for(var i=0;i<$scope.selectedProcedures.length;++i){
+                        if($scope.order.proceduresForSpecimen.length > 2){
+                            //we only allow 3, so get out
+                            return;
+                        }
+                        $scope.order.proceduresForSpecimen.push($scope.selectedProcedures[i]);
+                        for(var j=0;j<$scope.procedures.length;++j){
+                            if($scope.procedures[j].value == $scope.selectedProcedures[i].value){
+                                $scope.procedures.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                /*removes a procedure from the list*/
+                $scope.removeProcedure = function(){
+                    for(var i=0;i<$scope.tempProcedures.length;++i){
+                        $scope.procedures.push($scope.tempProcedures[i]);
+                        for(var j=0;j<$scope.order.proceduresForSpecimen.length;++j){
+                            if($scope.order.proceduresForSpecimen[j].value == $scope.tempProcedures[i].value){
+                                $scope.order.proceduresForSpecimen.splice(j, 1);
+                                break;
+                            }
+                        }
+                    }
+
+                };
+
+                $scope.initProcedures();
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };

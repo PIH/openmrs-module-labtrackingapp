@@ -43,13 +43,14 @@ angular.module("labTrackingOrderFactory", [])
             this.orginalSurgeonAndResident = {surgeon:null, resident:null};
             this.mdToNotify = {value: null};
             this.urgentReview = {value: false};
-            this.status = {value: null};
+            this.status = {label:null, value:null};
             this.requestDate = {value: null};
             this.sampleDate = {value: null};
             this.resultDate = {value: null, obsUuid: null};
             this.notes = {value: null};
             this.file = {value:null, url:null, obsUuid:null};
             this.debug = {};
+
         }
 
         /*
@@ -74,7 +75,7 @@ angular.module("labTrackingOrderFactory", [])
             notes:{value:'65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             resultDate:{value:'68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
             file:{value:'4cad2286-f66e-44c3-ba17-9665b569c13d'},
-            statusCodes: [{label:'All', value:'-1'},{label:'Requested', value:'1'},{label:'Sampled', value:'2'},{label:'With Results', value:'3'}]
+            statusCodes: [{label:'All', value:'-1'},{label:'Requested', value:'1'},{label:'Taken', value:'2'},{label:'Reported', value:'3'}]
         };
 
         /*
@@ -141,10 +142,8 @@ angular.module("labTrackingOrderFactory", [])
             order.patient.value = webServiceResult.patient.person.uuid;
             order.patient.name = webServiceResult.patient.person.display;
             order.patient.id = webServiceResult.patient.identifiers[0].identifier;
-            order.status.value = null; //TODO: need to get this
-            order.status.display = 'Requested'; //TODO: need to get this
             order.requestDate.value = new Date($filter('serverDate')(webServiceResult.dateActivated));
-
+            order.status = calcStatus(order);
             //default this to the order values ---------------------------
             order.locationWhereSpecimenCollected = order.location;
             order.proceduresForSpecimen = [];
@@ -251,6 +250,8 @@ angular.module("labTrackingOrderFactory", [])
 
                 }
 
+                labTrackingOrder.status = calcStatus(labTrackingOrder);
+
                 //var msg = "there are " + webServiceResult.encounterProviders.length + " providers, there ids are:\n";
                 for(var i = 0;i<webServiceResult.encounterProviders.length;++i){
                     var p = webServiceResult.encounterProviders[i];
@@ -274,13 +275,6 @@ angular.module("labTrackingOrderFactory", [])
                 //keep tracking of the original surgeon/resident, so that we can tell if they have changed
                 labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
 
-               // msg += "surgeon is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE + "\n";
-               // msg += "redident is " + LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE + "\n";
-
-
-                //labTrackingOrder.debug.message = msg;
-
-                console.log(labTrackingOrder.debug.message);
             }
 
             return labTrackingOrder;
@@ -473,6 +467,19 @@ angular.module("labTrackingOrderFactory", [])
             return providers;
         };
 
+        /* gets the Test Order status */
+        function calcStatus(order){
+            var idx = 1;
+            if(order.specimenDetailsEncounter.uuid){
+                if(order.resultDate.value){
+                    idx = 3
+                }
+                else{
+                    idx = 2
+                }
+            }
+            return LabTrackingOrder.concepts.statusCodes[idx];
+        }
         /* reads from obs to a labtracking order
          * @param order - the order object
          * @param conceptUuid -the concept id you are looking for

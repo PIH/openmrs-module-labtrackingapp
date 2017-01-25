@@ -85,10 +85,10 @@ else{
                   </tr>
                </thead>
                <tbody  ng-if="!data_loading">
-                  <tr ng-repeat="a in testOrderQueue | testOrderFilter:filter | orderBy:a.requestDate.value" >
+                  <tr ng-repeat="a in testOrderQueue | testOrderFilter:filter | orderBy:['requestDate.value','sampleDate.value', 'resultDate.value']" >
                      <td ng-show="patientUuid==null">{{a.patient.id}}</td>
                      <td ng-show="patientUuid==null">{{a.patient.name}}</td>
-                     <td>{{a.status.display}}</td>
+                     <td>{{a.status.label}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
                      <td><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span> {{a.sampleDate.value | date : 'shortDate'}}</td>
                      <td>{{a.resultDate.value | date : 'shortDate'}}</td>
