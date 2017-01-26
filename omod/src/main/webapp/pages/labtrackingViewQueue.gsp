@@ -59,7 +59,7 @@ else{
             <div class="col-md-3">${ui.message("labtrackingapp.listpage.search")}</div>
             <div class="col-md-9">
                <div class='input-group date' id='search'>
-                  <input type='text' class="form-control" ng-model="filter.patient.name" ng-change="handleFilterChange('patient')" />
+                  <input type='text' class="form-control" ng-model="filter.patient.name" ng-keypress="handleSearchChange(${'$'}event)" />
                   <span class="input-group-addon" ng-click="handleFilterChange('patient')">
                   <span class="glyphicon glyphicon-search"></span>
                   </span>
@@ -85,10 +85,16 @@ else{
                      <td ng-show="patientUuid==null">{{a.patient.name}}</td>
                      <td>{{a.status.label}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
-                     <td><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span> {{a.sampleDate.value | date : 'shortDate'}}</td>
-                     <td><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i> </span>{{a.resultDate.value | date : 'shortDate'}}</td>
+                     <td class="text-center"><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>
+                        <a role="button" ng-click="handleDetails(a, 'specimen')"><span title="Enter a value" ng-if="a.sampleDate.value==null"><i class="glyphicon glyphicon-edit action-icon" aria-hidden="true"></i></span><span ng-if="a.sampleDate.value!=null">{{a.sampleDate.value | date : 'shortDate'}}</span></a></td>
+                     <td class="text-center"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i> </span>
+                         <a role="button" ng-click="handleDetails(a, 'results')">
+                            <span title="Enter a value" ng-if="a.sampleDate.value!=null && a.resultDate.value==null"><i class="glyphicon glyphicon-edit action-icon" aria-hidden="true"></i></span>
+                            <span ng-if="a.resultDate.value!=null">{{a.resultDate.value | date : 'shortDate'}}</span>
+                         </a>
+                      </td>
                      <td>
-                        <button class="btn btn-sm btn-primary" ng-click="handleDetails(a)">${ui.message("labtrackingapp.listpage.details")}</button>
+                        <button class="btn btn-sm btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
                         <button class="btn btn-sm" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
                         <button ng-if="a.canceled==false" class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
                         <button ng-show="a.canceled==true" class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a, true)">${ui.message("labtrackingapp.purge")}</button>
@@ -150,3 +156,11 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
        });
    });
 </script>
+
+<style>
+        .action-icon{
+            color: #A1D030;
+            font-size: 25px;
+        }
+
+</style>

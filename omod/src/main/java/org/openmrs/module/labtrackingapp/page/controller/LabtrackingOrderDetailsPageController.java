@@ -10,7 +10,7 @@ public class LabtrackingOrderDetailsPageController {
 
     public Object controller(PageModel model, @RequestParam(value = "appId", required = false) AppDescriptor app,
                              @RequestParam(value = "returnUrl", required = false) String returnUrl,
-                             @RequestParam(value = "search", required = false) String search,
+                             @RequestParam(value = "pageType", required = false) String pageType,
                              @RequestParam(value = "orderUuid", required = true) String orderUuid,
                              @RequestParam(value = "patientId") Patient patient,
                              UiSessionContext uiSessionContext) {
@@ -20,6 +20,7 @@ public class LabtrackingOrderDetailsPageController {
         model.addAttribute("orderUuid", orderUuid);
         model.addAttribute("locale", uiSessionContext.getLocale());
         model.addAttribute("patient", patient);
+        model.addAttribute("pageType", pageType);
         model.addAttribute("location", uiSessionContext.getSessionLocation());
 
         return null;

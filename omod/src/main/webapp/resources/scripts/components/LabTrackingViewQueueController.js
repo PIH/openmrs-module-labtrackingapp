@@ -96,13 +96,15 @@ angular.module("labTrackingViewQueueController", [])
             /*
              handles looking up the order details
              @param order - the order to view the details for
+             @param type - the type of page to show either: speciment, results
              @return none, navigates to the order details page
              */
-            $scope.handleDetails = function (order) {
+            $scope.handleDetails = function (order, type) {
                 var url = "labtrackingOrderDetails.page?";
                 url += "patientId=" + order.patient.value;
                 url += "&orderUuid=" + order.uuid;
                 url += "&returnUrl=" + encodeURI(LabTrackingDataService.getQueuePageUrl(patientUuid));
+                url += "&pageType=" + type;
                 $window.location.href = url;
             };
 
@@ -163,6 +165,11 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.filter.from_date.opened = true;
             };
 
+
+            $scope.handleSearchChange = function(keyEvent) {
+                if (keyEvent.which === 13)
+                    $scope.handleFilterChange('patient');
+            }
             /*
              this is called whenever the filter changes
              */

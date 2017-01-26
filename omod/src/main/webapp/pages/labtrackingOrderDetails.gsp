@@ -18,22 +18,19 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
-
-
       <div class="panel-group" ng-if="data_loading == false">
         <order-debug-panel order="order" ng-show="debug"></order-debug-panel>
         <order-details-panel order="order"></order-details-panel>
-        <order-specimen-panel order="order" locations="locations" providers="providers" procedures="procedures"
+        <order-specimen-panel ng-if="pageType=='specimen'" order="order" locations="locations" providers="providers" procedures="procedures"
             diagnoses="diagnoses" concepts="concepts"></order-specimen-panel>
-        <order-results-panel order="order"></order-results-panel>
-
+        <order-results-panel ng-if="pageType=='results'" order="order"></order-results-panel>
+        <order-read-only-panel ng-if="pageType=='readonly'" order="order" concepts="concepts"></order-results-panel>
       </div>
 
-  
     <div class="row" ng-if="data_loading == false">
         <div class="col-sm-12 text-right">
             <button type="button" class="btn btn-default" ng-click="returnToList()">${ui.message("labtrackingapp.returnToListPage")}</button>
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>
+            <button ng-if="pageType != 'readonly'"type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>
             <button type="button" class="btn btn-default" ng-click="printOrder()">${ui.message("uicommons.print")}</button>
             <button type="button" class="btn btn-primary" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
         </div>
@@ -80,6 +77,7 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
     angular.module('labTrackingApp')
             .value('returnUrl', '${ returnUrl }')
             .value('orderUuid', '${ orderUuid }')
+            .value('pageType', '${ pageType }')
 			.value('patientUuid', '${ patient.uuid }')
 			.value('locationUuid', '${ location.uuid }')
             .value('translations', translations);

@@ -28,6 +28,12 @@ $fontPath: "../../fonts";
     color: #ff3d3d;
 }
 
+/* used for icons that you want to click to do something*/
+.action-icon{
+    color: #A1D030;
+    font-size: 25px;
+}
+
 /* fix so that the 1000px max size works with bootstrap
    if the UI changes, we can remove this
 */

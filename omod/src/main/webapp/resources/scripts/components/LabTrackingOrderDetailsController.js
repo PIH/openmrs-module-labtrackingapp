@@ -1,9 +1,10 @@
 angular.module("labTrackingOrderDetailsController", [])
     .controller("orderDetailsController", ['$scope', '$window', '$http', '$uibModal', 'Upload',
-        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'returnUrl',
+        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'returnUrl', 'pageType',
         function ($scope, $window, $http, $uibModal, Upload,
-                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid, returnUrl) {
+                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid, returnUrl, pageType) {
             // used to determine if we should disable things
+            $scope.pageType = pageType; //determines what we should show for editting
             $scope.data_loading = true;
             $scope.concepts = LabTrackingOrder.concepts;
             $scope.order = new LabTrackingOrder();
@@ -131,6 +132,15 @@ angular.module("labTrackingOrderDetailsController", [])
             });
 
         }])
+    .directive('orderReadOnlyPanel', function () {
+        return {
+            scope: {
+                order: '=',
+                concepts: '=',
+            },
+            templateUrl: 'labtrackingOrderReadOnly.page'
+        };
+    })
     .directive('orderDebugPanel', function () {
         return {
             scope: {

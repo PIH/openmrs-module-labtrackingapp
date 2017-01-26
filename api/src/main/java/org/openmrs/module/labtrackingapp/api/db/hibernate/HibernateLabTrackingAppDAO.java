@@ -102,6 +102,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     .createAlias("concept", "con")
                     .createAlias("encounter", "enc")
                     .setProjection(Property.forName("valueText"))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID));
 
 
@@ -114,6 +115,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     .createAlias("concept", "con")
                     .createAlias("encounter", "enc")
                     .setProjection(Property.forName("enc.id"))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID));
 
             DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
@@ -121,6 +123,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     .createAlias("encounter", "enc")
                     .setProjection(Property.forName("valueText"))
                     .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .add(Subqueries.propertyNotIn("enc.id", resultsObs));
 
 
@@ -141,7 +144,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     .createAlias("encounter", "enc")
                     .setProjection(Property.forName("valueText"))
                     .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
-                   // .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .add(Subqueries.propertyIn("enc.id", resultsObs));
 
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
@@ -156,20 +159,52 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                             Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_NOTES_UUID),
                             Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_FILE_UUID)));
 
+            DetachedCriteria samplesWithNoNotes = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("valueText"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyNotIn("enc.id", resultsObs));
+
             DetachedCriteria samples = DetachedCriteria.forClass(Obs.class)
                     .createAlias("concept", "con")
                     .createAlias("encounter", "enc")
                     .setProjection(Property.forName("valueText"))
                     .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
-                    // .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                    .add(Subqueries.propertyNotIn("enc.id", resultsObs));
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
-            criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                    .add(Subqueries.propertyIn("orderNumber", samples));
+            //we need to query for onces that don't have file/notes OR ones that don't have a sample at all
+            criteria.add(Restrictions.or(
+                            Subqueries.propertyIn("orderNumber", samplesWithNoNotes),
+                            Subqueries.propertyNotIn("orderNumber", samples)));
+        }
+        else if (LabTrackingConstants.LabTrackingOrderStatus.ALL.getId() == status) {
+            //for all we don't want to include canceled
+            DetachedCriteria resultsObs = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("enc.id"))
+                    .add(Restrictions.or(
+                            Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_NOTES_UUID),
+                            Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_FILE_UUID)));
+
+            DetachedCriteria samplesWithNotesOrFile = DetachedCriteria.forClass(Obs.class)
+                    .createAlias("concept", "con")
+                    .createAlias("encounter", "enc")
+                    .setProjection(Property.forName("valueText"))
+                    .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
+                    .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
+                    .add(Subqueries.propertyIn("enc.id", resultsObs));
+
+            criteria.add(Restrictions.or(Restrictions.eq("ord.voided", Boolean.FALSE),
+                                Restrictions.and(Restrictions.eq("ord.voided", Boolean.TRUE),
+                                        Subqueries.propertyIn("orderNumber", samplesWithNotesOrFile))));
+
+
         }
 
-
-
+        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.addOrder(org.hibernate.criterion.Order.desc("enc.encounterDatetime"));
 
         List<Order> orders = criteria.list();
