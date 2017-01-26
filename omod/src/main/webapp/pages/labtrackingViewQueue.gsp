@@ -86,10 +86,10 @@ else{
                      <td>{{a.status.label}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
                      <td class="text-center"><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>
-                        <a role="button" ng-click="handleDetails(a, 'specimen')"><span title="Enter a value" ng-if="a.sampleDate.value==null"><i class="glyphicon glyphicon-edit action-icon" aria-hidden="true"></i></span><span ng-if="a.sampleDate.value!=null">{{a.sampleDate.value | date : 'shortDate'}}</span></a></td>
-                     <td class="text-center"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i> </span>
+                        <a role="button" ng-click="handleDetails(a, 'specimen')"><span title="Enter a value" ng-if="a.sampleDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span><span ng-if="a.sampleDate.value!=null">{{a.sampleDate.value | date : 'shortDate'}}</span></a></td>
+                     <td class="text-center"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
                          <a role="button" ng-click="handleDetails(a, 'results')">
-                            <span title="Enter a value" ng-if="a.sampleDate.value!=null && a.resultDate.value==null"><i class="glyphicon glyphicon-edit action-icon" aria-hidden="true"></i></span>
+                            <span title="Enter a value" ng-if="a.sampleDate.value!=null && a.resultDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span>
                             <span ng-if="a.resultDate.value!=null">{{a.resultDate.value | date : 'shortDate'}}</span>
                          </a>
                       </td>
@@ -156,11 +156,3 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
        });
    });
 </script>
-
-<style>
-        .action-icon{
-            color: #A1D030;
-            font-size: 25px;
-        }
-
-</style>
