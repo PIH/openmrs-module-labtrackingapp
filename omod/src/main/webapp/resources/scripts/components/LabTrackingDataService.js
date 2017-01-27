@@ -383,12 +383,18 @@ angular.module("labTrackingDataService", [])
                 //if the providers have changed then remove the old ones and add the new ones
                 var changed = LabTrackingOrder.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
 
-                if (!changed) {
+                if (!changed.surgeon && !changed.resident) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
                 else {
-                    var encounterProvidersToDelete = [labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid,
-                        labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid];
+                    var encounterProvidersToDelete = [];
+                    if(changed.surgeon) {
+                        encounterProvidersToDelete.push(labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid);
+                    }
+
+                    if(changed.resident){
+                        encounterProvidersToDelete.push(labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid);
+                    }
 
                     return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete).then(function () {
                         return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.surgeon).then(function (resp2) {

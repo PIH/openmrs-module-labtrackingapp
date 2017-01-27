@@ -95,7 +95,7 @@ else{
                          </a>
                       </td>
                      <td>
-                        <button class="btn btn-sm btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
+                        <button title="{{a.orderNumber.value}}" class="btn btn-sm btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
                         <button class="btn btn-sm" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
                         <button ng-if="a.canceled==false" class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
                         <button ng-show="a.canceled==true" class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a, true)">${ui.message("labtrackingapp.purge")}</button>
