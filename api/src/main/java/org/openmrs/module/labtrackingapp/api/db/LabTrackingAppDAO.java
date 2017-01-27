@@ -39,12 +39,4 @@ public interface LabTrackingAppDAO {
 	* */
 	public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers);
 
-
-	/* cancels an order
-	* @param orderUuid - the order to udpate
-	* @return true/false depending on whether something was updated
-	* */
-	public boolean cancelOrder(String orderUuid);
-
-
 }

@@ -30,6 +30,9 @@
     <!--  the concept contains the results date for an order -->
     <concept concept_id="9993" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0"/>
 
+    <!--  the concept contains the notes for an order -->
+    <concept concept_id="9994" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="65a4cc8e-c27a-42d5-b9bf-e13674970d2a"/>
+
     <encounter_type encounter_type_id="9991" name="Test LabTracking Encounter type"
                     description="This is a the test LabTracking EncounterType" creator="1"
                     date_created="2016-12-11 00:00:00.0" retired="false" uuid="b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd"/>
@@ -58,7 +61,7 @@
             voided="false" patient_id="2"  care_setting="1"/>
     <!-- end first order -->
 
-    <!-- begin second order: will be canceled -->
+    <!-- begin second order -->
     <encounter encounter_id="8881" encounter_type="9991" patient_id="2" location_id="9991"
                encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
                voided="false" uuid="f13d6fae-baa9-4553-955d-888888888888"/>
@@ -70,7 +73,7 @@
             voided="false" patient_id="2"  care_setting="1"/>
     <!-- end 2nd order -->
 
-    <!-- begin 3rd order -->
+    <!-- begin 3rd order: has results date -->
     <encounter encounter_id="9993" encounter_type="9991" patient_id="2" location_id="9991"
                encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
                voided="false" uuid="f13d6fae-baa9-4553-955d-777777777777"/>
@@ -98,5 +101,47 @@
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
             voided="false" patient_id="2"  care_setting="1"/>
     <!-- end 3rd order -->
+
+    <!-- begin 4th order: canceled -->
+    <encounter encounter_id="4444" encounter_type="9991" patient_id="2" location_id="9991"
+               encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
+               voided="true" uuid="f13d6fae-baa9-4553-955d-777777777774"/>
+
+    <orders uuid="f4740b0b-206c-48a4-a5b7-444444444444" order_id="4444" encounter_id="4444"
+            order_type_id="2" urgency="ROUTINE"
+            order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
+            order_number="ORD-444"
+            auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
+            voided="true" patient_id="2"  care_setting="1"/>
+    <!-- end 4th order -->
+
+    <!-- begin 5th order: canceled with notes, should be returned by ALL queries -->
+    <encounter encounter_id="5555" encounter_type="9991" patient_id="2" location_id="9991"
+               encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
+               voided="false" uuid="f13d6fae-baa9-4553-955d-555555555555"/>
+
+    <!-- this is the specimen details for the order -->
+    <encounter encounter_id="5556" encounter_type="9991" patient_id="2" location_id="9991"
+               encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
+               voided="false" uuid="f13d6fae-baa9-4553-955d-555555555556"/>
+
+    <!-- the observation that maps the order to this encounter -->
+    <obs obs_id="5555" person_id="2" concept_id="9992" encounter_id="5556" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_text="ORD-555" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="3ce93824-26fe-102b-80cb-555555555555"/>
+
+    <!-- the observation that contains the notes -->
+    <obs obs_id="5556" person_id="2" concept_id="9994" encounter_id="5556" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_text="the quick brown fox jumps over the lazy dog." creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="3ce93824-26fe-102b-80cb-555555555556"/>
+
+
+    <orders uuid="f4740b0b-206c-48a4-a5b7-555555555555" order_id="5555" encounter_id="5555"
+            order_type_id="2" urgency="ROUTINE"
+            order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
+            order_number="ORD-555"
+            auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
+            voided="true" patient_id="2"  care_setting="1"/>
+    <!-- end 5th order -->
 
 </dataset>

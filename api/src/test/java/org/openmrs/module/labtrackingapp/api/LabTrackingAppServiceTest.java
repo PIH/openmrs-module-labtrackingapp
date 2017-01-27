@@ -48,11 +48,11 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private LabTrackingAppService service;
 	private OrderService orderService;
 
-	private static final int TOTAL_ACTIVE_ORDERS = 3;
+	private static final int TOTAL_ACTIVE_ORDERS = 4;
 	private static final int TOTAL_SAMPLED_ORDERS = 1;
 	private static final int TOTAL_REQUESTED_ORDERS = 1;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
-	private static final int TOTAL_CANCELED_ORDERS = 0;
+	private static final int TOTAL_CANCELED_ORDERS = 2;
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
 	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
 	private static final String TEST_ORDER_NUMBER="ORD-999";
@@ -69,14 +69,14 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	}
 	
 	@Test
-	@Verifies(value = "should get orders by date", method = "getActiveOrders()")
+	@Verifies(value = "should get ALL orders by date", method = "getActiveOrders()")
 	public void getActiveOrders_shouldGetByDate() throws Exception {
 		Date testDate = getTestEncounterDate();
 		long startDate = testDate.getTime()-1000*60*60;
 		long endDate = testDate.getTime()+1000*60*60;
 		String patientUuid = null;
 		String patientName = null;
-		int status = 0;
+		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
 	}
@@ -149,11 +149,10 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	@Test
 	@Verifies(value = "should get orders by status that are canceled", method = "getActiveOrders()")
 	public void getActiveOrders_shouldGetByDateCanceled() throws Exception {
-		Date testDate = getTestEncounterDate();
-		long startDate = testDate.getTime()-1000*60*60;
-		long endDate = testDate.getTime()+1000*60*60;
-		String patientUuid = TEST_PATIENT;
-		String patientName = "milt";
+		long startDate = 0;
+		long endDate = 0;
+		String patientUuid = null;
+		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId();
 		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
 		assertEquals(TOTAL_CANCELED_ORDERS, list.size());
