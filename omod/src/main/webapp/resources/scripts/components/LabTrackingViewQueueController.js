@@ -62,6 +62,10 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.data_loading = true;
                 $scope.lastUpdatedAtInMillis = new Date().getTime();
                 var pageNumber = $scope.filter.paging.currentPage;
+                if(pageNumber == 0){
+                    //this happens when there is no data
+                    pageNumber = 1;
+                }
                 var startDate = $scope.filter.from_date.value;
                 startDate.setHours(0, 0, 0, 0);
                 var endDate = $scope.filter.to_date.value;
