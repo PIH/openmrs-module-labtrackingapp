@@ -92,8 +92,13 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
         if (patientName != null && patientName.length() > 0) {
             criteria.createAlias("patient.names", "pname");
-            criteria.add(Restrictions.or(Restrictions.like("pname.givenName", "%" + patientName + "%"),
-                    Restrictions.like("pname.familyName", "%" + patientName + "%")));
+            criteria.createAlias("patient.identifiers", "pids");
+
+            final String query = new StringBuilder().append("%").append(patientName).append("%").toString();
+
+            criteria.add(Restrictions.or(Restrictions.like("pids.identifier", query),
+                    Restrictions.or(Restrictions.like("pname.givenName", query),
+                    Restrictions.like("pname.familyName", query))));
         }
 
         if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {

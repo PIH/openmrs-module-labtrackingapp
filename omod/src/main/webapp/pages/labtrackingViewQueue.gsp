@@ -29,7 +29,7 @@ else{
             <div class="col-md-4">
                <label for="status">${ui.message("labtrackingapp.listpage.status")}:</label>
                <select class="form-control" id="status" ng-model="filter.status" ng-change="handleFilterChange('status')"
-                  ng-options="item as item.label for item in statusCodes">
+                  ng-options="item as item.label for item in statusCodes track by item.value">
                </select>
             </div>
             <div class="col-md-4">
@@ -111,7 +111,7 @@ else{
                <label for="paging">Showing {{filter.paging.currentEntryStart}} to {{filter.paging.currentEntryEnd}} of {{filter.paging.totalItems}} entries</label>
             </div>
             <div class="col-sm-6 text-right">
-               <ul id="paging" uib-pagination total-items="filter.paging.totalItems" ng-model="filter.paging.currentPage" max-size="filter.paging.maxSize" ng-change="filter.paging.pageChanged()"
+               <ul id="paging" uib-pagination total-items="filter.paging.totalItems" ng-model="filter.paging.currentPage" max-size="filter.paging.maxSize" ng-change="pageChanged()"
                   class="pagination-sm" boundary-link-numbers="true"></ul>
             </div>
          </div>

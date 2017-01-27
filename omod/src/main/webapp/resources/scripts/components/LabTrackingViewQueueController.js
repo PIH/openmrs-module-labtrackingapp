@@ -1,6 +1,7 @@
 angular.module("labTrackingViewQueueController", [])
-    .controller("viewQueueController", ['$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid',
-        function ($scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid) {
+    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid','returnUrl',
+        function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, patientUuid, returnUrl) {
+            $scope.cookieForFilter="queue_filter";
             $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
             $scope.data_loading = true;
             $scope.selectedOrder = null;
@@ -10,53 +11,50 @@ angular.module("labTrackingViewQueueController", [])
             $scope.patientUuid = (patientUuid == null || patientUuid == 'null') ? null : patientUuid;
             var fromDate = new Date();
             fromDate.setDate(fromDate.getDate() - LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
-            $scope.filter = {
-                search: null, // the filter for the patient list
-                status: LabTrackingOrder.concepts.statusCodes[0],
-                patient: {uuid: null, name: null},
-                from_date: {opened: false, value: fromDate},
-                to_date: {opened: false, value: new Date()},
-                date_box: {
-                    format: 'dd-MMM-yyyy',
-                    options: {
-                        dateDisabled: false,
-                        formatYear: 'yy',
-                        maxDate: new Date(),
-                        minDate: new Date(2010, 1, 1),
-                        startingDay: 1,
-                        showWeeks: false
-                    },
-                    altInputFormats: ['M!/d!/yyyy']
-                },
-                paging: {
-                    totalItems: 0,
-                    currentPage: 1,
-                    maxSize: LabTrackingDataService.CONSTANTS.MAX_QUEUE_SIZE,
-                    currentEntryStart: 0,
-                    currentEntryEnd: 0,
-                    setPage: function (pageNo, totalItems) {
-                        if (totalItems == 0) {
-                            $scope.filter.paging.totalItems = 0;
-                            $scope.filter.paging.currentPage = 0;
-                            $scope.filter.paging.currentEntryStart = 0;
-                            $scope.filter.paging.currentEntryEnd = 0;
-                        }
-                        else {
-                            var sz = $scope.filter.paging.maxSize;
-                            $scope.filter.paging.totalItems = totalItems;
-                            $scope.filter.paging.currentPage = pageNo;
-                            $scope.filter.paging.currentEntryStart = pageNo * sz - sz + 1;
-                            $scope.filter.paging.currentEntryEnd = totalItems < pageNo * sz ? totalItems : pageNo * sz;
 
-                        }
-                    },
-                    pageChanged: function () {
-                        console.log('Page changed to: ' + $scope.filter.paging.currentPage);
-                        return $scope.loadQueue();
-                        //$scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.filter.paging.totalItems);
-                    }
+            var savedFilter = $cookies.getObject($scope.cookieForFilter);
+
+            if(savedFilter != null && returnUrl == 'internal'){
+                $scope.filter = savedFilter;
+                //we need to convert the dates strings to dates
+                if($scope.filter.from_date.value != null){
+                    $scope.filter.from_date.value = new Date($scope.filter.from_date.value);
                 }
-            };
+
+                if($scope.filter.to_date.value != null){
+                    $scope.filter.to_date.value = new Date($scope.filter.to_date.value);
+                }
+
+            }
+            else{
+                $scope.filter = {
+                    search: null, // the filter for the patient list
+                    status: LabTrackingOrder.concepts.statusCodes[0],
+                    patient: {uuid: null, name: null},
+                    from_date: {opened: false, value: fromDate},
+                    to_date: {opened: false, value: new Date()},
+                    date_box: {
+                        format: 'dd-MMM-yyyy',
+                        options: {
+                            dateDisabled: false,
+                            formatYear: 'yy',
+                            maxDate: new Date(),
+                            minDate: new Date(2010, 1, 1),
+                            startingDay: 1,
+                            showWeeks: false
+                        },
+                        altInputFormats: ['M!/d!/yyyy']
+                    },
+                    paging: {
+                        totalItems: 0,
+                        currentPage: 1,
+                        maxSize: LabTrackingDataService.CONSTANTS.MAX_QUEUE_SIZE,
+                        currentEntryStart: 0,
+                        currentEntryEnd: 0
+                    }
+                };
+            }
+
             /*
              loads the queue from the openmrs web services
              */
@@ -76,8 +74,10 @@ angular.module("labTrackingViewQueueController", [])
                         var cnt = resp.data.totalCount;
                         return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function (resp2) {
                             $scope.testOrderQueue = resp2.data;
-                            $scope.filter.paging.setPage(pageNumber, cnt);
+                            $scope.setPage(pageNumber, cnt);
                             $scope.data_loading = false;
+                            //update your cookies
+                            $cookies.putObject($scope.cookieForFilter, $scope.filter);
                         })
                     }
                     else {
@@ -147,7 +147,7 @@ angular.module("labTrackingViewQueueController", [])
                     $scope.data_loading = false;
                     $scope.selectedOrder = null;
                     $scope.orderCancelReason = null;
-                    $scope.filter.paging.setPage($scope.filter.paging.currentPage, $scope.testOrderQueue.length);
+                    $scope.setPage($scope.filter.paging.currentPage, $scope.testOrderQueue.length);
                 })
             };
 
@@ -179,5 +179,27 @@ angular.module("labTrackingViewQueueController", [])
                     return $scope.loadQueue();
                 }
             };
+
+            $scope.setPage =  function (pageNo, totalItems) {
+                if (totalItems == 0) {
+                    $scope.filter.paging.totalItems = 0;
+                    $scope.filter.paging.currentPage = 0;
+                    $scope.filter.paging.currentEntryStart = 0;
+                    $scope.filter.paging.currentEntryEnd = 0;
+                }
+                else {
+                    var sz = $scope.filter.paging.maxSize;
+                    $scope.filter.paging.totalItems = totalItems;
+                    $scope.filter.paging.currentPage = pageNo;
+                    $scope.filter.paging.currentEntryStart = pageNo * sz - sz + 1;
+                    $scope.filter.paging.currentEntryEnd = totalItems < pageNo * sz ? totalItems : pageNo * sz;
+
+                }
+            };
+
+            $scope.pageChanged = function () {
+                return $scope.loadQueue();
+            };
+
             return $scope.loadQueue();
         }]);

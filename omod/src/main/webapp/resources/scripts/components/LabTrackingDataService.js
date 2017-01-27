@@ -43,9 +43,9 @@ angular.module("labTrackingDataService", [])
              * @return String the url
              * */
             this.getQueuePageUrl = function (patientUuid) {
-                var queryString = "";
-                if (patientUuid != null) {
-                    queryString += "patientId=" + patientUuid;
+                var queryString = "returnUrl=internal"; //used to tell the queue to use the cookies for settings
+                if (patientUuid != null && patientUuid != 'null') {
+                    queryString += "&patientId=" + patientUuid;
                 }
                 return "labtrackingViewQueue.page?" + queryString;
             }

@@ -42,12 +42,7 @@
             <div class="col-sm-9">
                <p class="form-control-static" >{{order.postopDiagnosis.diagnosis.label}}</p>
             </div>
-            <div class="row">
-               <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.noteslabel")}</label>
-               <div class="col-sm-9">
-                  <p class="form-control-static" >{{order.notes.value}}</p>
-               </div>
-            </div>
+         </div>
             <div class="row">
                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
                <div class="col-sm-9">
@@ -74,12 +69,6 @@
                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
                <div class="col-sm-9">
                   <p class="form-control-static" >{{order.urgentReview.value == "3cd6f600-26fe-102b-80cb-0017a47871b2"?"${ui.message("uicommons.yes")}":"${ui.message("uicommons.no")}"}}</p>
-               </div>
-            </div>
-            <div class="row">
-               <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
-               <div class="col-sm-9">
-                  <p class="form-control-static" >{{order.resident.label}}</p>
                </div>
             </div>
          </div>

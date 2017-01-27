@@ -95,6 +95,32 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	@Test
+	@Verifies(value = "should get orders by patient id", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByDateAndPatientId() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = null;
+		String patientName = "bar1";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		assertEquals(TOTAL_REQUESTED_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value = "should get NOT orders by patient id that doesn't exist", method = "getActiveOrders()")
+	public void getActiveOrders_shouldNNotGetByDateAndPatientId() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = null;
+		String patientName = "the quick brown fox";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		assertEquals(0, list.size());
+	}
+
+	@Test
 	@Verifies(value = "should get orders by status with sample", method = "getActiveOrders()")
 	public void getActiveOrders_shouldGetByDateWithSample() throws Exception {
 		Date testDate = getTestEncounterDate();

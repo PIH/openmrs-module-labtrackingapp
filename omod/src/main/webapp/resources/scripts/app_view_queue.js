@@ -2,7 +2,7 @@
 
 // // Declare app level module which depends on views, and components
 angular.module('labTrackingApp', [
-    'ngDialog',
+    'ngCookies',
     'ngAnimate', 'ngSanitize', 'ui.bootstrap',
     'uicommons.filters',
     'ngFileUpload', //used for the file uploads

@@ -456,6 +456,7 @@ angular.module("labTrackingOrderFactory", [])
          * */
         LabTrackingOrder.haveProvidersChanged = function (provider, orginalSurgeonAndResident) {
             var ret = false;
+
             if ((provider.surgeon == null && orginalSurgeonAndResident.surgeon != null)
                 || (provider.surgeon != null && orginalSurgeonAndResident.surgeon == null)
                 || (provider.resident == null && orginalSurgeonAndResident.resident != null)
@@ -463,13 +464,11 @@ angular.module("labTrackingOrderFactory", [])
                 //handle all the nulls
                 ret = true;
             }
-            else if (provider.surgeon == null && orginalSurgeonAndResident.surgeon == null
-                && provider.resident == null && orginalSurgeonAndResident.resident == null) {
-                //they are both null and haven't changed
-                ret = false
+            else if(provider.surgeon != null && provider.surgeon.provider != orginalSurgeonAndResident.surgeon.provider){
+                ret = true;
             }
-            else if (provider.surgeon.provider != orginalSurgeonAndResident.surgeon.provider
-                || provider.resident.provider != orginalSurgeonAndResident.resident.provider) {
+            else if(provider.resident != null && provider.resident.provider != orginalSurgeonAndResident.resident.provider)
+            {
                 ret = true;
             }
 
