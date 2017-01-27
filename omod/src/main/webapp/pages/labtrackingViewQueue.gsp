@@ -55,13 +55,14 @@ else{
                </div>
             </div>
          </div>
+
          <div class="row top-buffer" ng-show="patientUuid==null">
-            <div class="col-md-3">${ui.message("labtrackingapp.listpage.search")}</div>
+            <div class="col-md-3 text-right">${ui.message("labtrackingapp.listpage.search")}</div>
             <div class="col-md-9">
-               <div class='input-group date' id='search'>
-                  <input type='text' class="form-control" ng-model="filter.patient.name" ng-keypress="handleSearchChange(${'$'}event)" />
-                  <span class="input-group-addon" ng-click="handleFilterChange('patient')">
-                  <span class="glyphicon glyphicon-search"></span>
+               <div class='input-group' id='search'>
+                  <input  id="patient-search" type='text' class="form-control" ng-model="filter.patient.name" ng-keypress="handleSearchChange(${'$'}event)" placeholder="${ui.message("coreapps.findPatient.search.placeholder")}" />
+                  <span role="button" class="input-group-addon" ng-click="filter.patient.name=null;handleFilterChange('patient')">
+                    <span class="glyphicon glyphicon-remove"></span>
                   </span>
                </div>
             </div>
