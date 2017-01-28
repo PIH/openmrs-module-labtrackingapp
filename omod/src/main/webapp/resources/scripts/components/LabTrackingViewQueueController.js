@@ -1,7 +1,7 @@
 angular.module("labTrackingViewQueueController", [])
-    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid','returnUrl',
+    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'returnUrl',
         function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, patientUuid, returnUrl) {
-            $scope.cookieForFilter="queue_filter";
+            $scope.cookieForFilter = "queue_filter";
             $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
             $scope.data_loading = true;
             $scope.selectedOrder = null;
@@ -14,19 +14,19 @@ angular.module("labTrackingViewQueueController", [])
 
             var savedFilter = $cookies.getObject($scope.cookieForFilter);
 
-            if(savedFilter != null && returnUrl == 'internal'){
+            if (savedFilter != null && returnUrl == 'internal') {
                 $scope.filter = savedFilter;
                 //we need to convert the dates strings to dates
-                if($scope.filter.from_date.value != null){
+                if ($scope.filter.from_date.value != null) {
                     $scope.filter.from_date.value = new Date($scope.filter.from_date.value);
                 }
 
-                if($scope.filter.to_date.value != null){
+                if ($scope.filter.to_date.value != null) {
                     $scope.filter.to_date.value = new Date($scope.filter.to_date.value);
                 }
 
             }
-            else{
+            else {
                 $scope.filter = {
                     search: null, // the filter for the patient list
                     status: LabTrackingOrder.concepts.statusCodes[0],
@@ -62,7 +62,7 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.data_loading = true;
                 $scope.lastUpdatedAtInMillis = new Date().getTime();
                 var pageNumber = $scope.filter.paging.currentPage;
-                if(pageNumber == 0){
+                if (pageNumber == 0) {
                     //this happens when there is no data
                     pageNumber = 1;
                 }
@@ -170,7 +170,7 @@ angular.module("labTrackingViewQueueController", [])
             };
 
 
-            $scope.handleSearchChange = function(keyEvent) {
+            $scope.handleSearchChange = function (keyEvent) {
                 if (keyEvent.which === 13)
                     $scope.handleFilterChange('patient');
             }
@@ -184,7 +184,7 @@ angular.module("labTrackingViewQueueController", [])
                 }
             };
 
-            $scope.setPage =  function (pageNo, totalItems) {
+            $scope.setPage = function (pageNo, totalItems) {
                 if (totalItems == 0) {
                     $scope.filter.paging.totalItems = 0;
                     $scope.filter.paging.currentPage = 0;

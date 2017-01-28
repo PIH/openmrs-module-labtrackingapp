@@ -388,11 +388,11 @@ angular.module("labTrackingDataService", [])
                 }
                 else {
                     var encounterProvidersToDelete = [];
-                    if(changed.surgeon) {
+                    if (changed.surgeon) {
                         encounterProvidersToDelete.push(labTrackingOrder.specimenDetailsEncounter.surgeonEncounterProviderUuid);
                     }
 
-                    if(changed.resident){
+                    if (changed.resident) {
                         encounterProvidersToDelete.push(labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid);
                     }
 

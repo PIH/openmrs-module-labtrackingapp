@@ -455,14 +455,14 @@ angular.module("labTrackingOrderFactory", [])
          * @param orginalSurgeonAndResident - the original provider objects
          * */
         LabTrackingOrder.haveProvidersChanged = function (provider, orginalSurgeonAndResident) {
-            var ret = {surgeon:false, resident:false};
+            var ret = {surgeon: false, resident: false};
 
             if ((provider.surgeon == null && orginalSurgeonAndResident.surgeon != null)
                 || (provider.surgeon != null && orginalSurgeonAndResident.surgeon == null)
-                || (provider.surgeon != null && provider.surgeon.provider != orginalSurgeonAndResident.surgeon.provider)){
+                || (provider.surgeon != null && provider.surgeon.provider != orginalSurgeonAndResident.surgeon.provider)) {
                 ret.surgeon = true;
             }
-            if((provider.resident == null && orginalSurgeonAndResident.resident != null)
+            if ((provider.resident == null && orginalSurgeonAndResident.resident != null)
                 || (provider.resident != null && orginalSurgeonAndResident.resident == null)
                 || (provider.resident != null && provider.resident.provider != orginalSurgeonAndResident.resident.provider)) {
                 ret.resident = true;
