@@ -18,7 +18,42 @@ angular.module("encounterFactory", [])
             this.location = location;
             this.encounterProviders = currentProvider !== null ? [encounterProvider] : [];
             this.obs = obs;
+
         }
+
+        /* formats a date like //yyyy-MM-dd HH:mm for DateTime concepts
+        * @param Date dt - the date
+        * @return the formatted date
+        * */
+        Encounter.formatDateTime = function(dt){
+
+            if(dt == null){
+                return null;
+            }
+
+            var ret = "";
+            var yr = dt.getFullYear();
+            var mt = dt.getMonth() + 1;
+            if(mt < 10){
+                mt = "0" + mt;
+            }
+            var dy = dt.getDate();
+            if(dy < 10){
+                dy = "0" + dy;
+            }
+            var h = dt.getHours();
+            if(h < 10){
+                h = "0" + h;
+            }
+
+            var mn = dt.getMinutes();
+            if(mn < 10){
+                mn = "0" + mn;
+            }
+            ret += yr + "-" + mt + "-" + dy + " " + h + ":" + mn;
+
+            return ret;
+        };
 
         /*creates an encounter provider object
          * @param providerUUID = the provider UUID

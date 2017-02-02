@@ -13,6 +13,7 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.locations = []; //the locations in the system
             $scope.diagnoses = []; //the diagnoses in the system
             $scope.procedures = []; //the procedures in the system
+
             /*
              loads the queue from the openmrs web services
              */
@@ -22,6 +23,10 @@ angular.module("labTrackingOrderDetailsController", [])
                 return LabTrackingDataService.loadOrder(orderUuid).then(function (resp) {
                     if (resp.status.code == 200) {
                         $scope.order = resp.data;
+                        if($scope.order.sampleDate.value == null){
+                            //if we don't have a sample date, then set a default value
+                            $scope.order.sampleDate.value = new Date();
+                        }
                     }
                     else {
                         $scope.errorMessage = resp.status.msg;
@@ -38,8 +43,8 @@ angular.module("labTrackingOrderDetailsController", [])
                         alert("Failed to save the specimen details");
 
                     }
-                    //$scope.savingModal.dismiss('cancel'); //don't need to dismiss, b/c we are just goint to the list page
-                    $window.location.href = returnUrl;
+                    $scope.savingModal.dismiss('cancel'); //don't need to dismiss, b/c we are just goint to the list page
+                    //$window.location.href = returnUrl;
                     //return resp;
                 });
             };
@@ -170,7 +175,26 @@ angular.module("labTrackingOrderDetailsController", [])
             controller: function ($scope) {
                 $scope.selectedProcedures = $scope.order.proceduresForSpecimen; //the list of procedures available, used to manage the UI state
                 $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
+                $scope.dateBoxOptions = {
+                    opened: false,
+                    format: 'dd-MMM-yyyy',
+                    options: {
+                        dateDisabled: false,
+                        formatYear: 'yy',
+                        minDate: null,
+                        maxDate: new Date(),
+                        startingDay: 1,
+                        showWeeks: false
+                    },
+                    altInputFormats: ['M!/d!/yyyy']
+                };
 
+                /*shows the date box for the sample date*/
+                $scope.showSampleDateBox = function () {
+                    //for some reason the value isn't binding, if it does, then you can remove this line
+                    $scope.dateBoxOptions.options.minDate = $scope.order.requestDate.value;
+                    $scope.dateBoxOptions.opened = true;
+                };
                 /* init procedures */
                 $scope.initProcedures = function () {
                     for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
@@ -230,7 +254,7 @@ angular.module("labTrackingOrderDetailsController", [])
                     options: {
                         dateDisabled: false,
                         formatYear: 'yy',
-                        minDate: $scope.minDate,
+                        minDate: null,
                         maxDate: new Date(),
                         startingDay: 1,
                         showWeeks: false

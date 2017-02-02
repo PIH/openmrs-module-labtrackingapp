@@ -1,3 +1,10 @@
+<style>
+    .labtracking_datebox{
+        margin-top:0px;
+    }
+</style>
+
+
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h4 class="panel-title">
@@ -6,17 +13,32 @@
 	</div>
 	<div id="specimen_panel" class="panel-collapse in">
 		<div class="panel-body">
-			<form class="form-horizontal">
-				<div class="row">
-					<label class="control-label form-control-static col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
-					<div class="col-sm-9">
-						<p class="form-control-static">{{(order.sampleDate.value==null?"New":order.sampleDate.value) | date : 'shortDate'}}</p>
+            <!-- put outside form so that it shows up -->
+
+
+            <form class="form-horizontal">
+
+			<div class="form-group">
+				<label class="control-label col-sm-3 text-right" for="date_of_results">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
+				<div class="col-md-9">
+					<div class='input-group date' id='date_of_results'>
+						<input type="text" class="form-control labtracking_datebox" uib-datepicker-popup="{{dateBoxOptions.format}}"
+						ng-model="order.sampleDate.value" is-open="dateBoxOptions.opened"
+						popup-placement="bottom-left"
+                         datepicker-options="dateBoxOptions.options"
+                     ng-required="false" close-text="Close" alt-input-formats="dateBoxOptions.altInputFormats" />
+                     	<span class="input-group-btn">
+							<button type="button" class="btn btn-default" ng-click="showSampleDateBox()">
+								<i class="glyphicon glyphicon-calendar"></i>
+							</button>
+						</span>
 					</div>
 				</div>
-				<div class="form-group">
-					<label class="control-label form-control-static col-sm-3" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
+			</div>
+				<div class="form-group top-buffer">
+					<label class="col-sm-3 text-right" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
 					<div class="col-sm-9">
-					    <select id="surgeon" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
+					    <select class="form-control" id="location" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
 					</div>
 				</div>
 				<div class="form-group">
