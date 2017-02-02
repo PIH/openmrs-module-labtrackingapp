@@ -43,8 +43,8 @@ angular.module("labTrackingOrderDetailsController", [])
                         alert("Failed to save the specimen details");
 
                     }
-                    $scope.savingModal.dismiss('cancel'); //don't need to dismiss, b/c we are just goint to the list page
-                    //$window.location.href = returnUrl;
+                    //$scope.savingModal.dismiss('cancel'); //don't need to dismiss, b/c we are just goint to the list page
+                    $window.location.href = returnUrl;
                     //return resp;
                 });
             };
