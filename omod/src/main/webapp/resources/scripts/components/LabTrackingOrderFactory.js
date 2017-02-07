@@ -86,9 +86,7 @@ angular.module("labTrackingOrderFactory", [])
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
                 {value: '873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'}],
             notes: {value: '65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
-            sampleDate: {value: '2f9d00f5-d292-4d87-ab94-0abf2f2817c4'},
-            //sampleDate: {value: 'bbeb58d7-63ba-4d7b-ac5b-4f72d3985888'},
-
+            // sampleDate: {value: '2f9d00f5-d292-4d87-ab94-0abf2f2817c4'}, //we are not using the OBS, if we do, then you can use this concept
             resultDate: {value: '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
             file: {value: '4cad2286-f66e-44c3-ba17-9665b569c13d'},
             statusCodes: [{label: 'All', value: '0'}, {label: 'Requested', value: '1'}, {
@@ -251,10 +249,11 @@ angular.module("labTrackingOrderFactory", [])
                             labTrackingOrder.resultDate.value = new Date($filter('serverDate')(v));
                             labTrackingOrder.resultDate.obsUuid = uuid;
                         }
-                        else if (conceptUuid == LabTrackingOrder.concepts.sampleDate.value) {
-                            labTrackingOrder.sampleDate.value = new Date($filter('serverDate')(v));
-                            labTrackingOrder.sampleDate.obsUuid = uuid;
-                        }
+                        //we are not using the OBS, if we do, then you can use this concept
+                        // else if (conceptUuid == LabTrackingOrder.concepts.sampleDate.value) {
+                        //     labTrackingOrder.sampleDate.value = new Date($filter('serverDate')(v));
+                        //     labTrackingOrder.sampleDate.obsUuid = uuid;
+                        // }
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
                             labTrackingOrder.file.url = v.links.uri;
                             labTrackingOrder.file.obsUuid = uuid;
@@ -397,13 +396,14 @@ angular.module("labTrackingOrderFactory", [])
                 obs.push(groupMembers);
             }
 
-            if (labTrackingOrder.sampleDate.value != null) {
-                var dtAsStr = Encounter.formatDateTime(labTrackingOrder.sampleDate.value);
-                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.sampleDate.value, dtAsStr, labTrackingOrder.sampleDate.obsUuid));
-            }
-            else if (labTrackingOrder.sampleDate.obsUuid != null) {
-                obsIdsToDelete.push(labTrackingOrder.sampleDate.obsUuid);
-            }
+            //we are not using the OBS, if we do, then you can use this concept
+            // if (labTrackingOrder.sampleDate.value != null) {
+            //     var dtAsStr = Encounter.formatDateTime(labTrackingOrder.sampleDate.value);
+            //     obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.sampleDate.value, dtAsStr, labTrackingOrder.sampleDate.obsUuid));
+            // }
+            // else if (labTrackingOrder.sampleDate.obsUuid != null) {
+            //     obsIdsToDelete.push(labTrackingOrder.sampleDate.obsUuid);
+            // }
 
             if (labTrackingOrder.resultDate.value != null) {
                 var dtAsStr = Encounter.toObsDate(labTrackingOrder.resultDate.value);

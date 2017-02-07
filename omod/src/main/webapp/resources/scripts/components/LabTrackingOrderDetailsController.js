@@ -25,7 +25,8 @@ angular.module("labTrackingOrderDetailsController", [])
                         $scope.order = resp.data;
                         if($scope.order.sampleDate.value == null){
                             //if we don't have a sample date, then set a default value
-                            $scope.order.sampleDate.value = new Date();
+                            //we are not using the OBS for sample date so you can't edit, if we do, you can set this default
+                            //$scope.order.sampleDate.value = new Date();
                         }
                     }
                     else {
@@ -175,26 +176,30 @@ angular.module("labTrackingOrderDetailsController", [])
             controller: function ($scope) {
                 $scope.selectedProcedures = $scope.order.proceduresForSpecimen; //the list of procedures available, used to manage the UI state
                 $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
-                $scope.dateBoxOptions = {
-                    opened: false,
-                    format: 'dd-MMM-yyyy',
-                    options: {
-                        dateDisabled: false,
-                        formatYear: 'yy',
-                        minDate: null,
-                        maxDate: new Date(),
-                        startingDay: 1,
-                        showWeeks: false
-                    },
-                    altInputFormats: ['M!/d!/yyyy']
-                };
 
-                /*shows the date box for the sample date*/
-                $scope.showSampleDateBox = function () {
-                    //for some reason the value isn't binding, if it does, then you can remove this line
-                    $scope.dateBoxOptions.options.minDate = $scope.order.requestDate.value;
-                    $scope.dateBoxOptions.opened = true;
-                };
+                //we are not using the OBS for sample date so you can't edit, if we do, you can these objects and props
+                // $scope.dateBoxOptions = {
+                //     opened: false,
+                //     format: 'dd-MMM-yyyy',
+                //     options: {
+                //         dateDisabled: false,
+                //         formatYear: 'yy',
+                //         minDate: null,
+                //         maxDate: new Date(),
+                //         startingDay: 1,
+                //         showWeeks: false
+                //     },
+                //     altInputFormats: ['M!/d!/yyyy']
+                // };
+                //
+                // /*shows the date box for the sample date*/
+                // $scope.showSampleDateBox = function () {
+                //     //for some reason the value isn't binding, if it does, then you can remove this line
+                //     $scope.dateBoxOptions.options.minDate = $scope.order.requestDate.value;
+                //     $scope.dateBoxOptions.opened = true;
+                // };
+
+                
                 /* init procedures */
                 $scope.initProcedures = function () {
                     for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
