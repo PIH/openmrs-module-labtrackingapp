@@ -18,8 +18,7 @@ public class LabtrackingAddOrderPageController {
         model.addAttribute("locale", uiSessionContext.getLocale());
         model.addAttribute("location", uiSessionContext.getSessionLocation());
         model.addAttribute("patient", patient);
-        //model.addAttribute("currentDateTimeInMillis", System.currentTimeMillis());
-
+  
         return null;
 
     }
