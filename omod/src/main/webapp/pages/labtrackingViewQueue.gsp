@@ -132,7 +132,8 @@ else{
                <h4 class="modal-title">Order #{{selectedOrder.orderNumber.value}} - {{selectedOrder.patient.name}}</h4>
             </div>
             <div class="modal-body">
-               <p>${ui.message("labtrackingapp.listpage.ordercancelreasonprompt")}</p>
+               <p ng-show="is_cancel">${ui.message("labtrackingapp.listpage.ordercancelreasonprompt")}</p>
+               <p ng-show="is_purge">${ui.message("labtrackingapp.listpage.orderpurgereasonprompt")}</p>
             </div>
             <div class="modal-footer">
                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="handleCancelOrder()">${ui.message("uicommons.yes")}</button>
