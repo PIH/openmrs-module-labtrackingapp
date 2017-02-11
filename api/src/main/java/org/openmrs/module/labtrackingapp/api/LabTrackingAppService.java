@@ -14,6 +14,7 @@ import org.openmrs.Order;
 import org.openmrs.api.OpenmrsService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * The main service of this module, which is exposed for other modules. See
@@ -29,18 +30,20 @@ public interface LabTrackingAppService extends OpenmrsService {
 	 * @param patientUuid - (optional) the patient UUID for the orders
 	 * @param patientName - (optional) the patient name to search for
 	 * @param status - (optional) the status code to search for
-	 */	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status);
+	 * @param maxResults - (optional) the max results to show, if 0 then all
+	 */	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, int maxResults);
 
 	/* gets the specimen details encounter associated with the Test order
 	* @param orderNumber - an array of order numbers to look up
 	* the Encounter
 	* */
 	public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers);
-	/* cancels an order
-	* @param orderUuid - the order to udpate
-	* @return true/false depending on whether something was updated
-	* */
-	public boolean cancelOrder(String orderUuid, String reasons);
 
-
+     /*
+	 * gets a summary of the active orders for a patient
+	 *  then the filter will not be applied
+	 * @param patientUuid - (optional) the patient UUID for the orders
+	 * @param maxResults - (optional) the max results to show, if 0 then all
+	 */
+	public Map<String, Map<String,Object>> getActiveOrderSummaryForPatient(String patientUuid, int maxResults);
 }

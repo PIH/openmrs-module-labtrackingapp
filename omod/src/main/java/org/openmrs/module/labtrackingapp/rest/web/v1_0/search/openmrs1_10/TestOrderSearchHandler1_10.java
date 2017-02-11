@@ -56,7 +56,7 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 		long startDate = toLong(context.getParameter(REQUEST_PARAM_START_DATE), 0);
 		long endDate = toLong(context.getParameter(REQUEST_PARAM_END_DATE), 0);
 
-		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		return new NeedsPaging<Order>(orders, context);
 	}
 

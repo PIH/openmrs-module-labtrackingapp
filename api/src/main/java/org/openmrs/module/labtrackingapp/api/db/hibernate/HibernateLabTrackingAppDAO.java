@@ -55,7 +55,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
     /*
     * gets all  encounters at a current location for a patient
     * */
-    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status){
+    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, int maxResults){
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");
         criteria.createAlias("encounter", "enc");
@@ -155,6 +155,10 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         criteria.addOrder(org.hibernate.criterion.Order.desc("enc.encounterDatetime"));
+
+        if(maxResults>0) {
+            criteria.setMaxResults(maxResults);
+        }
 
         List<Order> orders = criteria.list();
 //

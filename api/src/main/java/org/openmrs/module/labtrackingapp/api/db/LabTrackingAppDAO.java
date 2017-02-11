@@ -31,7 +31,7 @@ public interface LabTrackingAppDAO {
 	 * @param patientName - (optional) the patient name to search for
 	 * @param status - (optional) the status code to search for
 	 */
-	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status);
+	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, int maxResults);
 
 	/* gets the speciment details encounter for the test order
 	* @param orderNumbers - an array of order number

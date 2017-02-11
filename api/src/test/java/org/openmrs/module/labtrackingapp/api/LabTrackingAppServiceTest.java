@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -77,7 +78,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
 	}
 
@@ -90,7 +91,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_REQUESTED_ORDERS, list.size());
 	}
 
@@ -103,7 +104,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = "bar1";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_REQUESTED_ORDERS, list.size());
 	}
 
@@ -116,7 +117,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = "the quick brown fox";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(0, list.size());
 	}
 
@@ -129,7 +130,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_SAMPLED_ORDERS, list.size());
 	}
 
@@ -142,7 +143,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.RESULTS.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_RESULTS_ORDERS, list.size());
 	}
 
@@ -154,7 +155,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_CANCELED_ORDERS, list.size());
 	}
 	@Test
@@ -163,6 +164,14 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		List<Encounter> list = service.getSpecimenDetailsEncountersByOrderNumbers(new String[]{TEST_ORDER_NUMBER});
 		assertTrue(list.size()>0);
 	}
+
+	@Test
+	@Verifies(value = "should get active order summary for a patient", method = "getActiveOrderSummaryForPatient()")
+	public void getActiveOrderSummaryForPatient_shouldGetSome() throws Exception {
+		Map<String,Map<String,Object>> map = service.getActiveOrderSummaryForPatient(TEST_PATIENT, 5);
+		assertTrue(map.size()>0);
+	}
+
 	
 	/* gets the hours back for testing, b/c the test data date is static*/
 	private static Date getTestEncounterDate() {
