@@ -12,8 +12,6 @@ package org.openmrs.module.labtrackingapp.api.impl;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Order;
-import org.openmrs.api.OrderService;
-import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
