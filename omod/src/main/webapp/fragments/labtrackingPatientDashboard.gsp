@@ -1,4 +1,3 @@
-${ui.includeFragment("labtrackingapp", "libs")}
 
 <% if (orders.values().size() > 0) { %>
     <div class="info-section">
