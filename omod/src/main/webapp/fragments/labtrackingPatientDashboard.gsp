@@ -6,7 +6,7 @@
 
             <h3>${ ui.message("labtrackingapp.pathology").toUpperCase() }</h3>
             <i class="icon-share-alt edit-action right" title="Edit"
-               onclick="location.href = 'labtrackingViewQueue.page?patientId=${patient.uuid}';"></i>
+               onclick="location.href='${ui.pageLink("labtrackingapp", "labtrackingViewQueue", [ patientId: patient.id ])}';"></i>
         </div>
 
         <div class="info-body">
