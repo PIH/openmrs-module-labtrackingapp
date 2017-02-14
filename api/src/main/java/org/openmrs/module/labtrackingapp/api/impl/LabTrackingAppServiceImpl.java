@@ -57,7 +57,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                 }
 
                 Obs procNonCoded = getObsByConceptUUID(order.getEncounter(),
-                        LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID);
+                        LabTrackingConstants.LAB_TRACKING_PROCEDURE_NONCODED_UUID);
 
                 if(procNonCoded != null) {
                     procs.add(procNonCoded.getValueText());
