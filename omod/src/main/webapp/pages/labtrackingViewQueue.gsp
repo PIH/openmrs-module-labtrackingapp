@@ -95,10 +95,9 @@ else{
                          </a>
                       </td>
                      <td>
-                        <button title="{{a.orderNumber.value}}" class="btn btn-sm btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
-                        <button class="btn btn-sm" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
-                        <button ng-if="a.canceled==false" class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
-                        <button ng-show="a.canceled==true" class="btn btn-sm" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a, true)">${ui.message("labtrackingapp.purge")}</button>
+                        <button title="{{a.orderNumber.value}}" class="btn btn-xs btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
+                        <button class="btn btn-xs" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
+                        <button ng-if="a.canceled==false && a.resultDate.value == null" class="btn btn-xs" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
                      </td>
                   </tr>
                </tbody>
