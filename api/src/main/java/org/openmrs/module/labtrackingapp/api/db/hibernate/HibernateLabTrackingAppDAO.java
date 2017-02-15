@@ -96,9 +96,18 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
             final String query = new StringBuilder().append("%").append(patientName).append("%").toString();
 
-            criteria.add(Restrictions.or(Restrictions.like("pids.identifier", query),
-                    Restrictions.or(Restrictions.like("pname.givenName", query),
-                    Restrictions.like("pname.familyName", query))));
+
+            DetachedCriteria samples = getSamplesSubQuery();
+            //find orders where
+            //  an obs with the assendion number
+            // is part of an encounter that has an order number
+            // that equals the order's order number
+
+            criteria.add(
+                    Restrictions.or(Subqueries.propertyIn("orderNumber", getAccessionNumberSubQuery(query)),
+                    Restrictions.or(Restrictions.like("pids.identifier", query),
+                        Restrictions.or(Restrictions.like("pname.givenName", query),
+                            Restrictions.like("pname.familyName", query)))));
         }
 
         if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
@@ -181,6 +190,28 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                 .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
+
+    private static DetachedCriteria getAccessionNumberSubQuery(String srch){
+        //find orders where
+        //  an obs with the assendion number
+        // is part of an encounter that has an order number
+        // that equals the order's order number
+        DetachedCriteria accessionNumbersEncounterUUIDs =  DetachedCriteria.forClass(Obs.class)
+                .createAlias("concept", "conAcc")
+                .createAlias("encounter", "encAcc")
+                .setProjection(Property.forName("encAcc.id"))
+                .add(Restrictions.eq("voided", false))
+                .add(Restrictions.eq("conAcc.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_ACCESSION_NUMBER_UUID))
+                .add(Restrictions.like("valueText",srch));
+                //.add(Restrictions.in("enc.uuid"))
+                //.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+        DetachedCriteria samples = getSamplesSubQuery();
+        samples.add(Subqueries.propertyIn("enc.id", accessionNumbersEncounterUUIDs));
+
+        return samples;
+    }
+
 
     /*
     * gets a sub query that returns a list of encounter ids for orders that have a results date

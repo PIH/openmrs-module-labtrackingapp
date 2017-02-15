@@ -62,6 +62,12 @@
         </div>
     </div>
     <div class="row">
+        <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.accessionNumber")}</label>
+        <div class="col-sm-9">
+            <p class="form-control-static" >{{order.accessionNumber.value}}</p>
+        </div>
+    </div>
+    <div class="row">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{order.locationWhereSpecimenCollected.label}}</p>

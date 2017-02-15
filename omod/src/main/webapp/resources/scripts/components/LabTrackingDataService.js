@@ -371,7 +371,6 @@ angular.module("labTrackingDataService", [])
                             return resp;
                         }
                     });
-
                 });
             };
 

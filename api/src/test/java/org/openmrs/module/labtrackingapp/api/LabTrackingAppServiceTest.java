@@ -53,6 +53,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private static final int TOTAL_SAMPLED_ORDERS = 1;
 	private static final int TOTAL_REQUESTED_ORDERS = 1;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
+	private static final int TOTAL_ACCESSION_NUMBER_ORDERS = 1;
 	private static final int TOTAL_CANCELED_ORDERS = 2;
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
 	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
@@ -80,6 +81,19 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value = "should get orders by accession number", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetByAccessionNumber() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = 0;
+		long endDate = 0;
+		String patientUuid = null;
+		String patientName = "brown fox";
+		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		assertEquals(TOTAL_ACCESSION_NUMBER_ORDERS, list.size());
 	}
 
 	@Test

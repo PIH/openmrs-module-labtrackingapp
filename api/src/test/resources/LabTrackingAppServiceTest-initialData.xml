@@ -33,6 +33,9 @@
     <!--  the concept contains the notes for an order -->
     <concept concept_id="9994" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="65a4cc8e-c27a-42d5-b9bf-e13674970d2a"/>
 
+    <!--  the concept contains the accession number for an order -->
+    <concept concept_id="9995" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="57f4473c-4420-4dd8-9e56-5cac985d1fa1"/>
+
     <encounter_type encounter_type_id="9991" name="Test LabTracking Encounter type"
                     description="This is a the test LabTracking EncounterType" creator="1"
                     date_created="2016-12-11 00:00:00.0" retired="false" uuid="b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd"/>
@@ -93,6 +96,10 @@
          location_id="9991" value_datetime="2016-12-12 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
          uuid="3ce93824-26fe-102b-80cb-777777777778"/>
 
+    <!-- the accessionNumber UUID that contains the notes -->
+    <obs obs_id="9994" person_id="2" concept_id="9995" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_text="the quick brown fox jumps over the lazy dog." creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="3ce93824-26fe-102b-80cb-777777777779"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-111111111113" order_id="9993" encounter_id="9993"
             order_type_id="2" urgency="ROUTINE"
@@ -134,7 +141,6 @@
     <obs obs_id="5556" person_id="2" concept_id="9994" encounter_id="5556" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="the quick brown fox jumps over the lazy dog." creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
          uuid="3ce93824-26fe-102b-80cb-555555555556"/>
-
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-555555555555" order_id="5555" encounter_id="5555"
             order_type_id="2" urgency="ROUTINE"

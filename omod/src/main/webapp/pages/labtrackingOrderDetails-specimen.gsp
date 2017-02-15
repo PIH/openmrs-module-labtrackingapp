@@ -40,8 +40,14 @@
                     </div>
                 </div>
 -->
+				<div class="form-group">
+					<label class="control-label col-sm-3" for="accessionNumber">${ui.message("labtrackingapp.accessionNumber")}</label>
+					<div class="col-sm-9">
+						<input type='text' class="form-control" id="accessionNumber" ng-model="order.accessionNumber.value"  />
+					</div>
+				</div>
 				<div class="form-group top-buffer">
-					<label class="col-sm-3 text-right" for="proc_location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
+					<label class="col-sm-3 text-right" for="location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
 					<div class="col-sm-9">
 					    <select class="form-control" id="location" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
 					</div>
@@ -64,8 +70,6 @@
 						<input type='text' class="form-control" id="mdtonotify" ng-model="order.mdToNotify.value"  />
 					</div>
 				</div>
-
-
                 <div class="form-group">
                    <label for="procedure" class="control-label col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                    <div class="col-sm-4">

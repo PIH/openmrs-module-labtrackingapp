@@ -53,6 +53,7 @@ angular.module("labTrackingOrderFactory", [])
             this.orginalSurgeonAndResident = {surgeon: null, resident: null};
             this.mdToNotify = {value: null};
             this.urgentReview = {value: false};
+            this.accessionNumber = {value:null};
             this.status = {label: null, value: null};
             this.requestDate = {value: null};
             this.sampleDate = {value: null};
@@ -85,6 +86,7 @@ angular.module("labTrackingOrderFactory", [])
             mdToNotify: {value: 'a787e577-5e32-42dc-b3a8-e4c6d5b107f5'},
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
                 {value: '873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'}],
+            accessionNumber:{value:'57f4473c-4420-4dd8-9e56-5cac985d1fa1'},
             notes: {value: '65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             // sampleDate: {value: '2f9d00f5-d292-4d87-ab94-0abf2f2817c4'}, //we are not using the OBS, if we do, then you can use this concept
             resultDate: {value: '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
@@ -224,6 +226,9 @@ angular.module("labTrackingOrderFactory", [])
                         }
                         else if (_fromObsIfExists(labTrackingOrder, 'notes', conceptUuid, v, uuid)) {
                             //continue;
+                        }
+                        else if (_fromObsIfExists(labTrackingOrder, 'accessionNumber', conceptUuid, v, uuid)) {
+                                //continue;
                         } else if (_fromObsIfExists(labTrackingOrder, 'procedureNonCodedForSpecimen', conceptUuid, v, uuid)) {
                             //continue;
                             //console.log(labTrackingOrder.procedureNonCodedForSpecimen);
@@ -375,6 +380,7 @@ angular.module("labTrackingOrderFactory", [])
             _updateObsIfExists(labTrackingOrder, "clinicalHistoryForSpecimen", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "procedureNonCodedForSpecimen", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "notes", obs, obsIdsToDelete);
+            _updateObsIfExists(labTrackingOrder, "accessionNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "urgentReview", obs, obsIdsToDelete);
 
             if (labTrackingOrder.postopDiagnosis.diagnosis.value != null && labTrackingOrder.postopDiagnosis.diagnosis.value.length > 0) {

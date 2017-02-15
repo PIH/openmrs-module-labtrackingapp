@@ -13,14 +13,7 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
 
    ];
 </script>
-${
-if(patient){
-ui.includeFragment("coreapps", "patientHeader", [ patient: patient ])
-}
-else{
-''
-}
-}
+${if(patient){ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) } else{ '' }}
 <div class="container" ng-app="labTrackingApp" ng-controller="viewQueueController">
    <div class="panel panel-primary" id="monitor_box">
       <div class="panel-heading">${ui.message("labtrackingapp.listpage.panelheading")}</div>
@@ -73,6 +66,7 @@ else{
                   <tr>
                      <th ng-show="patientUuid==null">${ui.message("labtrackingapp.listpage.patient")}</th>
                      <th ng-show="patientUuid==null">${ui.message("labtrackingapp.listpage.name")}</th>
+                     <th>${ui.message("labtrackingapp.accessionNumber")}</th>
                      <th>${ui.message("labtrackingapp.listpage.status")}</th>
                      <th>${ui.message("labtrackingapp.listpage.requestdate")}</th>
                      <th>${ui.message("labtrackingapp.listpage.sampledate")}</th>
@@ -82,22 +76,23 @@ else{
                </thead>
                <tbody  ng-if="!data_loading">
                   <tr ng-repeat="a in testOrderQueue" >
-                     <td ng-show="patientUuid==null">{{a.patient.id}}</td>
-                     <td ng-show="patientUuid==null">{{a.patient.name}}</td>
-                     <td>{{a.status.label}}</td>
-                     <td>{{a.requestDate.value | date : 'shortDate'}}</td>
-                     <td class="text-center"><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>
+                     <td class="col-md-1" ng-show="patientUuid==null">{{a.patient.id}}</td>
+                     <td class="col-md-2"  ng-show="patientUuid==null">{{a.patient.name}}</td>
+                     <td class="col-md-1">{{a.accessionNumber.value}}</td>
+                     <td class="col-md-1">{{a.status.label}}</td>
+                     <td class="col-md-1">{{a.requestDate.value | date : 'shortDate'}}</td>
+                     <td class="col-md-1 text-center small"><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>
                         <a role="button" ng-click="handleDetails(a, 'specimen')"><span title="Enter a value" ng-if="a.sampleDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span><span ng-if="a.sampleDate.value!=null">{{a.sampleDate.value | date : 'shortDate'}}</span></a></td>
-                     <td class="text-center"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
+                     <td class="col-md-1 text-center small"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
                          <a role="button" ng-click="handleDetails(a, 'results')">
                             <span title="Enter a value" ng-if="a.sampleDate.value!=null && a.resultDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span>
                             <span ng-if="a.resultDate.value!=null">{{a.resultDate.value | date : 'shortDate'}}</span>
                          </a>
                       </td>
-                     <td>
-                        <button title="{{a.orderNumber.value}}" class="btn btn-xs btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
-                        <button class="btn btn-xs" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
-                        <button ng-if="a.canceled==false && a.resultDate.value == null" class="btn btn-xs" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
+                     <td class="col-md-*">
+                            <button title="{{a.orderNumber.value}}" class="btn btn-xs btn-primary" ng-click="handleDetails(a, 'readonly')">${ui.message("labtrackingapp.listpage.details")}</button>
+                            <button class="btn btn-xs" ng-click="handlePrint(a)" >${ui.message("uicommons.print")}</button>
+                            <button ng-if="a.canceled==false && a.resultDate.value == null" class="btn btn-xs" data-toggle="modal" data-target="#cancelOrderDialog" ng-click="showCancelOrder(a)">${ui.message("uicommons.cancel")}</button>
                      </td>
                   </tr>
                </tbody>
