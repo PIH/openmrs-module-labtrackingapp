@@ -53,7 +53,7 @@ ${if(patient){ ui.includeFragment("coreapps", "patientHeader", [ patient: patien
             <div class="col-md-3 text-right">${ui.message("labtrackingapp.listpage.search")}</div>
             <div class="col-md-9">
                <div class='input-group' id='search'>
-                  <input  id="patient-search" type='text' class="form-control" ng-model="filter.patient.name" ng-keypress="handleSearchChange(${'$'}event)" placeholder="${ui.message("coreapps.findPatient.search.placeholder")}" />
+                  <input  id="patient-search" type='text' class="form-control" ng-model="filter.patient.name" ng-keypress="handleSearchChange(${'$'}event)" placeholder="${ui.message("labtrackingapp.findPatient.search.placeholder")}" />
                   <span role="button" class="input-group-addon" ng-click="filter.patient.name=null;handleFilterChange('patient')">
                     <span class="glyphicon glyphicon-remove"></span>
                   </span>
