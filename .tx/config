@@ -4,6 +4,7 @@ host = https://www.transifex.com/
 [mirebalais.labtrackingapp-module]
 source_file = api/src/main/resources/messages.properties
 source_lang = en
+type = PROPERTIES
 trans.fr = api/src/main/resources/messages_fr.properties
 trans.ht = api/src/main/resources/messages_ht.properties
 
