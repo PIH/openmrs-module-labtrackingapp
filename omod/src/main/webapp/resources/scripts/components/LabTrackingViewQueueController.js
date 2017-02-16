@@ -110,7 +110,7 @@ angular.module("labTrackingViewQueueController", [])
                 var url = "labtrackingOrderDetails.page?";
                 url += "patientId=" + order.patient.value;
                 url += "&orderUuid=" + order.uuid;
-                url += "&returnUrl=" + encodeURI(LabTrackingDataService.getQueuePageUrl(patientUuid));
+                url += "&returnUrl=" + encodeURIComponent(LabTrackingDataService.getQueuePageUrl($scope.patientUuid));
                 url += "&pageType=" + type;
                 $window.location.href = url;
             };
