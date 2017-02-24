@@ -18,7 +18,8 @@
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("uicommons.patient")}</label>
         <div class="col-sm-9">
             <p class="form-control-static">
-                {{order.patient.name}} <br/>
+                {{order.patient.name}}<br/>
+                {{order.patient.id}}<br/>
 
             <span class="gender-age">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
