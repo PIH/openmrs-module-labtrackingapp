@@ -19,8 +19,7 @@
         <div class="col-sm-9">
             <p class="form-control-static">
                 {{order.patient.name}}<br/>
-                {{order.patient.id}}<br/>
-
+                <svg id="patient-id-barcode"></svg><br/>
             <span class="gender-age">
                 <span>${ui.message("coreapps.gender." + ui.encodeHtml(patient.gender))}&nbsp;</span>
                 <span>

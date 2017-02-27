@@ -22,6 +22,7 @@ ui.includeJavascript("labtrackingapp", "libs/ui-bootstrap-tpls-2.3.1.js")
 // used for the file uploaed
 ui.includeJavascript("labtrackingapp", "libs/ng-file-upload-shim.min.js")
 ui.includeJavascript("labtrackingapp", "libs/ng-file-upload.min.js")
+ui.includeJavascript("labtrackingapp", "libs/JsBarcode.all.min.js")
 
 // used for cookie management
 ui.includeJavascript("labtrackingapp", "libs/angular-cookies.min.js")

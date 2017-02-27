@@ -19,8 +19,12 @@ angular.module("labTrackingPrintController", [])
                 });
             };
 
-            /* loads the order then tells the window to print */
+            /* loads the order, creates the barcode, and then tells the window to print */
             return $scope.loadOrder(orderUuid).then(function () {
+
+                // bar code generation library: http://lindell.me/JsBarcode/
+                JsBarcode("#patient-id-barcode", $scope.order.patient.id);
+
                 $timeout(function () {
                     $window.print()
                 }, 500);
