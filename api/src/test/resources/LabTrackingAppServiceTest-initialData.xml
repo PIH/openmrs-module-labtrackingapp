@@ -34,7 +34,7 @@
     <concept concept_id="9994" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="65a4cc8e-c27a-42d5-b9bf-e13674970d2a"/>
 
     <!--  the concept contains the accession number for an order -->
-    <concept concept_id="9995" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="57f4473c-4420-4dd8-9e56-5cac985d1fa1"/>
+    <concept concept_id="9995" retired="false" datatype_id="0" class_id="0" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="162086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
 
     <encounter_type encounter_type_id="9991" name="Test LabTracking Encounter type"
                     description="This is a the test LabTracking EncounterType" creator="1"
