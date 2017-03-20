@@ -19,6 +19,7 @@ import org.openmrs.module.labtrackingapp.api.db.LabTrackingAppDAO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,8 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
 
     public Map<String,  Map<String,Object>> getActiveOrderSummaryForPatient(String patientUuid, int maxResults){
 
-        Map<String, Map<String,Object>> map = new HashMap<String,Map<String,Object>>();
+        // we use a linked hash map so that we maintain the order of the orders when we convert them to a map
+        Map<String, Map<String,Object>> map = new LinkedHashMap<String, Map<String, Object>>();
 
         List<Order> orders = getActiveOrders(0,0,patientUuid, null,
                 LabTrackingConstants.LabTrackingOrderStatus.ALL.getId(),maxResults);
