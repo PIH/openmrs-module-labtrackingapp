@@ -79,8 +79,8 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                </thead>
                <tbody  ng-if="!data_loading">
                   <tr ng-repeat="a in testOrderQueue" >
-                     <td ng-show="patientUuid==null">{{a.patient.id}}</td>
-                     <td  ng-show="patientUuid==null">{{a.patient.name}}</td>
+                     <td ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.id}}</a></td>
+                     <td  ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.name}}</a></td>
                      <td>{{a.accessionNumber.value}}</td>
                      <td>{{a.status.label}}</td>
                      <td>{{a.requestDate.value | date : 'shortDate'}}</td>
