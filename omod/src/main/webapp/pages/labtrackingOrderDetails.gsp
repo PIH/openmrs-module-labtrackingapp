@@ -22,7 +22,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         <order-debug-panel order="order" ng-show="debug"></order-debug-panel>
         <order-details-panel order="order"></order-details-panel>
         <order-specimen-panel ng-if="pageType=='specimen'" order="order" locations="locations" providers="providers" procedures="procedures"
-            diagnoses="diagnoses" concepts="concepts"></order-specimen-panel>
+            diagnoses="diagnoses" alldiagnoses="alldiagnoses" concepts="concepts"></order-specimen-panel>
         <order-results-panel ng-if="pageType=='results'" order="order"></order-results-panel>
         <order-read-only-panel ng-if="pageType=='readonly'" order="order" concepts="concepts"></order-results-panel>
       </div>

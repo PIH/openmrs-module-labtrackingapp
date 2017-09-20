@@ -6,7 +6,8 @@ angular.module("labTrackingAddOrderController", [])
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
             $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
             $scope.careSettings = [];  //the list of care settings in the system
-            $scope.diagnoses = []; // the diagnosis in the system
+            $scope.diagnoses = []; // the oncology diagnoses in the system
+            $scope.alldiagnoses = []; // all the diagnoses in the system
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
@@ -105,8 +106,11 @@ angular.module("labTrackingAddOrderController", [])
                     $scope.procedures = res2.data;
                     return LabTrackingDataService.loadDiagnonses().then(function (res3) {
                         $scope.diagnoses = res3.data;
-                    })
-                })
+                        return LabTrackingDataService.loadHumDiagnoses().then(function(humDiagnoses){
+                            $scope.alldiagnoses = humDiagnoses;
+                        });
+                    });
+                });
 
             });
         }]);

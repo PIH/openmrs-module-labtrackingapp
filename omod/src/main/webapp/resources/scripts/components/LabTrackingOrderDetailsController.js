@@ -11,7 +11,8 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.errorMessage = null;
             $scope.providers = []; // the proviers in the system
             $scope.locations = []; //the locations in the system
-            $scope.diagnoses = []; //the diagnoses in the system
+            $scope.diagnoses = []; //the oncology diagnoses in the system
+            $scope.alldiagnoses = []; //all the diagnoses in the system
             $scope.procedures = []; //the procedures in the system
 
             /*
@@ -130,7 +131,10 @@ angular.module("labTrackingOrderDetailsController", [])
                             $scope.procedures = res2.data;
                             return LabTrackingDataService.loadDiagnonses().then(function (res3) {
                                 $scope.diagnoses = res3.data;
-                                $scope.data_loading = false;
+                                return LabTrackingDataService.loadHumDiagnoses().then(function(humDiagnoses){
+                                    $scope.alldiagnoses = humDiagnoses;
+                                    $scope.data_loading = false;
+                                });
                             })
                         })
                     });
@@ -171,6 +175,7 @@ angular.module("labTrackingOrderDetailsController", [])
                 locations: '=',
                 procedures: '=',
                 diagnoses: '=',
+                alldiagnoses: '=',
                 concepts: '=',
             },
             controller: function ($scope) {

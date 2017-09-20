@@ -6,6 +6,7 @@ angular.module("labTrackingDataService", [])
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
+            var HUM_DIAGNOSIS_CONCEPT_SET_UUID = "8fcd0b0c-f977-4a66-a1b5-ad7ce68e6770";
             var CONSTANTS = {
                 MAX_QUEUE_SIZE: 10,
                 MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
@@ -121,6 +122,28 @@ angular.module("labTrackingDataService", [])
              * */
             this.loadDiagnonses = function () {
                 return _self.loadConceptSet(DIAGNOSIS_CONCEPT_SET_UUID);
+            };
+
+            /*
+             load all the HUM dianoses
+             * */
+            this.loadHumDiagnoses = function () {
+                var deferred = $q.defer();
+                var promises = [];
+                var allSysDiagnoses = [];
+                _self.loadConceptSet(HUM_DIAGNOSIS_CONCEPT_SET_UUID).then(function(result) {
+                    angular.forEach(result.data, function (diagSet) {
+                        promises.push(_self.loadConceptSet(diagSet.value));
+                    });
+                    return $q.all(promises).then(function(dataSet) {
+                       angular.forEach(dataSet, function(diagnosis) {
+                           allSysDiagnoses.push.apply(allSysDiagnoses, diagnosis.data);
+                       });
+                        deferred.resolve(allSysDiagnoses);
+                    });
+                });
+
+                return deferred.promise;
             };
             /*
              loads the the concepts in a concept set
