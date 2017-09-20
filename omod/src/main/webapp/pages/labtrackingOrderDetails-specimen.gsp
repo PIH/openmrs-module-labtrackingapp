@@ -2,6 +2,9 @@
     .labtracking_datebox{
         margin-top:0px;
     }
+	#procedure option{
+		white-space: pre-wrap;
+	}
 </style>
 
 

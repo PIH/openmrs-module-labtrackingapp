@@ -17,6 +17,9 @@
    .button-wrapper {
    margin-bottom:5px;
    }
+   #procedure option{
+      white-space: pre-wrap;
+   }
 </style>
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div class="container" ng-app="labTrackingApp" ng-controller="addOrderController">
