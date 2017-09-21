@@ -182,27 +182,24 @@ angular.module("labTrackingOrderDetailsController", [])
                 $scope.selectedProcedures = $scope.order.proceduresForSpecimen; //the list of procedures available, used to manage the UI state
                 $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
 
-                //we are not using the OBS for sample date so you can't edit, if we do, you can these objects and props
-                // $scope.dateBoxOptions = {
-                //     opened: false,
-                //     format: 'dd-MMM-yyyy',
-                //     options: {
-                //         dateDisabled: false,
-                //         formatYear: 'yy',
-                //         minDate: null,
-                //         maxDate: new Date(),
-                //         startingDay: 1,
-                //         showWeeks: false
-                //     },
-                //     altInputFormats: ['M!/d!/yyyy']
-                // };
-                //
-                // /*shows the date box for the sample date*/
-                // $scope.showSampleDateBox = function () {
-                //     //for some reason the value isn't binding, if it does, then you can remove this line
-                //     $scope.dateBoxOptions.options.minDate = $scope.order.requestDate.value;
-                //     $scope.dateBoxOptions.opened = true;
-                // };
+
+                $scope.procedureDateBoxOptions = {
+                    opened: false,
+                    format: 'dd-MMM-yyyy',
+                    options: {
+                        dateDisabled: false,
+                        formatYear: 'yy',
+                        minDate: $scope.order.requestDate.value,
+                        maxDate: new Date(),
+                        showWeeks: false
+                    },
+                    altInputFormats: ['M!/d!/yyyy']
+                };
+
+                /*shows the date box for the sample date*/
+                $scope.showProcedureDateBox = function () {
+                    $scope.procedureDateBoxOptions.opened = true;
+                };
 
                 
                 /* init procedures */

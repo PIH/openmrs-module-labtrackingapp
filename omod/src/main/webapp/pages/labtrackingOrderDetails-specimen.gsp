@@ -19,30 +19,21 @@
             <form class="form-horizontal">
                 <div class="row">
                     <div class="col-sm-3 text-right">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</div>
-                    <div class="col-sm-9">
-                        <p ng-if="order.sampleDate.value!=null">{{order.sampleDate.value | date : 'shortDate'}}</p>
-                        <p ng-if="order.sampleDate.value==null">${ui.message("uicommons.new")}</p>
+					<div class="col-md-9">
+						<div class='input-group date' id='date_of_procedure'>
+							<input type="text" class="form-control" uib-datepicker-popup="{{procedureDateBoxOptions.format}}"
+								   ng-model="order.sampleDate.value" is-open="procedureDateBoxOptions.opened"
+								   datepicker-options="procedureDateBoxOptions.options"
+								   ng-required="false" close-text="Close" alt-input-formats="procedureDateBoxOptions.altInputFormats" />
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-default" ng-click="showProcedureDateBox()">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</button>
+							</span>
+						</div>
+
                     </div>
                 </div>
-<!--
-                <div class="form-group">
-                    <label class="control-label col-sm-3 text-right" for="date_of_results">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
-                    <div class="col-md-9">
-                        <div class='input-group date' id='date_of_results'>
-                            <input type="text" class="form-control labtracking_datebox" uib-datepicker-popup="{{dateBoxOptions.format}}"
-                            ng-model="order.sampleDate.value" is-open="dateBoxOptions.opened"
-                            popup-placement="bottom-left"
-                             datepicker-options="dateBoxOptions.options"
-                         ng-required="false" close-text="Close" alt-input-formats="dateBoxOptions.altInputFormats" />
-                            <span class="input-group-btn">
-                                <button type="button" class="btn btn-default" ng-click="showSampleDateBox()">
-                                    <i class="glyphicon glyphicon-calendar"></i>
-                                </button>
-                            </span>
-                        </div>
-                    </div>
-                </div>
--->
 				<div class="form-group">
 					<label class="control-label col-sm-3" for="accessionNumber">${ui.message("labtrackingapp.accessionNumber")}</label>
 					<div class="col-sm-9">
