@@ -517,8 +517,7 @@ angular.module("labTrackingDataService", [])
              * @param {LabTrackingOrder} labTrackingOrder - the order that you want to save
              * */
             this.saveOrder = function (labTrackingOrder) {
-
-                return ensureActiveVisit(labTrackingOrder.patient.value, labTrackingOrder.location.value)
+                return ensureActiveVisit(labTrackingOrder.patient.value, labTrackingOrder.location.value, labTrackingOrder.visit)
                     .then(function (res) {
                         if (_self.isOk(res)) {
                             return _self.createOrderEncounter(labTrackingOrder);
@@ -577,8 +576,19 @@ angular.module("labTrackingDataService", [])
              * @param patient - the patient uuid
              * @param location - the location uuid
              * */
-            function ensureActiveVisit(patient, location) {
-                return $http.post(CONSTANTS.URLS.ACTIVE_VISIT + "?patient=" + patient + "&location=" + location);
+            function ensureActiveVisit(patient, location, visit) {
+                var deferred = $q.defer();
+                if (visit.value) {
+                    deferred.resolve({status: 200, data: visit});
+                } else {
+                    return $http.post(CONSTANTS.URLS.ACTIVE_VISIT + "?patient=" + patient + "&location=" + location).then( function(res){
+                        deferred.resolve(res);
+                    }, function(error) {
+                        deferred.reject(error);
+                    });
+                }
+
+                return deferred.promise;
             }
 
 
