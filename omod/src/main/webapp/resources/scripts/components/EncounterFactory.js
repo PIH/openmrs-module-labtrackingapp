@@ -9,7 +9,7 @@ angular.module("encounterFactory", [])
         /**
          * Constructor, with class name , all parameters are UUID's
          */
-        function Encounter(encounterType, currentProvider, encounterRole, patient, location, obs) {
+        function Encounter(encounterType, currentProvider, encounterRole, patient, location, obs, encounterDatetime, visit) {
 
             var encounterProvider = Encounter.toEncounterProvider(currentProvider, encounterRole);
 
@@ -18,7 +18,12 @@ angular.module("encounterFactory", [])
             this.location = location;
             this.encounterProviders = currentProvider !== null ? [encounterProvider] : [];
             this.obs = obs;
-
+            if (encounterDatetime) {
+                this.encounterDatetime = encounterDatetime;
+            }
+            if (visit) {
+                this.visit = visit;
+            }
         }
 
         /* formats a date like //yyyy-MM-dd HH:mm for DateTime concepts

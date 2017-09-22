@@ -16,9 +16,10 @@ angular.module("labTrackingOrderFactory", [])
         /**
          * Constructor, with class name
          */
-        function LabTrackingOrder(patientUuid, locationUuid) {
+        function LabTrackingOrder(patientUuid, locationUuid, visitUuid) {
             this.location = {value: locationUuid}; //this is the location where the order was created
             this.patient = {value: patientUuid, name: null, id: null};
+            this.visit = {value: visitUuid, id: null};
             this.uuid = null;
             this.canceled = false;
             this.specimenDetailsEncounter = {
@@ -329,7 +330,8 @@ angular.module("labTrackingOrderFactory", [])
                 encounter: labTrackingOrder.encounter.value,
                 orderReason: labTrackingOrder.preLabDiagnosis.value,
                 instructions: labTrackingOrder.instructions.value,
-                clinicalHistory: labTrackingOrder.clinicalHistory.value
+                clinicalHistory: labTrackingOrder.clinicalHistory.value,
+                dateActivated: labTrackingOrder.requestDate.value ? labTrackingOrder.requestDate.value : new Date() 
             };
         };
 
@@ -354,7 +356,7 @@ angular.module("labTrackingOrderFactory", [])
 
 
             return new Encounter(LabTrackingOrder.concepts.order.encounterTypeUuid, currentProviderUUID, LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-                labTrackingOrder.patient.value, labTrackingOrder.location.value, obs);
+                labTrackingOrder.patient.value, labTrackingOrder.location.value, obs, labTrackingOrder.requestDate.value, labTrackingOrder.visit.value);
         };
 
 
@@ -465,7 +467,7 @@ angular.module("labTrackingOrderFactory", [])
 
             var encounter = new Encounter(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID, currentProviderUUID,
                 LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-                labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs);
+                labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs, labTrackingOrder.requestDate.value, labTrackingOrder.visit.value);
 
             return {encounter: encounter, obsIdsToDelete: obsIdsToDelete};
         };

@@ -1,6 +1,6 @@
 angular.module("labTrackingAddOrderController", [])
-    .controller("addOrderController", ['$window', '$uibModal', '$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'locationUuid', 'returnUrl',
-        function ($window, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, locationUuid, returnUrl) {
+    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'visitStartDateTime', 'visitStopDateTime', 'locationUuid', 'returnUrl',
+        function ($window, $filter, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, visitStartDateTime, visitStopDateTime, locationUuid, returnUrl) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.procedures = []; //the list of procedures in the system
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
@@ -8,13 +8,45 @@ angular.module("labTrackingAddOrderController", [])
             $scope.careSettings = [];  //the list of care settings in the system
             $scope.diagnoses = []; // the oncology diagnoses in the system
             $scope.alldiagnoses = []; // all the diagnoses in the system
-            $scope.order = new LabTrackingOrder(patientUuid, locationUuid);
+            $scope.order = new LabTrackingOrder(patientUuid, locationUuid, visitUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
+
+            $scope.visitStartDateTime = new Date( $filter('serverDate')(visitStartDateTime));
+            $scope.visitSopDateTime = new Date();
+            if (visitStopDateTime) {
+                $scope.visitSopDateTime = new Date( $filter('serverDate')(visitStopDateTime));
+            }
+
+            $scope.requestDateBoxOptions = {
+                opened: false,
+                format: 'dd-MMM-yyyy',
+                options: {
+                    dateDisabled: false,
+                    formatYear: 'yy',
+                    minDate:  $scope.visitStartDateTime,
+                    initDate:  $scope.visitStartDateTime,
+                    maxDate: $scope.visitSopDateTime,
+                    showWeeks: false
+                },
+                altInputFormats: ['M!/d!/yyyy']
+            };
+
+            /*shows the date box for the request date*/
+            $scope.showRequestDateBox = function () {
+                $scope.requestDateBoxOptions.opened = true;
+            };
 
             /* saves an order*/
             $scope.handleSaveOrder = function () {
                 $scope.savingModal = showSavingModal();
+                // keep the Order Request datetime within the boundaries of the visit
+                if ( $scope.order.requestDate.value < $scope.visitStartDateTime ) {
+                    $scope.order.requestDate.value = $scope.visitStartDateTime;
+                } else if ( $scope.visitSopDateTime && $scope.order.requestDate.value > $scope.visitSopDateTime ) {
+                    $scope.order.requestDate.value = $scope.visitSopDateTime;
+                }
+
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
                     if (LabTrackingDataService.isOk(res)) {
                         $window.location.href = returnUrl; // LabTrackingDataService.getQueuePageUrl(patientUuid);

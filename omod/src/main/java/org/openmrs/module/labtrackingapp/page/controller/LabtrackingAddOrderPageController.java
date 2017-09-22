@@ -1,6 +1,7 @@
 package org.openmrs.module.labtrackingapp.page.controller;
 
 import org.openmrs.Patient;
+import org.openmrs.Visit;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
 import org.openmrs.ui.framework.page.PageModel;
@@ -10,6 +11,7 @@ public class LabtrackingAddOrderPageController {
 
     public Object controller(PageModel model, @RequestParam(value = "appId", required = false) AppDescriptor app,
                              @RequestParam(value = "returnUrl", required = false) String returnUrl,
+                             @RequestParam(value = "visitId", required = false) Visit visit,
                              @RequestParam(value = "patientId") Patient patient,
                              UiSessionContext uiSessionContext) {
 
@@ -18,7 +20,8 @@ public class LabtrackingAddOrderPageController {
         model.addAttribute("locale", uiSessionContext.getLocale());
         model.addAttribute("location", uiSessionContext.getSessionLocation());
         model.addAttribute("patient", patient);
-  
+        model.addAttribute("visit", visit);
+
         return null;
 
     }

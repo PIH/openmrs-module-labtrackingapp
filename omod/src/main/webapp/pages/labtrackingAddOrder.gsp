@@ -28,6 +28,22 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
       <div class="panel-body">
          <form name="addOrderForm">
             <div class="form-group row">
+               <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.listpage.requestdate")}</label>
+               <div class="col-sm-10">
+                  <div class='input-group date' id='date_of_request'>
+                     <input type="text" class="form-control" uib-datepicker-popup="{{requestDateBoxOptions.format}}"
+                            ng-model="order.requestDate.value" is-open="requestDateBoxOptions.opened"
+                            datepicker-options="requestDateBoxOptions.options"
+                            ng-required="false" close-text="Close" alt-input-formats="requestDateBoxOptions.altInputFormats" />
+                     <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" ng-click="showRequestDateBox()">
+                           <i class="glyphicon glyphicon-calendar"></i>
+                        </button>
+                     </span>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group row">
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-10">
                   <input type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="true"
@@ -119,6 +135,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
    angular.module('labTrackingApp')
    .value('returnUrl', '${ returnUrl }')
    .value('patientUuid', '${ patient.uuid }')
+   .value('visitUuid', '${ visit.uuid }')
+   .value('visitStartDateTime', '${ visit ? visit.startDatetime : '' }')
+   .value('visitStopDateTime', '${ visit ? visit.stopDatetime : '' }')
    .value('locationUuid', '${ location.uuid }');
    
    jq(function () {
