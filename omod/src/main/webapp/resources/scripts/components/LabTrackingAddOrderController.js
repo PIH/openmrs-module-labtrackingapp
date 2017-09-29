@@ -13,9 +13,18 @@ angular.module("labTrackingAddOrderController", [])
             $scope.debugInfo = null;  // for debugging
 
             $scope.visitStartDateTime = new Date( $filter('serverDate')(visitStartDateTime));
-            $scope.visitSopDateTime = new Date();
+            $scope.visitStopDateTime = new Date();
             if (visitStopDateTime) {
-                $scope.visitSopDateTime = new Date( $filter('serverDate')(visitStopDateTime));
+                $scope.visitStopDateTime = new Date( $filter('serverDate')(visitStopDateTime));
+            }
+            // if an active visit (no stop date), set the model value to the current date
+            else {
+                $scope.order.requestDate.value = new Date();
+            }
+
+            // if a single day visit, just set the model value to that date
+            if (sameDate($scope.visitStartDateTime, $scope.visitStopDateTime)) {
+                $scope.order.requestDate.value = $scope.visitStartDateTime;
             }
 
             $scope.requestDateBoxOptions = {
@@ -26,7 +35,7 @@ angular.module("labTrackingAddOrderController", [])
                     formatYear: 'yy',
                     minDate:  $scope.visitStartDateTime,
                     initDate:  $scope.visitStartDateTime,
-                    maxDate: $scope.visitSopDateTime,
+                    maxDate: $scope.visitStopDateTime,
                     showWeeks: false
                 },
                 altInputFormats: ['M!/d!/yyyy']
@@ -43,8 +52,8 @@ angular.module("labTrackingAddOrderController", [])
                 // keep the Order Request datetime within the boundaries of the visit
                 if ( $scope.order.requestDate.value < $scope.visitStartDateTime ) {
                     $scope.order.requestDate.value = $scope.visitStartDateTime;
-                } else if ( $scope.visitSopDateTime && $scope.order.requestDate.value > $scope.visitSopDateTime ) {
-                    $scope.order.requestDate.value = $scope.visitSopDateTime;
+                } else if ( $scope.visitStopDateTime && $scope.order.requestDate.value > $scope.visitStopDateTime ) {
+                    $scope.order.requestDate.value = $scope.visitStopDateTime;
                 }
 
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
@@ -125,8 +134,19 @@ angular.module("labTrackingAddOrderController", [])
                     templateUrl: 'myModalContent.html',
                     size: 'sm'
                 });
+            }
 
+            /*
+             * returns true/false whether the two dates are the same date (dropping time component)
+             */
+            function sameDate(date1, date2) {
+                var d1 = new Date(date1.getTime());
+                var d2 = new Date(date2.getTime());
 
+                d1.setHours(0,0,0,0);
+                d2.setHours(0,0,0,0);
+
+                return d1.getTime() == d2.getTime();
             }
 
             /*

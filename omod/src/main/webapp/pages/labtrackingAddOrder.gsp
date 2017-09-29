@@ -137,7 +137,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
    .value('patientUuid', '${ patient.uuid }')
    .value('visitUuid', '${ visit.uuid }')
    .value('visitStartDateTime', '${ visit ? visit.startDatetime : '' }')
-   .value('visitStopDateTime', '${ visit ? visit.stopDatetime : '' }')
+   .value('visitStopDateTime', '${ visit && visit.stopDatetime ? visit.stopDatetime : '' }')
    .value('locationUuid', '${ location.uuid }');
    
    jq(function () {
