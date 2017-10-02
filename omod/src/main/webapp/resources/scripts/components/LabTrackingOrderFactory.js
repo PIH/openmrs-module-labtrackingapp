@@ -467,7 +467,7 @@ angular.module("labTrackingOrderFactory", [])
 
             var encounter = new Encounter(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID, currentProviderUUID,
                 LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-                labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs, labTrackingOrder.requestDate.value, labTrackingOrder.visit.value);
+                labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs, labTrackingOrder.sampleDate.value, labTrackingOrder.visit.value);
 
             return {encounter: encounter, obsIdsToDelete: obsIdsToDelete};
         };
