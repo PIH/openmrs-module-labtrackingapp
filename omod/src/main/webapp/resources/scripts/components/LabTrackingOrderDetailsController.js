@@ -191,7 +191,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         dateDisabled: false,
                         formatYear: 'yy',
                         minDate: $scope.order.requestDate.value,
-                        maxDate:  $scope.serverDatetime,
+                        maxDate:  new Date(),
                         showWeeks: false
                     },
                     altInputFormats: ['M!/d!/yyyy']
@@ -263,7 +263,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         dateDisabled: false,
                         formatYear: 'yy',
                         minDate: null,
-                        maxDate:  $scope.serverDatetime,
+                        maxDate: new Date(),
                         startingDay: 1,
                         showWeeks: false
                     },
@@ -274,7 +274,7 @@ angular.module("labTrackingOrderDetailsController", [])
                 $scope.showResultsDateBox = function () {
                     //for some reason the value isn't binding, if it does, then you can remove this line
                     if ($scope.order.sampleDate.value == null) {
-                        $scope.dateBoxOptions.options.minDate =  $scope.serverDatetime;
+                        $scope.dateBoxOptions.options.minDate =  new Date();
                     }
                     else {
                         $scope.dateBoxOptions.options.minDate = $scope.order.sampleDate.value;
@@ -300,7 +300,7 @@ angular.module("labTrackingOrderDetailsController", [])
                     $scope.order.file.value = file;
                     $scope.order.file.label = file.name;
                     if ($scope.order.resultDate.value == null) {
-                        $scope.order.resultDate.value =  $scope.serverDatetime;
+                        $scope.order.resultDate.value =  new Date();
                     }
                 };
 
