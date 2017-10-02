@@ -1,6 +1,9 @@
 angular.module("labTrackingViewQueueController", [])
     .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'returnUrl',
         function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, patientUuid, returnUrl) {
+
+            $scope.dateFormat = "d-MMM-yy";
+
             $scope.cookieForFilter = "queue_filter";
             $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
             $scope.data_loading = true;

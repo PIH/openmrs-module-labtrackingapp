@@ -58,7 +58,7 @@
     <div class="row">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
         <div class="col-sm-9">
-            <p class="form-control-static">{{order.sampleDate.value | date : 'shortDate'}}</p>
+            <p class="form-control-static">{{order.sampleDate.value | date : 'd-MMM-yy'}}</p>
         </div>
     </div>
     <div class="row">
