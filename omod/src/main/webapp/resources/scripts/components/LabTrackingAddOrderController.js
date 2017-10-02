@@ -1,6 +1,6 @@
 angular.module("labTrackingAddOrderController", [])
-    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'visitStartDateTime', 'visitStopDateTime', 'locationUuid', 'returnUrl',
-        function ($window, $filter, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, visitStartDateTime, visitStopDateTime, locationUuid, returnUrl) {
+    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', '$window', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'visitStartDateTime', 'visitStopDateTime', 'serverDatetime', 'locationUuid', 'returnUrl',
+        function ($window, $filter, $uibModal, $scope, $window, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, visitStartDateTime, visitStopDateTime, serverDatetime, locationUuid, returnUrl) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.procedures = []; //the list of procedures in the system
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
@@ -12,6 +12,7 @@ angular.module("labTrackingAddOrderController", [])
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
 
+            $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
             $scope.visitStartDateTime = new Date( $filter('serverDate')(visitStartDateTime));
             if (visitStopDateTime) {
                 $scope.visitStopDateTime = new Date( $filter('serverDate')(visitStopDateTime));
@@ -22,7 +23,7 @@ angular.module("labTrackingAddOrderController", [])
                 $scope.order.requestDate.value = $scope.visitStartDateTime;
             } // if not a single day visit, but an active visit, set request date to current date
             else if (!visitStopDateTime) {
-                $scope.order.requestDate.value = new Date();
+                $scope.order.requestDate.value = $scope.serverDatetime;
             }
 
             $scope.requestDateBoxOptions = {
@@ -33,7 +34,7 @@ angular.module("labTrackingAddOrderController", [])
                     formatYear: 'yy',
                     minDate:  $scope.visitStartDateTime,
                     initDate:  $scope.visitStartDateTime,
-                    maxDate: $scope.visitStopDateTime ? $scope.visitStopDateTime : new Date(),
+                    maxDate: $scope.visitStopDateTime ? $scope.visitStopDateTime : $scope.serverDatetime,
                     showWeeks: false
                 },
                 altInputFormats: ['M!/d!/yyyy']

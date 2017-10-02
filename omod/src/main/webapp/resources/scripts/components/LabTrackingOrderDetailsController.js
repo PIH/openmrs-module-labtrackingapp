@@ -1,8 +1,8 @@
 angular.module("labTrackingOrderDetailsController", [])
-    .controller("orderDetailsController", ['$scope', '$window', '$http', '$uibModal', 'Upload',
-        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'returnUrl', 'pageType',
-        function ($scope, $window, $http, $uibModal, Upload,
-                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid, returnUrl, pageType) {
+    .controller("orderDetailsController", ['$scope', '$window', '$http', '$filter', '$uibModal', 'Upload',
+        'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'serverDatetime', 'returnUrl', 'pageType',
+        function ($scope, $window, $http, $filter, $uibModal, Upload,
+                  LabTrackingOrder, LabTrackingDataService, Encounter, orderUuid, patientUuid, serverDatetime, returnUrl, pageType) {
             // used to determine if we should disable things
             $scope.pageType = pageType; //determines what we should show for editting
             $scope.data_loading = true;
@@ -15,6 +15,8 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.alldiagnoses = []; //all the diagnoses in the system
             $scope.procedures = []; //the procedures in the system
 
+            $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
+
             /*
              loads the queue from the openmrs web services
              */
@@ -26,8 +28,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         $scope.order = resp.data;
                         if($scope.order.sampleDate.value == null){
                             //if we don't have a sample date, then set a default value
-                            //we are not using the OBS for sample date so you can't edit, if we do, you can set this default
-                            //$scope.order.sampleDate.value = new Date();
+                            $scope.order.sampleDate.value =  $scope.serverDatetime;
                         }
                     }
                     else {
@@ -190,7 +191,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         dateDisabled: false,
                         formatYear: 'yy',
                         minDate: $scope.order.requestDate.value,
-                        maxDate: new Date(),
+                        maxDate:  $scope.serverDatetime,
                         showWeeks: false
                     },
                     altInputFormats: ['M!/d!/yyyy']
@@ -262,7 +263,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         dateDisabled: false,
                         formatYear: 'yy',
                         minDate: null,
-                        maxDate: new Date(),
+                        maxDate:  $scope.serverDatetime,
                         startingDay: 1,
                         showWeeks: false
                     },
@@ -273,7 +274,7 @@ angular.module("labTrackingOrderDetailsController", [])
                 $scope.showResultsDateBox = function () {
                     //for some reason the value isn't binding, if it does, then you can remove this line
                     if ($scope.order.sampleDate.value == null) {
-                        $scope.dateBoxOptions.options.minDate = new Date();
+                        $scope.dateBoxOptions.options.minDate =  $scope.serverDatetime;
                     }
                     else {
                         $scope.dateBoxOptions.options.minDate = $scope.order.sampleDate.value;
@@ -299,7 +300,7 @@ angular.module("labTrackingOrderDetailsController", [])
                     $scope.order.file.value = file;
                     $scope.order.file.label = file.name;
                     if ($scope.order.resultDate.value == null) {
-                        $scope.order.resultDate.value = new Date();
+                        $scope.order.resultDate.value =  $scope.serverDatetime;
                     }
                 };
 

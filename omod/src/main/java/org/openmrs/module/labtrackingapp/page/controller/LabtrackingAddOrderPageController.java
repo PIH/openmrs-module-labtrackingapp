@@ -1,5 +1,6 @@
 package org.openmrs.module.labtrackingapp.page.controller;
 
+import org.joda.time.DateTime;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.appframework.domain.AppDescriptor;
@@ -21,6 +22,7 @@ public class LabtrackingAddOrderPageController {
         model.addAttribute("location", uiSessionContext.getSessionLocation());
         model.addAttribute("patient", patient);
         model.addAttribute("visit", visit);
+        model.addAttribute("serverDatetime", new DateTime()); // just in case the server and client time are not in sync
 
         return null;
 

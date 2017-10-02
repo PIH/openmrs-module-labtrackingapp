@@ -80,6 +80,7 @@ ${ ui.includeFragment("labtrackingapp", "translations") }
             .value('pageType', '${ pageType }')
 			.value('patientUuid', '${ patient.uuid }')
 			.value('locationUuid', '${ location.uuid }')
+            .value('serverDatetime', '${ serverDatetime }')
             .value('translations', translations);
 
     jq(function () {

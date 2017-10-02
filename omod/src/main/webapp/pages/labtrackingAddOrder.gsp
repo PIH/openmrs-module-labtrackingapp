@@ -133,12 +133,13 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 </div>
 <script type="text/javascript">
    angular.module('labTrackingApp')
-   .value('returnUrl', '${ returnUrl }')
-   .value('patientUuid', '${ patient.uuid }')
-   .value('visitUuid', '${ visit.uuid }')
-   .value('visitStartDateTime', '${ visit ? visit.startDatetime : '' }')
-   .value('visitStopDateTime', '${ visit && visit.stopDatetime ? visit.stopDatetime : '' }')
-   .value('locationUuid', '${ location.uuid }');
+      .value('returnUrl', '${ returnUrl }')
+      .value('patientUuid', '${ patient.uuid }')
+      .value('visitUuid', '${ visit.uuid }')
+      .value('visitStartDateTime', '${ visit ? visit.startDatetime : '' }')
+      .value('visitStopDateTime', '${ visit && visit.stopDatetime ? visit.stopDatetime : '' }')
+      .value('serverDatetime', '${ serverDatetime }')
+      .value('locationUuid', '${ location.uuid }');
    
    jq(function () {
        // make sure we reload the page if the location is changes; this custom event is emitted by by the location selector in the header

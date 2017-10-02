@@ -1,10 +1,9 @@
 package org.openmrs.module.labtrackingapp.page.controller;
 
+import org.joda.time.DateTime;
 import org.openmrs.Patient;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
-import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
-import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -24,6 +23,7 @@ public class LabtrackingOrderDetailsPageController {
         model.addAttribute("patient", patient);
         model.addAttribute("pageType", pageType);
         model.addAttribute("location", uiSessionContext.getSessionLocation());
+        model.addAttribute("serverDatetime", new DateTime()); // just in case the server and client time are not in sync
 
         return null;
 
