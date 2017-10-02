@@ -13,7 +13,6 @@ angular.module("labTrackingAddOrderController", [])
             $scope.debugInfo = null;  // for debugging
 
             $scope.visitStartDateTime = new Date( $filter('serverDate')(visitStartDateTime));
-            $scope.visitStopDateTime = new Date();
             if (visitStopDateTime) {
                 $scope.visitStopDateTime = new Date( $filter('serverDate')(visitStopDateTime));
             }
@@ -34,7 +33,7 @@ angular.module("labTrackingAddOrderController", [])
                     formatYear: 'yy',
                     minDate:  $scope.visitStartDateTime,
                     initDate:  $scope.visitStartDateTime,
-                    maxDate: $scope.visitStopDateTime,
+                    maxDate: $scope.visitStopDateTime ? $scope.visitStopDateTime : new Date(),
                     showWeeks: false
                 },
                 altInputFormats: ['M!/d!/yyyy']
@@ -51,7 +50,8 @@ angular.module("labTrackingAddOrderController", [])
                 // keep the Order Request datetime within the boundaries of the visit
                 if ( $scope.order.requestDate.value < $scope.visitStartDateTime ) {
                     $scope.order.requestDate.value = $scope.visitStartDateTime;
-                } else if ( $scope.visitStopDateTime && $scope.order.requestDate.value > $scope.visitStopDateTime ) {
+                }
+                else if ( $scope.visitStopDateTime && $scope.order.requestDate.value > $scope.visitStopDateTime ) {
                     $scope.order.requestDate.value = $scope.visitStopDateTime;
                 }
 
@@ -139,6 +139,10 @@ angular.module("labTrackingAddOrderController", [])
              * returns true/false whether the two dates are the same date (dropping time component)
              */
             function sameDate(date1, date2) {
+                if (!date1 || !date2) {
+                    return false;
+                }
+
                 var d1 = new Date(date1.getTime());
                 var d2 = new Date(date2.getTime());
 
