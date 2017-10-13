@@ -21,7 +21,7 @@
                     <div class="col-sm-3 text-right">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</div>
 					<div class="col-md-9">
 						<div class='input-group date' id='date_of_procedure'>
-							<input type="text" class="form-control" uib-datepicker-popup="{{procedureDateBoxOptions.format}}"
+							<input type="text" class="form-control" uib-datepicker-popup="{{procedureDateBoxOptions.format}}" popup-placement="bottom"
 								   ng-model="order.sampleDate.value" is-open="procedureDateBoxOptions.opened"
 								   datepicker-options="procedureDateBoxOptions.options"
 								   ng-required="false" close-text="Close" alt-input-formats="procedureDateBoxOptions.altInputFormats" />
