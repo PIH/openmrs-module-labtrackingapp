@@ -42,6 +42,11 @@
 		<file>messages_es.properties</file>
 	</messages>
 	<!-- /Internationalization -->
+
+	<privilege>
+		<name>Task: labtracking.update</name>
+		<description>Able to update lab tracking information (specimen information and results)</description>
+	</privilege>
 	
 </module>
 

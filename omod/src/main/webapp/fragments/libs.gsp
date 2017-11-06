@@ -8,6 +8,7 @@ ui.includeJavascript("uicommons", "angular-resource.min.js")
 ui.includeJavascript("uicommons", "angular-common.js")
 ui.includeJavascript("uicommons", "angular-app.js")
 ui.includeJavascript("uicommons", "services/session.js")
+ui.includeJavascript("uicommons", "model/user-model.js")
 ui.includeJavascript("uicommons", "filters/serverDate.js")
 
 // required for the ui-boostrap libs
@@ -32,3 +33,4 @@ ui.includeJavascript("labtrackingapp", "components/LabTrackingDataService.js")
 ui.includeJavascript("labtrackingapp", "components/EncounterFactory.js")
 ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderFactory.js")
 %>
+

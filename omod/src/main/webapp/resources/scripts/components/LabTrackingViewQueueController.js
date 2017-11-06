@@ -1,6 +1,6 @@
 angular.module("labTrackingViewQueueController", [])
-    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'returnUrl',
-        function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, patientUuid, returnUrl) {
+    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'SessionInfo', 'patientUuid','returnUrl',
+        function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, SessionInfo, patientUuid, returnUrl) {
 
             $scope.dateFormat = "d-MMM-yy";
 
@@ -12,8 +12,8 @@ angular.module("labTrackingViewQueueController", [])
             $scope.testOrderQueue = []; // hold the model
             $scope.errorMessage = null; // displays an error on the page if not null
             $scope.patientUuid = (patientUuid == null || patientUuid == 'null') ? null : patientUuid;
-            $scope.is_cancel=false;  //used to determien which warning message to show
-            $scope.is_purge=false;   //used to determien which warning message to show
+            $scope.is_cancel=false;  //used to determine which warning message to show
+            $scope.is_purge=false;   //used to determine which warning message to show
 
             var fromDate = new Date();
             fromDate.setDate(fromDate.getDate() - LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
@@ -212,6 +212,10 @@ angular.module("labTrackingViewQueueController", [])
             $scope.pageChanged = function () {
                 return $scope.loadQueue();
             };
+
+            $scope.canEdit = function() {
+                return SessionInfo.hasPrivilege('Task: labtracking.update');
+            }
 
             return $scope.loadQueue();
         }]);
