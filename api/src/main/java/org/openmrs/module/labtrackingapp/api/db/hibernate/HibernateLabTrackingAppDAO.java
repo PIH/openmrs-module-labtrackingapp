@@ -16,14 +16,14 @@ package org.openmrs.module.labtrackingapp.api.db.hibernate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.*;
-
-import org.openmrs.*;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Subqueries;
+import org.openmrs.Encounter;
+import org.openmrs.Obs;
 import org.openmrs.Order;
-import org.openmrs.api.db.OrderDAO;
-import org.openmrs.api.db.hibernate.HibernatePersonDAO;
-import org.openmrs.api.db.hibernate.PatientSearchCriteria;
+import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 
 import java.util.Calendar;
@@ -36,19 +36,19 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-    private SessionFactory sessionFactory;
+    private DbSessionFactory sessionFactory;
     
     /**
      * @param sessionFactory the sessionFactory to set
      */
-    public void setSessionFactory(SessionFactory sessionFactory) {
+    public void setSessionFactory(DbSessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     /**
      * @return the sessionFactory
      */
-    public SessionFactory getSessionFactory() {
+    public DbSessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
