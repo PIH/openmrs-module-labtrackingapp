@@ -1,7 +1,6 @@
 package org.openmrs.module.labtrackingapp.rest.web.v1_0.search.openmrs1_10;
 
 import org.openmrs.Encounter;
-import org.openmrs.Order;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
 import org.openmrs.module.webservices.rest.web.RequestContext;
@@ -15,7 +14,6 @@ import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Component
@@ -27,7 +25,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 	        .withRequiredParameters(REQUEST_PARAM_ORDER_NUMBER).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getSpecimenDetailsEncounter", RestConstants.VERSION_1 + "/encounter",
-	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"), searchQuery);
+	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*"), searchQuery);
 	
 	/**
 	 * @see SearchHandler#getSearchConfig()

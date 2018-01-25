@@ -1,12 +1,8 @@
 package org.openmrs.module.labtrackingapp.rest.web.v1_0.search.openmrs1_10;
 
-import org.apache.commons.lang.StringUtils;
-import org.openmrs.Encounter;
 import org.openmrs.Order;
 import org.openmrs.api.context.Context;
-
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
-import org.openmrs.module.webservices.rest.web.ConversionUtil;
 import org.openmrs.module.webservices.rest.web.RequestContext;
 import org.openmrs.module.webservices.rest.web.RestConstants;
 import org.openmrs.module.webservices.rest.web.resource.api.PageableResult;
@@ -17,7 +13,8 @@ import org.openmrs.module.webservices.rest.web.resource.impl.NeedsPaging;
 import org.openmrs.module.webservices.rest.web.response.ResponseException;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class TestOrderSearchHandler1_10 implements SearchHandler {
@@ -35,7 +32,7 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS, REQUEST_PARAM_TOTAL_COUNT).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getActiveOrders", RestConstants.VERSION_1 + "/order",
-	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*"), searchQuery);
+	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*"), searchQuery);
 	
 	/**
 	 * @see SearchHandler#getSearchConfig()
