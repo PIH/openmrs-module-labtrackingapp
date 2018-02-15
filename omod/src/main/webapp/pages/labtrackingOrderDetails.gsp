@@ -5,7 +5,7 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
     ui.includeJavascript("labtrackingapp", "app_order_details.js")
 %>
 
-<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
+<script type="text/javascript">
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
         {
@@ -24,7 +24,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
         <order-specimen-panel ng-if="pageType=='specimen'" order="order" locations="locations" providers="providers" procedures="procedures"
             diagnoses="diagnoses" alldiagnoses="alldiagnoses" concepts="concepts"></order-specimen-panel>
         <order-results-panel ng-if="pageType=='results'" order="order"></order-results-panel>
-        <order-read-only-panel ng-if="pageType=='readonly'" order="order" concepts="concepts"></order-results-panel>
+        <order-read-only-panel ng-if="pageType=='readonly'" order="order" concepts="concepts"></order-read-only-panel>
       </div>
 
     <div class="row" ng-if="data_loading == false">

@@ -1,4 +1,9 @@
 angular.module("labTrackingOrderDetailsController", [])
+    .config(function($templateRequestProvider){
+        $templateRequestProvider.httpOptions({
+            headers: { Accept: 'text/html' }
+        });
+    })
     .controller("orderDetailsController", ['$scope', '$window', '$http', '$filter', '$uibModal', 'Upload',
         'LabTrackingOrder', 'LabTrackingDataService', 'Encounter', 'orderUuid', 'patientUuid', 'serverDatetime', 'returnUrl', 'pageType',
         function ($scope, $window, $http, $filter, $uibModal, Upload,
