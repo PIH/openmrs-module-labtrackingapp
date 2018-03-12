@@ -489,7 +489,8 @@ angular.module("labTrackingDataService", [])
                     person: labTrackingOrder.patient.value,
                     obsDatetime: Encounter.toObsDate(new Date()),
                     concept: LabTrackingOrder.concepts.file.value,
-                    encounter: labTrackingOrder.specimenDetailsEncounter.uuid
+                    encounter: labTrackingOrder.specimenDetailsEncounter.uuid,
+                    location: labTrackingOrder.location.value
                     //file: file
                     //value: dataUrl
                 };
