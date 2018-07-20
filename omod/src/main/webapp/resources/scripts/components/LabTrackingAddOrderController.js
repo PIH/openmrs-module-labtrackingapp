@@ -112,8 +112,7 @@ angular.module("labTrackingAddOrderController", [])
             /* checks if you can submit the form*/
             $scope.readyToSubmit = function () {
                 return ($scope.order.procedures.length > 0
-                    || ($scope.order.procedureNonCoded.value != null && $scope.order.procedureNonCoded.value.length > 0))
-                    && ($scope.order.preLabDiagnosis != null && $scope.order.preLabDiagnosis.value != null);
+                    || ($scope.order.procedureNonCoded.value != null && $scope.order.procedureNonCoded.value.length > 0));
             };
 
 
