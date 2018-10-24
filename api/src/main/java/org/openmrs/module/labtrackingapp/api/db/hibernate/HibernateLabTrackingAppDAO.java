@@ -62,7 +62,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         criteria.createAlias("ord.patient", "pat");
         criteria.createAlias("ord.orderType", "orderType");
 
-        criteria.add(Restrictions.eq("orderType.uuid", LabTrackingConstants.LAB_TRACKING_TESTORDER_TYPE_UUID));
+        criteria.add(Restrictions.eq("orderType.uuid", LabTrackingConstants.LAB_TRACKING_PATHOLOGY_ORDER_TYPE_UUID));
         if(LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() == status){
             criteria.add(Restrictions.eq("ord.voided", Boolean.TRUE));
         }
