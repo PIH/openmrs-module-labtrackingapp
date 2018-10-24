@@ -23,7 +23,6 @@ import org.openmrs.test.Verifies;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +53,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private static final int TOTAL_REQUESTED_ORDERS = 1;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
 	private static final int TOTAL_ACCESSION_NUMBER_ORDERS = 1;
-	private static final int TOTAL_CANCELED_ORDERS = 2;
+	private static final int TOTAL_CANCELED_ORDERS = 1;
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
 	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
 	private static final String TEST_ORDER_NUMBER="ORD-999";

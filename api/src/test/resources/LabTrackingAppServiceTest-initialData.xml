@@ -11,6 +11,9 @@
 
 -->
 <dataset>
+    <!-- new pathlogy order type -->
+    <order_type order_type_id="1001" name="Pathology test order" parent="2" java_class_name="org.openmrs.TestOrder" description="Pathology tests orders" date_created="2008-08-15 13:49:47.0" retired="false" uuid="65c912c2-88cf-46c2-83ae-2b03b1f97d3a" creator="1" />
+
     <!-- generic patient info -->
     <patient patient_id="2" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"/>
     <patient_identifier patient_identifier_id="9991" patient_id="2" identifier="foobar123" identifier_type="1" preferred="1" location_id="1" creator="1" date_created="2016-12-11 00:00:00.0" voided="false" uuid="f76b39ad-cffb-42d1-a977-1f449a68a220"/>
@@ -57,7 +60,7 @@
          uuid="3ce93824-26fe-102b-80cb-0017a47871b2"/>
 
 
-    <orders uuid="f4740b0b-206c-48a4-a5b7-111111111111" order_id="9991" encounter_id="9991" order_type_id="2" urgency="ROUTINE"
+    <orders uuid="f4740b0b-206c-48a4-a5b7-111111111111" order_id="9991" encounter_id="9991" order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
             order_number="ORD-999"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
@@ -69,7 +72,7 @@
                encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
                voided="false" uuid="f13d6fae-baa9-4553-955d-888888888888"/>
 
-    <orders uuid="f4740b0b-206c-48a4-a5b7-111111111112" order_id="9992" encounter_id="9991" order_type_id="2" urgency="ROUTINE"
+    <orders uuid="f4740b0b-206c-48a4-a5b7-111111111112" order_id="9992" encounter_id="9991" order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
             order_number="ORD-888"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
@@ -102,7 +105,7 @@
          uuid="3ce93824-26fe-102b-80cb-777777777779"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-111111111113" order_id="9993" encounter_id="9993"
-            order_type_id="2" urgency="ROUTINE"
+            order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
             order_number="ORD-777"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
@@ -115,7 +118,7 @@
                voided="true" uuid="f13d6fae-baa9-4553-955d-777777777774"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-444444444444" order_id="4444" encounter_id="4444"
-            order_type_id="2" urgency="ROUTINE"
+            order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
             order_number="ORD-444"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
@@ -143,7 +146,7 @@
          uuid="3ce93824-26fe-102b-80cb-555555555556"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-555555555555" order_id="5555" encounter_id="5555"
-            order_type_id="2" urgency="ROUTINE"
+            order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
             order_number="ORD-555"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
