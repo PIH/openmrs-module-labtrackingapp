@@ -2,6 +2,9 @@ angular.module("labTrackingOrderFactory", [])
     .factory('LabTrackingOrder', ['$http', '$filter', 'Encounter', function ($http, $filter, Encounter) {
         LabTrackingOrder.CONSTANTS = {
             ORDER_TYPE: "testorder",
+            // TODO this (and equivalent in LabTrackingConstants) is hardcoded to the Pathology Lab Order Type defined in OrderTypeBundle in PIH Core;
+            // TODO: could be changed to GP if we want
+            LAB_TRACKING_PATHOLOGY_ORDER_TYPE_UUID: "65c912c2-88cf-46c2-83ae-2b03b1f97d3a",
             ORDER_ENCOUNTER_PROVIDER_ROLE_UUID: "c458d78e-8374-4767-ad58-9f8fe276e01c",
             SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID: "10db3139-07c0-4766-b4e5-a41b01363145",
             SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER: "393dec41-2fb5-428f-acfa-36ea85da6666",
@@ -323,6 +326,7 @@ angular.module("labTrackingOrderFactory", [])
         LabTrackingOrder.toWebServiceObject = function (labTrackingOrder, currentProviderUUID) {
             return {
                 type: LabTrackingOrder.CONSTANTS.ORDER_TYPE,
+                orderType: LabTrackingOrder.CONSTANTS.LAB_TRACKING_PATHOLOGY_ORDER_TYPE_UUID,
                 patient: labTrackingOrder.patient.value,
                 orderer: currentProviderUUID,
                 concept: LabTrackingOrder.concepts.order.conceptUuid,

@@ -2,7 +2,8 @@ package org.openmrs.module.labtrackingapp;
 
 public class LabTrackingConstants {
 	//public static final String LAB_TRACKING_ORDER_ENCOUNTER_TYPE_UUID = "b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd";
-    // this is hardcoded to the Pathology Lab Order Type defined in OrderTypeBundle in PIH Core; could be changed to GP if we want
+    // TODO this (and equivalent in LabTrackingOrderFactory) is hardcoded to the Pathology Lab Order Type defined in OrderTypeBundle in PIH Core;
+	// TODO could be changed to GP if we want
 	public static final String LAB_TRACKING_PATHOLOGY_ORDER_TYPE_UUID = "65c912c2-88cf-46c2-83ae-2b03b1f97d3a";
 	public static final String LAB_TRACKING_SPECIMEN_ENCOUNTER_ACCESSION_NUMBER_UUID = "162086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String LAB_TRACKING_SPECIMEN_ENCOUNTER_ORDER_NUMBER_UUID = "393dec41-2fb5-428f-acfa-36ea85da6666";
