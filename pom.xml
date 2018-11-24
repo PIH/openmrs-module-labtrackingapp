@@ -39,13 +39,13 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<openMRSVersion>1.10.4</openMRSVersion>
 		<openMRSwebVersion>1.10.4</openMRSwebVersion>
-		<appframeworkVersion>2.11.0</appframeworkVersion>
-		<appuiVersion>1.8.0</appuiVersion>
+		<appframeworkVersion>2.12.0</appframeworkVersion>
+		<appuiVersion>1.9.0</appuiVersion>
 		<uicommonsVersion>1.8</uicommonsVersion>
-		<uiframeworkVersion>3.13.0</uiframeworkVersion>
+		<uiframeworkVersion>3.14.0</uiframeworkVersion>
 		<uilibraryVersion>1.5</uilibraryVersion>
 		<webservicesRestVersion>2.13</webservicesRestVersion>
-		<emrapiVersion>1.24.5</emrapiVersion>
+		<emrapiVersion>1.26.0</emrapiVersion>
 		<reportingVersion>1.16.0</reportingVersion>
 		<calculationVersion>1.2</calculationVersion>
 		<serializationxstreamVersion>0.2.14</serializationxstreamVersion>
