@@ -139,6 +139,13 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>emrapi-api-pre2.2</artifactId>
+			<version>${emrapiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- OpenMRS modules simply required to fire up the application context when running component tests -->
 
 		<dependency>
@@ -222,6 +229,14 @@
 							<banSnapshots>true</banSnapshots>
 						</property>
 					</properties>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.1</version>
+				<configuration>
+					<argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
