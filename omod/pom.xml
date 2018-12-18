@@ -238,7 +238,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<jrubyVersion>1.7.10</jrubyVersion>
+					<jrubyVersion>9.2.5.0</jrubyVersion>
 					<execArgs>${gem.home}/bin/compass compile ${basedir}/src/main/compass</execArgs>
 				</configuration>
 			</plugin>
