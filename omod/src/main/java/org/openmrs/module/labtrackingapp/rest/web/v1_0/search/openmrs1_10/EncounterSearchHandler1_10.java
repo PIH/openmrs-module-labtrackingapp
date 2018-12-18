@@ -25,7 +25,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 	        .withRequiredParameters(REQUEST_PARAM_ORDER_NUMBER).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getSpecimenDetailsEncounter", RestConstants.VERSION_1 + "/encounter",
-	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*"), searchQuery);
+	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.*"), searchQuery);
 	
 	/**
 	 * @see SearchHandler#getSearchConfig()

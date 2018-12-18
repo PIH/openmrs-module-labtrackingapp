@@ -32,7 +32,7 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS, REQUEST_PARAM_TOTAL_COUNT).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getActiveOrders", RestConstants.VERSION_1 + "/order",
-	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.0.*", "2.1.*"), searchQuery);
+	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.*"), searchQuery);
 	
 	/**
 	 * @see SearchHandler#getSearchConfig()
