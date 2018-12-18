@@ -265,7 +265,7 @@
 						</executions>
 						<configuration>
 							<includeGemsInResources>false</includeGemsInResources>
-							<jrubyVersion>1.7.10</jrubyVersion>
+							<jrubyVersion>9.2.5.0</jrubyVersion>
 							<execArgs>${gem.home}/bin/compass watch ${basedir}/src/main/compass</execArgs>
 						</configuration>
 					</plugin>
