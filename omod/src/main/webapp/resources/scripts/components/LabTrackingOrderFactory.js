@@ -264,7 +264,8 @@ angular.module("labTrackingOrderFactory", [])
                             labTrackingOrder.sampleDate.obsUuid = uuid;
                         }*/
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
-                            labTrackingOrder.file.url = v.links.uri;
+                            var regex = /(.*)\/\/[^\/]+\//;  // hack to remove hostname and just use relative link to solve https://tickets.pih-emr.org/browse/UHM-3500
+                            labTrackingOrder.file.url = v.links.uri.replace(regex, '/');
                             labTrackingOrder.file.obsUuid = uuid;
                         } else {
 
