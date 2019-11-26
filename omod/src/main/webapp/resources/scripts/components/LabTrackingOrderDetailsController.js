@@ -154,6 +154,11 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 concepts: '=',
             },
+            controller: function ($scope, LabTrackingDataService) {
+              $scope.downloadPdf = function () {
+                LabTrackingDataService.downloadPdf($scope.order);
+              };
+            },
             templateUrl: 'labtrackingOrderReadOnly.page'
         };
     })
@@ -207,7 +212,7 @@ angular.module("labTrackingOrderDetailsController", [])
                     $scope.procedureDateBoxOptions.opened = true;
                 };
 
-                
+
                 /* init procedures */
                 $scope.initProcedures = function () {
                     for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
