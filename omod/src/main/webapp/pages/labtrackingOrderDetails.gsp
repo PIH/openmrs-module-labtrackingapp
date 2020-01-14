@@ -1,6 +1,6 @@
 ${ ui.includeFragment("labtrackingapp", "libs") }
 <%
-    ui.decorateWith("appui", "standardEmrPage")
+    ui.decorateWith("appui", "standardEmrPage", [ includeBootstrap: false ])
     ui.includeJavascript("labtrackingapp", "components/LabTrackingOrderDetailsController.js")
     ui.includeJavascript("labtrackingapp", "app_order_details.js")
 %>

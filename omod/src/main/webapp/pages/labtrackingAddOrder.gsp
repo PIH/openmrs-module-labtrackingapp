@@ -1,5 +1,5 @@
 <%
-   ui.decorateWith("appui", "standardEmrPage")
+   ui.decorateWith("appui", "standardEmrPage", [ includeBootstrap: false ])
    ui.includeFragment("labtrackingapp", "libs")
    ui.includeJavascript("labtrackingapp", "components/LabTrackingAddOrderController.js")
    ui.includeJavascript("labtrackingapp", "app_add_order.js")
@@ -10,7 +10,7 @@
        {
            label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=labtrackingapp.app.viewQueue") }"
        }
-   
+
    ];
 </script>
 <style>
@@ -140,7 +140,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
       .value('visitStopDateTime', '${ visit && visit.stopDatetime ? visit.stopDatetime : '' }')
       .value('serverDatetime', '${ serverDatetime }')
       .value('locationUuid', '${ location.uuid }');
-   
+
    jq(function () {
        // make sure we reload the page if the location is changes; this custom event is emitted by by the location selector in the header
        jq(document).on('sessionLocationChanged', function () {

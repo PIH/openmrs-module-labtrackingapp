@@ -1,9 +1,9 @@
 ${ ui.includeFragment("labtrackingapp", "libs") }
 <%
-   ui.decorateWith("appui", "standardEmrPage")
+   ui.decorateWith("appui", "standardEmrPage", [ includeBootstrap: false ])
    ui.includeJavascript("labtrackingapp", "components/LabTrackingViewQueueController.js")
    ui.includeJavascript("labtrackingapp", "app_view_queue.js")
-   
+
    def middleLabel = patient ? ui.format(patient.familyName + ", " + patient.givenName):  ui.message("labtrackingapp.title")
    def middleUrl   = patient ? ui.pageLink("coreapps", "clinicianfacing/patient", [patientId: patient.id]) : ""
    def endCrumb= patient ? ",{label: '" + ui.message("labtrackingapp.title") + "'}":""
