@@ -47,7 +47,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-10">
                   <input type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
-                     uib-typeahead="item as item.label for item in diagnoses | filter:{label:${'$viewValue'}} | limitTo:8" typeahead-editable="false" />
+                     uib-typeahead="item as item.label for item in diagnoses | filter:{label:${'$viewValue'}} | limitTo:8" />
                </div>
             </div>
             <div class="form-group row">

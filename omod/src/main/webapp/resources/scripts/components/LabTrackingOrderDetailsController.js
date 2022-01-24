@@ -158,6 +158,9 @@ angular.module("labTrackingOrderDetailsController", [])
               $scope.downloadPdf = function () {
                 LabTrackingDataService.downloadPdf($scope.order);
               };
+              $scope.isObject = function (obj) {
+                return typeof obj === 'object';
+              }
             },
             templateUrl: 'labtrackingOrderReadOnly.page'
         };
@@ -175,8 +178,13 @@ angular.module("labTrackingOrderDetailsController", [])
             scope: {
                 order: '=',
             },
+            controller: function($scope) {
+              $scope.isObject = function (obj) {
+                return typeof obj === 'object';
+              }
+            },
             templateUrl: 'labtrackingOrderDetails-order.page'
-        };
+      };
     })
     .directive('orderSpecimenPanel', function () {
         return {

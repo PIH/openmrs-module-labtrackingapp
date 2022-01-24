@@ -40,13 +40,13 @@
          <div class="row">
             <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.preoathologydiagnosislabel")}</label>
             <div class="col-sm-9">
-               <p class="form-control-static" >{{order.preLabDiagnosis.label}}</p>
+               <p class="form-control-static" >{{isObject(order.preLabDiagnosis) ? order.preLabDiagnosis.label : order.preLabDiagnosis}}</p>
             </div>
          </div>
          <div class="row">
             <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
             <div class="col-sm-9">
-               <p class="form-control-static" >{{order.postopDiagnosis.diagnosis.label}}</p>
+               <p class="form-control-static" >{{isObject(order.postopDiagnosis.diagnosis) ? order.postopDiagnosis.diagnosis.label : order.postopDiagnosis.diagnosis}}</p>
             </div>
          </div>
             <div class="row">

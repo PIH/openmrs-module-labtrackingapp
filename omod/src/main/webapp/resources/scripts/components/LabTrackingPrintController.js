@@ -19,6 +19,10 @@ angular.module("labTrackingPrintController", [])
                 });
             };
 
+            $scope.isObject = function (obj) {
+              return typeof obj === 'object';
+            }
+
             /* loads the order, creates the barcode, and then tells the window to print */
             return $scope.loadOrder(orderUuid).then(function () {
 
