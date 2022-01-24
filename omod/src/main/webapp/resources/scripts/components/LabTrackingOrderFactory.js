@@ -189,7 +189,7 @@ angular.module("labTrackingOrderFactory", [])
               order.postopDiagnosis.diagnosis.label = order.preLabDiagnosis.label;
             }
             else {
-              order.postopDiagnosis.diagnosis =order.preLabDiagnosis;
+              order.postopDiagnosis.diagnosis = order.preLabDiagnosis;
             }
             order.clinicalHistoryForSpecimen.value = order.clinicalHistory.value;
             //----------------------------------------------------------------------
