@@ -76,13 +76,13 @@
     <div class="row">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.preoathologydiagnosislabel")}</label>
         <div class="col-sm-9">
-            <p class="form-control-static" >{{order.preLabDiagnosis.label}}</p>
+            <p class="form-control-static" >{{formatDiagnosis(order.preLabDiagnosis)}}</p>
         </div>
     </div>
     <div class="row">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
         <div class="col-sm-9">
-            <p class="form-control-static" >{{order.postopDiagnosis.diagnosis.label}}</p>
+            <p class="form-control-static" >{{formatDiagnosis(order.postopDiagnosis.diagnosis)}}</p>
         </div>
     </div>
     <div class="row">

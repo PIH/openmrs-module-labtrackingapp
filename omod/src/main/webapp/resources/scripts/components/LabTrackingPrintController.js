@@ -19,6 +19,10 @@ angular.module("labTrackingPrintController", [])
                 });
             };
 
+            $scope.formatDiagnosis = function (diagnosis) {
+              return diagnosis !== null &&  typeof diagnosis === 'object' ? diagnosis.label : diagnosis;
+            }
+
             /* loads the order, creates the barcode, and then tells the window to print */
             return $scope.loadOrder(orderUuid).then(function () {
 

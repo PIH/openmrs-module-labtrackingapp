@@ -112,7 +112,7 @@
 					<label class="control-label col-sm-3"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
 					<div class="col-sm-9">
                     <input type="text" ng-model="order.postopDiagnosis.diagnosis"  class="form-control"
-                        uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8" typeahead-editable="false" />
+                        uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8"  />
 					</div>
 				</div>
 				<div class="form-group">

@@ -194,11 +194,13 @@ angular.module("encounterFactory", [])
          @return The WebService object
          */
         Encounter.toObsWebServiceObject = function (conceptUuid, obsValue, existingObsUuid) {
-            var ret = {concept: conceptUuid, value: null, uuid: null};
+            var ret = {};
+            if (conceptUuid != null) {
+              ret.concept = conceptUuid;
+            }
             if (obsValue != null) {
                 ret.value = obsValue;
             }
-
             if (existingObsUuid != null) {
                 ret.uuid = existingObsUuid;
             }
