@@ -185,11 +185,10 @@ angular.module("labTrackingOrderFactory", [])
             order.proceduresForSpecimen = [];
             order.procedureNonCodedForSpecimen.value = order.procedureNonCoded.value;
             if (typeof order.preLabDiagnosis === 'object') {
-              order.postopDiagnosis.diagnosis.value = order.preLabDiagnosis.value;
-              order.postopDiagnosis.diagnosis.label = order.preLabDiagnosis.label;
+              order.postopDiagnosis.diagnosis = { ...order.preLabDiagnosis }   // clone, don't copy reference
             }
             else {
-              order.postopDiagnosis.diagnosis =order.preLabDiagnosis;
+              order.postopDiagnosis.diagnosis = order.preLabDiagnosis;
             }
             order.clinicalHistoryForSpecimen.value = order.clinicalHistory.value;
             //----------------------------------------------------------------------
@@ -255,12 +254,12 @@ angular.module("labTrackingOrderFactory", [])
                                 var conceptUuid2 = obs2.concept.uuid;
                                 if (conceptUuid2 == LabTrackingOrder.concepts.postopDiagnosis.value) {
                                     labTrackingOrder.postopDiagnosis.diagnosis = { value: obs2.value.uuid, label: obs2.value.display };
-                                    labTrackingOrder.postopDiagnosis.type = 'coded';
+                                    labTrackingOrder.postopDiagnosis.originalType = 'coded';
                                     labTrackingOrder.postopDiagnosis.obsUuid = obs2.uuid;
                                 }
                                 else if (conceptUuid2 == LabTrackingOrder.concepts.postopDiagnosis.nonCodedValue) {
                                     labTrackingOrder.postopDiagnosis.diagnosis = obs2.value;
-                                    labTrackingOrder.postopDiagnosis.type = 'nonCoded';
+                                    labTrackingOrder.postopDiagnosis.originalType = 'nonCoded';
                                     labTrackingOrder.postopDiagnosis.obsUuid = obs2.uuid;
                                 }
                                 else if (conceptUuid2 == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID) {
@@ -347,8 +346,8 @@ angular.module("labTrackingOrderFactory", [])
                 concept: LabTrackingOrder.concepts.order.conceptUuid,
                 careSetting: labTrackingOrder.careSetting.value,
                 encounter: labTrackingOrder.encounter.value,
-                orderReason: typeof labTrackingOrder.preLabDiagnosis === 'object' ? labTrackingOrder.preLabDiagnosis.value : null,
-                orderReasonNonCoded: typeof labTrackingOrder.preLabDiagnosis === 'string' ? labTrackingOrder.preLabDiagnosis : null,
+                orderReason: labTrackingOrder.preLabDiagnosis !== null && typeof labTrackingOrder.preLabDiagnosis === 'object' ? labTrackingOrder.preLabDiagnosis.value : null,
+                orderReasonNonCoded: labTrackingOrder.preLabDiagnosis !== null && typeof labTrackingOrder.preLabDiagnosis === 'string' ? labTrackingOrder.preLabDiagnosis : null,
                 instructions: labTrackingOrder.instructions.value,
                 clinicalHistory: labTrackingOrder.clinicalHistory.value,
                 dateActivated: labTrackingOrder.requestDate.value ? labTrackingOrder.requestDate.value : new Date()
@@ -405,10 +404,13 @@ angular.module("labTrackingOrderFactory", [])
             _updateObsIfExists(labTrackingOrder, "accessionNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "urgentReview", obs, obsIdsToDelete);
 
-            // special case for post-op diagnosis obs group
-            if (((typeof labTrackingOrder.postopDiagnosis.diagnosis === 'object' && labTrackingOrder.postopDiagnosis.diagnosis.value === null)
-                || labTrackingOrder.postopDiagnosis.diagnosis === null || labTrackingOrder.postopDiagnosis.diagnosis.length === 0)) {
-                // if no post-op diagnosis specified, but there's an existing value, we need to delete the whole obs group
+            // special case for post-op diagnosis obs group.. this first block tests if a postop diagnosis (either coded or string) has been specified
+            if (((labTrackingOrder.postopDiagnosis.diagnosis !== null
+                && typeof labTrackingOrder.postopDiagnosis.diagnosis === 'object'
+                && labTrackingOrder.postopDiagnosis.diagnosis.value === null)     // it's an object, but value is null
+                || labTrackingOrder.postopDiagnosis.diagnosis === null
+                || labTrackingOrder.postopDiagnosis.diagnosis.length === 0)) {    // not an object, and null or empty
+                // if no post-op diagnosis specified, but there's an existing value, we need to delete the whole existing obs group
                 if (labTrackingOrder.postopDiagnosis.groupMemmberParentUuid !== null) {
                   obsIdsToDelete.push(labTrackingOrder.postopDiagnosis.groupMemmberParentUuid);
                 }
@@ -419,7 +421,7 @@ angular.module("labTrackingOrderFactory", [])
 
                 if (typeof labTrackingOrder.postopDiagnosis.diagnosis === 'object') {
                   // coded obs
-                  if (labTrackingOrder.postopDiagnosis.obsUuid === null || labTrackingOrder.postopDiagnosis.type === 'coded') {
+                  if (labTrackingOrder.postopDiagnosis.obsUuid === null || labTrackingOrder.postopDiagnosis.originalType === 'coded') {
                     // if there's no existing obs (obsUuid === null) or the existing type was coded, just create/update
                     v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.postopDiagnosis.value,
                       labTrackingOrder.postopDiagnosis.diagnosis.value,
@@ -434,7 +436,7 @@ angular.module("labTrackingOrderFactory", [])
                 }
                 else {
                   // else, non-coded obs
-                  if (labTrackingOrder.postopDiagnosis.obsUuid === null || labTrackingOrder.postopDiagnosis.type === 'nonCoded') {
+                  if (labTrackingOrder.postopDiagnosis.obsUuid === null || labTrackingOrder.postopDiagnosis.originalType === 'nonCoded') {
                     // if there's no existing obs (obsUuid === null) or the existing type was coded, just create/update
                     v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.postopDiagnosis.nonCodedValue,
                       labTrackingOrder.postopDiagnosis.diagnosis,
