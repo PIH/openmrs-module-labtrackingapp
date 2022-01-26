@@ -203,6 +203,16 @@ angular.module("labTrackingOrderFactory", [])
          @return LabeTrackingOrder object
          */
         LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject = function (webServiceResult, labTrackingOrder) {
+
+            // if there *is* a specimen collection encounter for this object, we want to clear out any defaults that may have been set from the order
+            // (see "default this to the order values" section of LabTrackingOrder.fromWebServiceObject)
+            labTrackingOrder.locationWhereSpecimenCollected = {value: null};
+            labTrackingOrder.proceduresForSpecimen = [];
+            labTrackingOrder.procedureNonCodedForSpecimen = {value: null};
+            labTrackingOrder.clinicalHistoryForSpecimen = {value: ""};
+            labTrackingOrder.postopDiagnosis.diagnosis = {label: null, value: null};
+
+            // now start setting values based on encounter
             labTrackingOrder.sampleDate.value = new Date($filter('serverDate')(webServiceResult.encounterDatetime));
             labTrackingOrder.specimenDetailsEncounter.uuid = webServiceResult.uuid;
 
@@ -210,7 +220,6 @@ angular.module("labTrackingOrderFactory", [])
                 labTrackingOrder.locationWhereSpecimenCollected.value = webServiceResult.location.uuid;
                 labTrackingOrder.locationWhereSpecimenCollected.label = webServiceResult.location.name;
             }
-
 
             if (webServiceResult.obs != null && webServiceResult.obs.length > 0) {
                 labTrackingOrder.debug.specimenDetails = {

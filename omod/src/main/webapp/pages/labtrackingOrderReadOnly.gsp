@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div class="panel panel-default" ng-if="hasSpecimenCollection(order)">
    <div class="panel-heading">
       <h4 class="panel-title">
          <a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.pathologyspecimendetailslabel")} </a>
@@ -88,7 +88,7 @@
    </div>
 </div>
 
-<div class="panel panel-default">
+<div class="panel panel-default" ng-if="hasSpecimenCollection(order)">
    <div class="panel-heading">
       <h4 class="panel-title">
          <a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.resultdetailslabel")} </a>

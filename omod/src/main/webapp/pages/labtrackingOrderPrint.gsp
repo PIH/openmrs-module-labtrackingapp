@@ -42,20 +42,20 @@
                </p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{order.clinicalHistoryForSpecimen.value}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" ng-repeat="a in order.proceduresForSpecimen | orderBy:'label'" >{{a.label}}</p>
             <p ng-if="order.procedureNonCodedForSpecimen.value" class="form-control-static">{{order.procedureNonCodedForSpecimen.value}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.sampledatelabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static">{{order.sampleDate.value | date : 'd-MMM-yy'}}</p>
@@ -67,7 +67,7 @@
             <p class="form-control-static" >{{order.accessionNumber.value}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{order.locationWhereSpecimenCollected.label}}</p>
@@ -79,13 +79,13 @@
             <p class="form-control-static" >{{formatDiagnosis(order.preLabDiagnosis)}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{formatDiagnosis(order.postopDiagnosis.diagnosis)}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
         <div class="col-sm-9">
             <div class="form-group" ng-repeat="a in concepts.specimenDetails">
@@ -95,19 +95,19 @@
             </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{order.surgeon.label}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{order.resident.label}}</p>
         </div>
     </div>
-    <div class="row">
+    <div class="row" ng-if="hasSpecimenCollection(order)">
         <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
         <div class="col-sm-9">
             <p class="form-control-static" >{{order.urgentReview.value == "3cd6f600-26fe-102b-80cb-0017a47871b2"?"${ui.message("uicommons.yes")}":"${ui.message("uicommons.no")}"}}</p>

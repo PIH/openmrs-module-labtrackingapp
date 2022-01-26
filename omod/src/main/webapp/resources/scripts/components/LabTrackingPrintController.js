@@ -23,6 +23,10 @@ angular.module("labTrackingPrintController", [])
               return diagnosis !== null &&  typeof diagnosis === 'object' ? diagnosis.label : diagnosis;
             }
 
+            $scope.hasSpecimenCollection = function (order) {
+              return order.specimenDetailsEncounter !== null && order.specimenDetailsEncounter.uuid !== null;
+            }
+
             /* loads the order, creates the barcode, and then tells the window to print */
             return $scope.loadOrder(orderUuid).then(function () {
 

@@ -161,6 +161,9 @@ angular.module("labTrackingOrderDetailsController", [])
               $scope.formatDiagnosis = function (diagnosis) {
                 return diagnosis !== null &&  typeof diagnosis === 'object' ? diagnosis.label : diagnosis;
               }
+              $scope.hasSpecimenCollection = function (order) {
+                return order.specimenDetailsEncounter !== null && order.specimenDetailsEncounter.uuid !== null;
+              }
             },
             templateUrl: 'labtrackingOrderReadOnly.page'
         };
