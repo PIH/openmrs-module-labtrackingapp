@@ -44,8 +44,32 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
+               <label class="col-sm-2 col-form-label" for="location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
+               <div class="col-sm-9">
+                  <select class="form-control" id="location" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
+               </div>
+            </div>
+            <div class="form-group row">
+               <label class="col-sm-2 col-form-label" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
+               <div class="col-sm-9">
+                  <select class="form-control" id="surgeon" type="text" ng-model="order.surgeon"  ng-options="a as a.label for a in providers | orderBy:'label' track by a.value"></select>
+               </div>
+            </div>
+            <div class="form-group row">
+               <label class="col-sm-2 col-form-label" for="resident">${ui.message("labtrackingapp.orderdetails.residentlabel")}</label>
+               <div class="col-sm-9">
+                  <select class="form-control" id="resident" type="text" ng-model="order.resident"  ng-options="a as a.label for a in providers | orderBy:'label' track by a.value"></select>
+               </div>
+            </div>
+            <div class="form-group row">
+               <label class="col-sm-2 col-form-label" for="mdtonotify">${ui.message("labtrackingapp.orderdetails.mdtonotifylabel")}</label>
+               <div class="col-sm-9">
+                  <input type='text' class="form-control" id="mdtonotify" ng-model="order.mdToNotify.value"  />
+               </div>
+            </div>
+            <div class="form-group row">
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
-               <div class="col-sm-10">
+               <div class="col-sm-9">
                   <input type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
                      uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8" />
                </div>
@@ -85,11 +109,27 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
+               <label class="control-label col-sm-3" for="urgentreviewlabel">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
+               <div class="col-sm-9">
+                  <div class="btn-group btn-toggle">
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgentReview.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">Yes</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgentReview.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value=''">No</button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group row">
                <label for="caresetting" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.caresettinglabel")}</label>
                <div class="col-sm-10">
                   <select class="form-control" id="caresetting"  ng-required="true"
                      ng-options="item as item.label for item in careSettings | orderBy:'label' track by item.value "
                      ng-model="order.careSetting"></select>
+               </div>
+            </div>
+            <div class="form-group row">
+               <label class="col-sm-2 col-form-label"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
+               <div class="col-sm-9">
+                  <input type="text" ng-model="order.postopDiagnosis.diagnosis"  class="form-control"
+                         uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8"  />
                </div>
             </div>
             <div class="form-group row">
@@ -101,7 +141,18 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label for="history" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
                <div class="col-sm-10">
-                  <textarea type="text" class="form-control" id="history" placeholder="" ng-model="order.clinicalHistory.value"></textarea>
+                  <textarea type="text" class="form-control" id="history" placeholder="" ng-model="order.clinicalHistoryForSpecimen.value"></textarea>
+               </div>
+            </div>
+            <div class="form-group row">
+               <label class="control-label col-sm-2">${ui.message("labtrackingapp.orderdetails.specimandetailslabel")}</label>
+               <div class="col-sm-9">
+                  <div class="form-group" ng-repeat="a in concepts.specimenDetails">
+                     <label class="control-label col-sm-1">{{${'$'}index+1 }}.</label>
+                     <div class="col-sm-11">
+                        <input type="text" class="form-control" ng-model="order.specimenDetails[${'$'}index].value"></input>
+                     </div>
+                  </div>
                </div>
             </div>
             <div class="pull-right">
