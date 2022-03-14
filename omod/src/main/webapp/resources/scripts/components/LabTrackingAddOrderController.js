@@ -11,6 +11,9 @@ angular.module("labTrackingAddOrderController", [])
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid, visitUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
+            $scope.locations = []; // clinical locations in the system
+            $scope.providers = []; // the proviers in the system
+            $scope.concepts = LabTrackingOrder.concepts;
 
             $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
             $scope.visitStartDateTime = new Date( $filter('serverDate')(visitStartDateTime));
@@ -155,18 +158,27 @@ angular.module("labTrackingAddOrderController", [])
             /*
              loads the system care settings
              */
-            return LabTrackingDataService.loadCareSettings().then(function (res) {
-                $scope.careSettings = res.data;
-                return LabTrackingDataService.loadProcedures().then(function (res2) {
+            return LabTrackingDataService.loadLocations().then(function (respLocations) {
+              if (respLocations.status.code == 200) {
+                $scope.locations = respLocations.data;
+              }
+              return LabTrackingDataService.loadProviders().then(function (respProviders) {
+                if (respProviders.status.code == 200) {
+                  $scope.providers = respProviders.data;
+                }
+                return LabTrackingDataService.loadCareSettings().then(function (res) {
+                  $scope.careSettings = res.data;
+                  return LabTrackingDataService.loadProcedures().then(function (res2) {
                     $scope.procedures = res2.data;
                     return LabTrackingDataService.loadDiagnonses().then(function (res3) {
-                        $scope.diagnoses = res3.data;
-                        return LabTrackingDataService.loadHumDiagnoses().then(function(humDiagnoses){
-                            $scope.alldiagnoses = humDiagnoses;
-                        });
+                      $scope.diagnoses = res3.data;
+                      return LabTrackingDataService.loadHumDiagnoses().then(function (humDiagnoses) {
+                        $scope.alldiagnoses = humDiagnoses;
+                      });
                     });
+                  });
                 });
-
+              });
             });
         }]);
 

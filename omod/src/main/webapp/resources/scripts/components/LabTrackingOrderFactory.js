@@ -118,6 +118,23 @@ angular.module("labTrackingOrderFactory", [])
             return ret;
         };
 
+      /**
+       * update LabTracking order from the REST order response
+       * @param webServiceResult - the REST response from the /order web service
+       * @return LabeTrackingOrder object
+       */
+        LabTrackingOrder.updateOrderFromRestResponse = function( labTrackingOrder, webServiceResult ) {
+
+          labTrackingOrder.uuid = webServiceResult.uuid;
+          labTrackingOrder.orderNumber.value = webServiceResult.orderNumber;
+          labTrackingOrder.status = calcStatus(labTrackingOrder);
+          if (webServiceResult.careSetting) {
+            labTrackingOrder.careSetting.value = webServiceResult.careSetting.uuid;
+          }
+          labTrackingOrder.locationWhereSpecimenCollected = labTrackingOrder.location;
+          return labTrackingOrder;
+        }
+
         /*
          creates a LabTracking order form a web service object
          @param webServiceResult - the web service object
@@ -398,17 +415,20 @@ angular.module("labTrackingOrderFactory", [])
             var obsIdsToDelete = [];
             var obs = [];
 
-            if (labTrackingOrder.specimenDetailsEncounter.uuid == null) {
+            if ( labTrackingOrder.specimenDetailsEncounter && labTrackingOrder.specimenDetailsEncounter.orderNumber == null) {
                 // we use the orderNumber to map the specimen encounter
                 // we only need to save this the first time
-                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER,
+                if ( labTrackingOrder.orderNumber && labTrackingOrder.orderNumber.value && labTrackingOrder.orderNumber.value.length > 0 ) {
+                  obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER,
                     labTrackingOrder.orderNumber.value, labTrackingOrder.orderNumber.obsUuid));
+                }
             }
 
             //standard text fields
             _updateObsIfExists(labTrackingOrder, "mdToNotify", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "clinicalHistoryForSpecimen", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "procedureNonCodedForSpecimen", obs, obsIdsToDelete);
+            _updateObsIfExists(labTrackingOrder, "procedureNonCoded", obs, obsIdsToDelete)
             _updateObsIfExists(labTrackingOrder, "notes", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "accessionNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "urgentReview", obs, obsIdsToDelete);
@@ -489,6 +509,10 @@ angular.module("labTrackingOrderFactory", [])
                 obsIdsToDelete.push(labTrackingOrder.resultDate.obsUuid);
             }
 
+            for (var i = 0; i < labTrackingOrder.procedures.length; ++i) {
+                var o = Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.procedure.value, labTrackingOrder.procedures[i].value, labTrackingOrder.procedures[i].obsUuid);
+                obs.push(o);
+            }
 
             //copy the procedures and keep track of the ones to delete
             for (var i = 0; i < labTrackingOrder.proceduresForSpecimen.length; ++i) {

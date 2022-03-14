@@ -361,17 +361,31 @@ angular.module("labTrackingDataService", [])
                     return {status: {code: 500, msg: "Error canceling the order " + err}, data: []};
                 });
             };
+            
 
-            /* creates the encounter associated with the test order
-             @param labTrackingOrder - the order to create
-             @return the saved encounter
-             */
-            this.createOrderEncounter = function (labTrackingOrder) {
-                var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
-                var encounter = LabTrackingOrder.toTestOrderEncounterWebServiceObject(labTrackingOrder, provider);
-                return Encounter.save(encounter);
-            };
+          /**
+           * adds Order Number as an obs to the SpecimenCollection encounter
+           * @param labTrackingOrder
+           * @return the updated encounter
+           */
+            this.updateSpecimenCollectionEncounterOrderNumber = function (labTrackingOrder) {
+                var obs = [];
+                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER,
+                labTrackingOrder.orderNumber.value, labTrackingOrder.orderNumber.obsUuid));
 
+                var encounter = {
+                    patient: labTrackingOrder.patient.value,
+                    location: labTrackingOrder.locationWhereSpecimenCollected.value,
+                    encounterType: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID,
+                    encounterDatetime: labTrackingOrder.specimenDetailsEncounter.encounterDatetime,
+                    obs: obs
+                };
+
+              return Encounter.save(encounter, labTrackingOrder.specimenDetailsEncounter.uuid).then(function(resp) {
+                  return resp;
+              });
+
+            }
 
             /* creates the encounter associated with the specimen for the test
              @param labTrackingOrder - the order to create
@@ -386,6 +400,7 @@ angular.module("labTrackingDataService", [])
                         if (_self.isOk(resp)) {
                             //need to update the labtracking orders spec id
                             labTrackingOrder.specimenDetailsEncounter.uuid = resp.data.uuid;
+                            labTrackingOrder.specimenDetailsEncounter.encounterDatetime = resp.data.encounterDatetime;
                             return _self.handleEncounterProviders(labTrackingOrder).then(function (res) {
                                 return _self.uploadResultsPdf(labTrackingOrder);
                             });
@@ -521,7 +536,7 @@ angular.module("labTrackingDataService", [])
                 return ensureActiveVisit(labTrackingOrder.patient.value, labTrackingOrder.location.value, labTrackingOrder.visit)
                     .then(function (res) {
                         if (_self.isOk(res)) {
-                            return _self.createOrderEncounter(labTrackingOrder);
+                            return _self.createOrUpdateOrderSpecimenEncounter(labTrackingOrder);
                         }
                         else {
                             return res;
@@ -530,8 +545,12 @@ angular.module("labTrackingDataService", [])
                     })
                     .then(function (res) {
                         if (_self.isOk(res)) {
-                            labTrackingOrder.encounter.value = res.data.uuid;
+                            labTrackingOrder.encounter.value = res.data.specimenDetailsEncounter.uuid;
                             var order = LabTrackingOrder.toWebServiceObject(labTrackingOrder, _self.session.currentProvider.uuid);
+                            // use the specimen collection encounter datetime as the Order dateActivated
+                            if (res.data.specimenDetailsEncounter && res.data.specimenDetailsEncounter.encounterDatetime ) {
+                                order.dateActivated = res.data.specimenDetailsEncounter.encounterDatetime;
+                            }
                             return $http.post(CONSTANTS.URLS.SAVE_ORDER, order)
                         }
                         else {
@@ -539,9 +558,18 @@ angular.module("labTrackingDataService", [])
                         }
                     })
                     .then(function (res) {
-                        return res;
+                          if (_self.isOk(res)) {
+                                LabTrackingOrder.updateOrderFromRestResponse(labTrackingOrder, res.data);
+                                // add to the Specimen Collection encounter an obs with the ORDER-NUMBER
+                                return _self.updateSpecimenCollectionEncounterOrderNumber(labTrackingOrder);
+                          } else {
+                                return res;
+                          }
+                    })
+                    .then(function (res) {
+                      return res;
                     }, function (err) {
-                        return err;
+                      return err;
                     })
 
             };
