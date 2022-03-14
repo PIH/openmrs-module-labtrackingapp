@@ -361,16 +361,7 @@ angular.module("labTrackingDataService", [])
                     return {status: {code: 500, msg: "Error canceling the order " + err}, data: []};
                 });
             };
-
-            /* creates the encounter associated with the test order
-             @param labTrackingOrder - the order to create
-             @return the saved encounter
-             */
-            this.createOrderEncounter = function (labTrackingOrder) {
-                var provider = _self.session.currentProvider ? _self.session.currentProvider.uuid : null;
-                var encounter = LabTrackingOrder.toTestOrderEncounterWebServiceObject(labTrackingOrder, provider);
-                return Encounter.save(encounter);
-            };
+            
 
           /**
            * adds Order Number as an obs to the SpecimenCollection encounter
