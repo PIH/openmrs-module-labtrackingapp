@@ -61,6 +61,7 @@ angular.module("labTrackingOrderFactory", [])
             this.status = {label: null, value: null};
             this.requestDate = {value: null};
             this.sampleDate = {value: null};
+            this.processedDate = { value: null };
             this.resultDate = {value: null, obsUuid: null};
             this.notes = {value: null};
             this.file = {value: null, url: null, obsUuid: null};
@@ -94,12 +95,30 @@ angular.module("labTrackingOrderFactory", [])
             accessionNumber:{value:'162086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             notes: {value: '65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             //sampleDate: {value: '2f9d00f5-d292-4d87-ab94-0abf2f2817c4'}, //we are not using the OBS, if we do, then you can use this concept
+            processedDate: {value: '160715AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'}, //CIEL:160715
             resultDate: {value: '68d6bd27-37ff-4d7a-87a0-f5e0f9c8dcc0'},
             file: {value: '4cad2286-f66e-44c3-ba17-9665b569c13d'},
-            statusCodes: [{label: 'All', value: '0'}, {label: 'Requested', value: '1'}, {
-                label: 'Taken',
-                value: '2'
-            }, {label: 'Reported', value: '3'}, {label: 'Canceled', value: '4'}]
+            statusCodes: [
+                {
+                    label: 'All',
+                    value: '0'
+                },
+                {
+                    label: 'Requested',
+                    value: '1'
+                },
+                {
+                    label: 'Processed',
+                    value: '2'
+                },
+                {
+                    label: 'Reported',
+                    value: '3'
+                },
+                {
+                    label: 'Canceled',
+                    value: '4'
+                }]
         };
 
         /*
@@ -297,11 +316,10 @@ angular.module("labTrackingOrderFactory", [])
                             labTrackingOrder.resultDate.value = new Date($filter('serverDate')(v));
                             labTrackingOrder.resultDate.obsUuid = uuid;
                         }
-                        //we are not using the OBS (just storing this as the encounter datetime), if we do, then you can use this concept
-                       /* else if (conceptUuid == LabTrackingOrder.concepts.sampleDate.value) {
-                            labTrackingOrder.sampleDate.value = new Date($filter('serverDate')(v));
-                            labTrackingOrder.sampleDate.obsUuid = uuid;
-                        }*/
+                       else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
+                            labTrackingOrder.processedDate.value = new Date($filter('serverDate')(v));
+                            labTrackingOrder.processedDate.obsUuid = uuid;
+                        }
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
                             var regex = /(.*)\/\/[^\/]+\//;  // hack to remove hostname and just use relative link to solve https://tickets.pih-emr.org/browse/UHM-3500
                             labTrackingOrder.file.url = v.links.uri.replace(regex, '/');
@@ -492,14 +510,13 @@ angular.module("labTrackingOrderFactory", [])
                 obs.push(groupMembers);
             }
 
-            //we are not using the OBS (just storing it as the encounter datetime), if we do, then you can use this concept
-           /* if (labTrackingOrder.sampleDate.value != null) {
-                var dtAsStr = Encounter.formatDateTime(labTrackingOrder.sampleDate.value);
-                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.sampleDate.value, dtAsStr, labTrackingOrder.sampleDate.obsUuid));
+           if (labTrackingOrder.processedDate.value != null) {
+                var dtAsStr = Encounter.formatDateTime(labTrackingOrder.processedDate.value);
+                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.processedDate.value, dtAsStr, labTrackingOrder.processedDate.obsUuid));
             }
-            else if (labTrackingOrder.sampleDate.obsUuid != null) {
-                obsIdsToDelete.push(labTrackingOrder.sampleDate.obsUuid);
-            }*/
+            else if (labTrackingOrder.processedDate.obsUuid != null) {
+                obsIdsToDelete.push(labTrackingOrder.processedDate.obsUuid);
+            }
 
             if (labTrackingOrder.resultDate.value != null) {
                 var dtAsStr = Encounter.toObsDate(labTrackingOrder.resultDate.value);
@@ -557,9 +574,15 @@ angular.module("labTrackingOrderFactory", [])
             }
 
 
-            var encounter = new Encounter(LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID, currentProviderUUID,
-                LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-                labTrackingOrder.patient.value, labTrackingOrder.locationWhereSpecimenCollected.value, obs, labTrackingOrder.sampleDate.value, labTrackingOrder.visit.value);
+            var encounter = new Encounter(
+                                LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_CONCEPT_UUID,
+                                currentProviderUUID,
+                                LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
+                                labTrackingOrder.patient.value,
+                                labTrackingOrder.locationWhereSpecimenCollected.value,
+                                obs,
+                                labTrackingOrder.sampleDate.value,
+                                labTrackingOrder.visit.value);
 
             return {encounter: encounter, obsIdsToDelete: obsIdsToDelete};
         };
@@ -619,7 +642,7 @@ angular.module("labTrackingOrderFactory", [])
                     idx = 3
                 }
                 else {
-                    idx = 2
+                    idx = 1
                 }
             }
             return LabTrackingOrder.concepts.statusCodes[idx];
