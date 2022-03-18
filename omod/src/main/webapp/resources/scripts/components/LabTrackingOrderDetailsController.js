@@ -35,6 +35,10 @@ angular.module("labTrackingOrderDetailsController", [])
                             //if we don't have a sample date, then set a default value
                             $scope.order.sampleDate.value =  $scope.serverDatetime;
                         }
+                        if($scope.order.processedDate.value == null){
+                            //if we don't have a date processed, then set a default value
+                            $scope.order.processedDate.value =  $scope.serverDatetime;
+                        }
                     }
                     else {
                         $scope.errorMessage = resp.status.msg;
@@ -180,6 +184,12 @@ angular.module("labTrackingOrderDetailsController", [])
         return {
             scope: {
                 order: '=',
+                providers: '=',
+                locations: '=',
+                procedures: '=',
+                diagnoses: '=',
+                alldiagnoses: '=',
+                concepts: '=',
             },
             controller: function($scope) {
               $scope.formatDiagnosis = function (diagnosis) {
