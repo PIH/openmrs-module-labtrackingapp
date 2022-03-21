@@ -121,11 +121,13 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
                     .add(Subqueries.propertyNotIn("orderNumber", samples));
         }
-        else if (LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId() == status) {
-           // all orders that have a samples encounter and no results
+        else if (LabTrackingConstants.LabTrackingOrderStatus.PROCESSED.getId() == status) {
+           // all orders that have a samples encounter and Procedure Date obs but  no results
             DetachedCriteria resultsObs = getResultsSubQuery();
+            DetachedCriteria processedSamples = getProcessedSamplesSubQuery();
 
             DetachedCriteria samples = getSamplesSubQuery()
+                    .add(Subqueries.propertyIn("enc.id", processedSamples))
                     .add(Subqueries.propertyNotIn("enc.id", resultsObs));
 
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
@@ -248,6 +250,19 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                 .setProjection(Property.forName("enc.id"))
                 .add(Restrictions.eq("voided", false))
                 .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID))
+                .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+    }
+
+    /*
+     * gets a subquery that returns a list of encounter ids for orders that have a processed date
+     * */
+    private static DetachedCriteria getProcessedSamplesSubQuery(){
+        return DetachedCriteria.forClass(Obs.class)
+                .createAlias("concept", "con")
+                .createAlias("encounter", "enc")
+                .setProjection(Property.forName("enc.id"))
+                .add(Restrictions.eq("voided", false))
+                .add(Restrictions.eq("con.uuid", LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID))
                 .setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
     }
 

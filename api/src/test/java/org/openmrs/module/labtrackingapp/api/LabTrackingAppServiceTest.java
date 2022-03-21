@@ -155,7 +155,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		long endDate = testDate.getTime()+1000*60*60;
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
-		int status = LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId();
+		int status = LabTrackingConstants.LabTrackingOrderStatus.PROCESSED.getId();
 		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_SAMPLED_ORDERS, list.size());
 	}

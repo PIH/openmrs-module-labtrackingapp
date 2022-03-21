@@ -45,6 +45,9 @@
     <!--  the concept that indicates YES -->
     <concept concept_id="9997" retired="false" datatype_id="11" class_id="4" is_set="false" creator="1" date_created="2020-12-11 00:00:00.0" uuid="3cd6f600-26fe-102b-80cb-0017a47871b2"/>
 
+    <!--  the concept contains the processed date for a specimen -->
+    <concept concept_id="9899" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="160715AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
+
     <encounter_type encounter_type_id="9991" name="Test LabTracking Encounter type"
                     description="This is a the test LabTracking EncounterType" creator="1"
                     date_created="2016-12-11 00:00:00.0" retired="false" uuid="b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd"/>
@@ -64,6 +67,11 @@
     <obs obs_id="9999" person_id="2" concept_id="9996" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_coded="9997" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
          uuid="B77273A0-3A2E-48EF-AF34-B3B79D98914E"/>
+
+    <!-- the observation that contains the PROCESSED DATE -->
+    <obs obs_id="100003" person_id="2" concept_id="9899" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="A136033D-1FEF-45F8-94F8-B31F7842845B"/>
 
     <!-- the observation that maps the order to this encounter -->
     <obs obs_id="9991" person_id="2" concept_id="9992" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
