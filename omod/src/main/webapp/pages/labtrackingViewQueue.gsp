@@ -60,12 +60,6 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                </label>
             </div>
 
-            <div class="col-md-6 text-left">
-               <label>
-                  <input id="urgentReview-search" type="checkbox"/>
-                  ${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}
-               </label>
-            </div>
          </div>
 
          <div class="row top-buffer" ng-show="patientUuid==null">
