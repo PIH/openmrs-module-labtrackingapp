@@ -55,7 +55,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
     /*
     * gets all  encounters at a current location for a patient
     * */
-    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, int maxResults){
+    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, int maxResults){
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");
         criteria.createAlias("encounter", "enc");
@@ -99,7 +99,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
             DetachedCriteria samples = getSamplesSubQuery();
             //find orders where
-            //  an obs with the assendion number
+            //  an obs with the accession number
             // is part of an encounter that has an order number
             // that equals the order's order number
 
@@ -108,6 +108,11 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
                     Restrictions.or(Restrictions.like("pids.identifier", query),
                         Restrictions.or(Restrictions.like("pname.givenName", query),
                             Restrictions.like("pname.familyName", query)))));
+        }
+
+        if ( suspectedCancer ) {
+            DetachedCriteria suspectedCancerSamples = getSuspectedCancerSubQuery();
+            criteria.add(Subqueries.propertyIn("orderNumber", suspectedCancerSamples));
         }
 
         if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
@@ -193,7 +198,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
     private static DetachedCriteria getAccessionNumberSubQuery(String srch){
         //find orders where
-        //  an obs with the assendion number
+        //  an obs with the accession number
         // is part of an encounter that has an order number
         // that equals the order's order number
         DetachedCriteria accessionNumbersEncounterUUIDs =  DetachedCriteria.forClass(Obs.class)
@@ -208,6 +213,26 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
         DetachedCriteria samples = getSamplesSubQuery();
         samples.add(Subqueries.propertyIn("enc.id", accessionNumbersEncounterUUIDs));
+
+        return samples;
+    }
+
+    private static DetachedCriteria getSuspectedCancerSubQuery(){
+        //find orders where
+        //  an obs with the SuspectedCancer = yes
+        // is part of an encounter that has an order number
+        // that equals the order's order number
+        DetachedCriteria suspectedCancerEncIds =  DetachedCriteria.forClass(Obs.class)
+                .createAlias("concept", "conCancer")
+                .createAlias("encounter", "encCancer")
+                .createAlias("valueCoded", "vcCancer")
+                .setProjection(Property.forName("encCancer.id"))
+                .add(Restrictions.eq("voided", false))
+                .add(Restrictions.eq("conCancer.uuid", LabTrackingConstants.LAB_TRACKING_SUSPECTED_CANCER_UUID))
+                .add(Restrictions.like("vcCancer.uuid",LabTrackingConstants.YES));
+
+        DetachedCriteria samples = getSamplesSubQuery();
+        samples.add(Subqueries.propertyIn("enc.id", suspectedCancerEncIds));
 
         return samples;
     }

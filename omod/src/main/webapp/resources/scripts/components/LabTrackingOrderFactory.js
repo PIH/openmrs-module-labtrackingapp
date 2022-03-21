@@ -57,6 +57,7 @@ angular.module("labTrackingOrderFactory", [])
             this.orginalSurgeonAndResident = {surgeon: null, resident: null};
             this.mdToNotify = {value: null};
             this.urgentReview = {value: false};
+            this.suspectedCancer = { value: false };
             this.accessionNumber = {value:null};
             this.status = {label: null, value: null};
             this.requestDate = {value: null};
@@ -88,6 +89,7 @@ angular.module("labTrackingOrderFactory", [])
             proceduresForSpecimen: {value: 'd2a8e2d1-88f9-45f9-9511-4ac5df877340'},
             procedureNonCodedForSpecimen: {value: '2ccfa5d8-b2a0-4ff0-9d87-c2471ef069f4'},
             urgentReview: {value: '9e4b6acc-ab97-4ecd-a48c-b3d67e5ef778'},
+            suspectedCancer: { value: 'd0718b9e-31e3-4bc8-a8d3-cfc5cc1ae2cb'},
             clinicalHistoryForSpecimen: {value: '160221AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             mdToNotify: {value: 'a787e577-5e32-42dc-b3a8-e4c6d5b107f5'},
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
@@ -284,6 +286,9 @@ angular.module("labTrackingOrderFactory", [])
                         else if (_fromObsIfExists(labTrackingOrder, 'urgentReview', conceptUuid, vAsUuid, uuid)) {
                             //continue;
                         }
+                        else if (_fromObsIfExists(labTrackingOrder, 'suspectedCancer', conceptUuid, vAsUuid, uuid)) {
+                          //continue;
+                        }
                         else if (_fromObsIfExists(labTrackingOrder, 'notes', conceptUuid, v, uuid)) {
                             //continue;
                         }
@@ -457,6 +462,7 @@ angular.module("labTrackingOrderFactory", [])
             _updateObsIfExists(labTrackingOrder, "accessionNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "orderNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "urgentReview", obs, obsIdsToDelete);
+            _updateObsIfExists(labTrackingOrder, "suspectedCancer", obs, obsIdsToDelete);
 
             // special case for post-op diagnosis obs group.. this first block tests if a postop diagnosis (either coded or string) has been specified
             if (((labTrackingOrder.postopDiagnosis.diagnosis !== null

@@ -28,8 +28,8 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
     private LabTrackingAppDAO dao;
 
     public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status,
-                                       int maxResults){
-        return dao.getActiveOrders(startDate, endDate, patientUuid, patientName, status, maxResults);
+                                       boolean suspectedCancer, int maxResults){
+        return dao.getActiveOrders(startDate, endDate, patientUuid, patientName, status, suspectedCancer, maxResults);
     }
 
     public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers) {
@@ -42,7 +42,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         Map<String, Map<String,Object>> map = new LinkedHashMap<String, Map<String, Object>>();
 
         List<Order> orders = getActiveOrders(0,0,patientUuid, null,
-                LabTrackingConstants.LabTrackingOrderStatus.ALL.getId(),maxResults);
+                LabTrackingConstants.LabTrackingOrderStatus.ALL.getId(), false, maxResults);
 
         if(orders.size()>0) {
             // iterate throught the orders and put them in a map

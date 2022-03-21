@@ -53,6 +53,22 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
          </div>
 
          <div class="row top-buffer" ng-show="patientUuid==null">
+            <div class="col-md-6 text-left">
+               <label>
+                  <input id="suspectedCancer-search" type="checkbox" ng-change="handleFilterChange('suspectedCancer')" ng-model="filter.suspectedCancer"/>
+                  ${ui.message("labtrackingapp.orderdetails.suspectedCancer")}
+               </label>
+            </div>
+
+            <div class="col-md-6 text-left">
+               <label>
+                  <input id="urgentReview-search" type="checkbox"/>
+                  ${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}
+               </label>
+            </div>
+         </div>
+
+         <div class="row top-buffer" ng-show="patientUuid==null">
             <div class="col-md-3 text-right">${ui.message("labtrackingapp.listpage.search")}</div>
             <div class="col-md-9">
                <div class='input-group' id='search'>

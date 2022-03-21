@@ -39,6 +39,12 @@
     <!--  the concept contains the accession number for an order -->
     <concept concept_id="9995" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="162086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
 
+    <!--  the concept that indicates whether or not cancer is suspected -->
+    <concept concept_id="9996" retired="false" datatype_id="2" class_id="4" is_set="false" creator="1" date_created="2020-12-11 00:00:00.0" uuid="d0718b9e-31e3-4bc8-a8d3-cfc5cc1ae2cb"/>
+
+    <!--  the concept that indicates YES -->
+    <concept concept_id="9997" retired="false" datatype_id="11" class_id="4" is_set="false" creator="1" date_created="2020-12-11 00:00:00.0" uuid="3cd6f600-26fe-102b-80cb-0017a47871b2"/>
+
     <encounter_type encounter_type_id="9991" name="Test LabTracking Encounter type"
                     description="This is a the test LabTracking EncounterType" creator="1"
                     date_created="2016-12-11 00:00:00.0" retired="false" uuid="b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd"/>
@@ -53,6 +59,11 @@
     <encounter encounter_id="9992" encounter_type="9991" patient_id="2" location_id="9991"
                encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
                voided="false" uuid="f13d6fae-baa9-4553-955d-999999999999"/>
+
+    <!-- suspectedCancer obs -->
+    <obs obs_id="9999" person_id="2" concept_id="9996" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_coded="9997" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="B77273A0-3A2E-48EF-AF34-B3B79D98914E"/>
 
     <!-- the observation that maps the order to this encounter -->
     <obs obs_id="9991" person_id="2" concept_id="9992" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
@@ -103,6 +114,11 @@
     <obs obs_id="9994" person_id="2" concept_id="9995" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="the quick brown fox jumps over the lazy dog." creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
          uuid="3ce93824-26fe-102b-80cb-777777777779"/>
+
+    <!-- suspectedCancer obs -->
+    <obs obs_id="9998" person_id="2" concept_id="9996" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_coded="9997" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="CE73E78F-BF33-4051-8F9F-62BD2E157445"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-111111111113" order_id="9993" encounter_id="9993"
             order_type_id="1001" urgency="ROUTINE"
