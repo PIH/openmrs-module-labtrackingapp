@@ -81,6 +81,12 @@
                 </div>
             </div>
             <div class="row">
+                <label class="form-control-static text-right col-sm-3" for="phoneNumberForClinician">${ui.message("labtrackingapp.orderdetails.phoneNumberForClinician")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" id="phoneNumberForClinician">{{ order.phoneNumberForClinician.value }}</p>
+                </div>
+            </div>
+            <div class="row">
                 <label class="form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
                 <div class="col-sm-9">
                     <div class="btn-group btn-toggle">

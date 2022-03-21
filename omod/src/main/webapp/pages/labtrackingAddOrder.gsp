@@ -68,6 +68,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
+               <label class="col-sm-2 col-form-label" for="phoneNumberForClinician">${ui.message("labtrackingapp.orderdetails.phoneNumberForClinician")}</label>
+               <div class="col-sm-9">
+                  <input type='text' class="form-control" id="phoneNumberForClinician" ng-model="order.phoneNumberForClinician.value"  />
+               </div>
+            </div>
+            <div class="form-group row">
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-9">
                   <input type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
