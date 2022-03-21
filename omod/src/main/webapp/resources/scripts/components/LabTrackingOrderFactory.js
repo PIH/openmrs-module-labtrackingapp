@@ -56,7 +56,9 @@ angular.module("labTrackingOrderFactory", [])
             this.resident = {value: null, label: null};
             this.orginalSurgeonAndResident = {surgeon: null, resident: null};
             this.mdToNotify = {value: null};
+            this.phoneNumberForClinician = { value: null };
             this.urgentReview = {value: false};
+            this.suspectedCancer = { value: false };
             this.accessionNumber = {value:null};
             this.status = {label: null, value: null};
             this.requestDate = {value: null};
@@ -88,11 +90,13 @@ angular.module("labTrackingOrderFactory", [])
             proceduresForSpecimen: {value: 'd2a8e2d1-88f9-45f9-9511-4ac5df877340'},
             procedureNonCodedForSpecimen: {value: '2ccfa5d8-b2a0-4ff0-9d87-c2471ef069f4'},
             urgentReview: {value: '9e4b6acc-ab97-4ecd-a48c-b3d67e5ef778'},
+            suspectedCancer: { value: 'd0718b9e-31e3-4bc8-a8d3-cfc5cc1ae2cb'},
             clinicalHistoryForSpecimen: {value: '160221AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             mdToNotify: {value: 'a787e577-5e32-42dc-b3a8-e4c6d5b107f5'},
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
                 {value: '873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'}],
             accessionNumber:{value:'162086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
+            phoneNumberForClinician: { value:'f51531c0-e3f6-4611-9a32-d709551307a7' },
             orderNumber: { value: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER },
             notes: {value: '65a4cc8e-c27a-42d5-b9bf-e13674970d2a'},
             //sampleDate: {value: '2f9d00f5-d292-4d87-ab94-0abf2f2817c4'}, //we are not using the OBS, if we do, then you can use this concept
@@ -278,11 +282,17 @@ angular.module("labTrackingOrderFactory", [])
                         if (_fromObsIfExists(labTrackingOrder, 'mdToNotify', conceptUuid, v, uuid)) {
                             //continue;
                         }
+                        if (_fromObsIfExists(labTrackingOrder, 'phoneNumberForClinician', conceptUuid, v, uuid)) {
+                            //continue;
+                        }
                         else if (_fromObsIfExists(labTrackingOrder, 'clinicalHistoryForSpecimen', conceptUuid, v, uuid)) {
                             //continue;
                         }
                         else if (_fromObsIfExists(labTrackingOrder, 'urgentReview', conceptUuid, vAsUuid, uuid)) {
                             //continue;
+                        }
+                        else if (_fromObsIfExists(labTrackingOrder, 'suspectedCancer', conceptUuid, vAsUuid, uuid)) {
+                          //continue;
                         }
                         else if (_fromObsIfExists(labTrackingOrder, 'notes', conceptUuid, v, uuid)) {
                             //continue;
@@ -450,6 +460,7 @@ angular.module("labTrackingOrderFactory", [])
 
             //standard text fields
             _updateObsIfExists(labTrackingOrder, "mdToNotify", obs, obsIdsToDelete);
+            _updateObsIfExists(labTrackingOrder, "phoneNumberForClinician", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "clinicalHistoryForSpecimen", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "procedureNonCodedForSpecimen", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "procedureNonCoded", obs, obsIdsToDelete)
@@ -457,6 +468,7 @@ angular.module("labTrackingOrderFactory", [])
             _updateObsIfExists(labTrackingOrder, "accessionNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "orderNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "urgentReview", obs, obsIdsToDelete);
+            _updateObsIfExists(labTrackingOrder, "suspectedCancer", obs, obsIdsToDelete);
 
             // special case for post-op diagnosis obs group.. this first block tests if a postop diagnosis (either coded or string) has been specified
             if (((labTrackingOrder.postopDiagnosis.diagnosis !== null

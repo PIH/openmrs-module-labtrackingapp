@@ -68,6 +68,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
+               <label class="col-sm-2 col-form-label" for="phoneNumberForClinician">${ui.message("labtrackingapp.orderdetails.phoneNumberForClinician")}</label>
+               <div class="col-sm-9">
+                  <input type='text' class="form-control" id="phoneNumberForClinician" ng-model="order.phoneNumberForClinician.value"  />
+               </div>
+            </div>
+            <div class="form-group row">
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-9">
                   <input type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
@@ -109,11 +115,20 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
-               <label class="control-label col-sm-3" for="urgentreviewlabel">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
+               <label class="control-label col-sm-3">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
                <div class="col-sm-9">
                   <div class="btn-group btn-toggle">
-                     <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgentReview.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">Yes</button>
-                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgentReview.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value=''">No</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.suspectedCancer.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.suspectedCancer.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.suspectedCancer.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.suspectedCancer.value=''">${ui.message("uicommons.no")}</button>
+                  </div>
+               </div>
+            </div>
+            <div class="form-group row">
+               <label class="control-label col-sm-3">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
+               <div class="col-sm-9">
+                  <div class="btn-group btn-toggle">
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgentReview.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgentReview.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value=''">${ui.message("uicommons.no")}</button>
                   </div>
                </div>
             </div>

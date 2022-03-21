@@ -37,6 +37,7 @@ angular.module("labTrackingViewQueueController", [])
                     search: null, // the filter for the patient list
                     status: LabTrackingOrder.concepts.statusCodes[0],
                     patient: {uuid: null, name: null},
+                    suspectedCancer: false,
                     from_date: {opened: false, value: fromDate},
                     to_date: {opened: false, value: new Date()},
                     date_box: {
@@ -77,9 +78,10 @@ angular.module("labTrackingViewQueueController", [])
                 var endDate = $scope.filter.to_date.value;
                 endDate.setHours(23, 59, 59, 999);
                 var status = $scope.filter.status.value;
+                var suspectedCancer = $scope.filter.suspectedCancer;
                 var patientName = $scope.filter.patient.name;
 
-                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName).then(function (resp) {
+                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer).then(function (resp) {
                     if (resp.status.code == 200) {
                         var cnt = resp.data.totalCount;
                         return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function (resp2) {
@@ -187,7 +189,7 @@ angular.module("labTrackingViewQueueController", [])
              */
             $scope.handleFilterChange = function (filterSource) {
                 if (filterSource == 'from_date' || filterSource == 'to_date'
-                    || filterSource == 'status' || filterSource == 'patient') {
+                    || filterSource == 'status' || filterSource == 'patient' || filterSource == 'suspectedCancer') {
                     return $scope.loadQueue();
                 }
             };

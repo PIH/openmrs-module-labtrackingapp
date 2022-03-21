@@ -53,6 +53,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private static final int TOTAL_REQUESTED_ORDERS = 1;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
 	private static final int TOTAL_ACCESSION_NUMBER_ORDERS = 1;
+	private static final int TOTAL_SUSPECTED_CANCER_ORDERS = 2;
 	private static final int TOTAL_CANCELED_ORDERS = 1;
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
 	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
@@ -78,8 +79,20 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value = "should get orders that have corresponding encounter with suspectedCancer obs", method = "getActiveOrders()")
+	public void getActiveOrders_shouldGetBySuspectedCancer() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = 0;
+		long endDate = 0;
+
+		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
+		List<Order> list = service.getActiveOrders(startDate, endDate, null, null, status, true, 0);
+		assertEquals(TOTAL_SUSPECTED_CANCER_ORDERS, list.size());
 	}
 
 	@Test
@@ -91,7 +104,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = "brown fox";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_ACCESSION_NUMBER_ORDERS, list.size());
 	}
 
@@ -104,7 +117,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_REQUESTED_ORDERS, list.size());
 	}
 
@@ -117,7 +130,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = "bar1";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_REQUESTED_ORDERS, list.size());
 	}
 
@@ -130,7 +143,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = "the quick brown fox";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(0, list.size());
 	}
 
@@ -143,7 +156,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.SAMPLED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_SAMPLED_ORDERS, list.size());
 	}
 
@@ -156,7 +169,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = TEST_PATIENT;
 		String patientName = "milt";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.RESULTS.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_RESULTS_ORDERS, list.size());
 	}
 
@@ -168,7 +181,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientUuid = null;
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId();
-		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status,0);
+		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, 0);
 		assertEquals(TOTAL_CANCELED_ORDERS, list.size());
 	}
 	@Test
