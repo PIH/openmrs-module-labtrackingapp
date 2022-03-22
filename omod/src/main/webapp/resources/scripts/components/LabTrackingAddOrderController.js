@@ -58,6 +58,7 @@ angular.module("labTrackingAddOrderController", [])
                 else if ( $scope.visitStopDateTime && $scope.order.requestDate.value > $scope.visitStopDateTime ) {
                     $scope.order.requestDate.value = $scope.visitStopDateTime;
                 }
+                $scope.order.sampleDate.value = $scope.order.requestDate.value;
 
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
                     if (LabTrackingDataService.isOk(res)) {

@@ -4,8 +4,8 @@
 			<a data-toggle="collapse" href="#results_panel">${ui.message("labtrackingapp.resultdetailslabel")}</a>
 		</h4>
 	</div>
-	<div id="results_panel" class="panel-collapse in">
 
+	<div id="results_panel" class="panel-collapse in">
 		<div class="panel-body">
 			<div class="row">
 				<label class="control-label col-sm-3 text-right" for="date_of_results">${ui.message("labtrackingapp.orderdetails.resultsdatelabel")}</label>
@@ -50,6 +50,5 @@
 				</div>
 			</div>
 		</div>
-
 	</div>
 </div>

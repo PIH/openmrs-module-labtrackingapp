@@ -1,13 +1,3 @@
-<style>
-    .labtracking_datebox{
-        margin-top:0px;
-    }
-	#procedure option{
-		white-space: pre-wrap;
-	}
-</style>
-
-
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h4 class="panel-title">
@@ -16,12 +6,12 @@
 	</div>
 	<div id="specimen_panel" class="panel-collapse in">
 		<div class="panel-body">
-            <form class="form-horizontal">
+
                 <div class="row">
-                    <div class="col-sm-3 text-right">${ui.message("labtrackingapp.orderdetails.processedDatelabel")}</div>
+                    <div class="col-sm-3 text-right" for="date_of_procedure">${ui.message("labtrackingapp.orderdetails.processedDatelabel")}</div>
 					<div class="col-md-9">
 						<div class='input-group date' id='date_of_procedure'>
-							<input type="text" class="form-control" uib-datepicker-popup="{{procedureDateBoxOptions.format}}" popup-placement="bottom"
+							<input type="text" class="form-control" uib-datepicker-popup="{{procedureDateBoxOptions.format}}" popup-placement="top"
 								   ng-model="order.processedDate.value" is-open="procedureDateBoxOptions.opened"
 								   datepicker-options="procedureDateBoxOptions.options"
 								   ng-required="false" close-text="Close" alt-input-formats="procedureDateBoxOptions.altInputFormats" />
@@ -33,14 +23,14 @@
 						</div>
                     </div>
                 </div>
-				<div class="form-group">
+				<div class="row top-buffer">
 					<label class="control-label col-sm-3" for="accessionNumber">${ui.message("labtrackingapp.accessionNumber")}</label>
 					<div class="col-sm-9">
 						<input type='text' class="form-control" id="accessionNumber" ng-model="order.accessionNumber.value"  />
 					</div>
 				</div>
 
-			</form>
+
 		</div>
 	</div>
 </div>
