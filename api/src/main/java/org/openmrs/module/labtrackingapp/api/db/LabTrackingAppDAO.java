@@ -30,8 +30,10 @@ public interface LabTrackingAppDAO {
 	 * @param patientUuid - (optional) the patient UUID for the orders
 	 * @param patientName - (optional) the patient name to search for
 	 * @param status - (optional) the status code to search for
+	 * @param suspectedCancer - (optional) the suspected cancer orders
+	 * @param status - (optional) the urgent review orders
 	 */
-	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, int maxResults);
+	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean urgentReview, int maxResults);
 
 	/* gets the speciment details encounter for the test order
 	* @param orderNumbers - an array of order number
