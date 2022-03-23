@@ -7,51 +7,7 @@
 	<div id="order_panel" class="panel-collapse in">
 		<div class="panel-body">
             <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.orderdetails.dateOfInitialConsult") }</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static">{{order.sampleDate.value | date : 'd-MMM-yy'}}</p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderNumberLabel")}</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static">{{order.orderNumber.value}}</p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static" ng-repeat="a in order.procedures | orderBy:'label'" >{{ a.label }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.procedureNonCoded")}</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static">{{order.procedureNonCoded.value}}</p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.preoathologydiagnosislabel")}</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static" >
-                        {{formatDiagnosis(order.preLabDiagnosis)}}
-                    </p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.instructionslabel")}</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static" >{{order.instructions.value}}</p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
-                <div class="col-sm-9">
-                    <p class="form-control-static" >{{ order.clinicalHistoryForSpecimen.value }}</p>
-                </div>
-            </div>
-            <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.orderdetails.sampledatelabel") }</label>
+                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.listpage.requestdate") }</label>
                 <div class="col-sm-9">
                     <p class="form-control-static">{{order.sampleDate.value | date : 'd-MMM-yy'}}</p>
                 </div>
@@ -87,6 +43,28 @@
                 </div>
             </div>
             <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.preoathologydiagnosislabel")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" >
+                        {{formatDiagnosis(order.preLabDiagnosis)}}
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" ng-repeat="a in order.procedures | orderBy:'label'" >{{ a.label }}</p>
+                </div>
+            </div>
+            <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.procedureNonCoded")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static">{{order.procedureNonCoded.value}}</p>
+                </div>
+            </div>
+
+
+            <div class="row">
                 <label class="form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
                 <div class="col-sm-9">
                     <div class="btn-group btn-toggle">
@@ -105,11 +83,29 @@
                 </div>
             </div>
             <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.caresettinglabel")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" >{{ order.careSetting.label }}</p>
+                </div>
+            </div>
+            <div class="row">
                 <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
                 <div class="col-sm-9">
                     <p class="form-control-static" >
                         {{formatDiagnosis(order.postopDiagnosis.diagnosis)}}
                     </p>
+                </div>
+            </div>
+            <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.instructionslabel")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" >{{order.instructions.value}}</p>
+                </div>
+            </div>
+            <div class="row">
+                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" >{{ order.clinicalHistoryForSpecimen.value }}</p>
                 </div>
             </div>
             <div class="row">

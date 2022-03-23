@@ -153,6 +153,7 @@ angular.module("labTrackingOrderFactory", [])
           labTrackingOrder.status = calcStatus(labTrackingOrder);
           if (webServiceResult.careSetting) {
             labTrackingOrder.careSetting.value = webServiceResult.careSetting.uuid;
+            labTrackingOrder.careSetting.label = webServiceResult.careSetting.display;
           }
           labTrackingOrder.locationWhereSpecimenCollected = labTrackingOrder.location;
           return labTrackingOrder;
@@ -205,6 +206,7 @@ angular.module("labTrackingOrderFactory", [])
             order.clinicalHistory.value = webServiceResult.clinicalHistory;
             if (webServiceResult.careSetting) {
                 order.careSetting.value = webServiceResult.careSetting.uuid;
+                order.careSetting.label = webServiceResult.careSetting.display;
             }
 
             order.encounter.value = webServiceResult.encounter.uuid;

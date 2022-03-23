@@ -281,6 +281,14 @@ angular.module("labTrackingOrderDetailsController", [])
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };
     })
+    .directive('orderSpecimenPanelReadOnly', function () {
+      return {
+        scope: {
+          order: '=',
+        },
+        templateUrl: 'labtrackingOrderDetails-specimen-readOnly.page'
+      };
+    })
     .directive('orderResultsPanel', function () {
         return {
             scope: {
