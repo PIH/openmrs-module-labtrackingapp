@@ -55,7 +55,7 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
     /*
     * gets all  encounters at a current location for a patient
     * */
-    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, int maxResults){
+    public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean urgentReview, int maxResults){
 
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class, "ord");
         criteria.createAlias("encounter", "enc");
@@ -113,6 +113,11 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         if ( suspectedCancer ) {
             DetachedCriteria suspectedCancerSamples = getSuspectedCancerSubQuery();
             criteria.add(Subqueries.propertyIn("orderNumber", suspectedCancerSamples));
+        }
+
+        if ( urgentReview ) {
+            DetachedCriteria urgentReviewSamples = getUrgentReviewSubQuery();
+            criteria.add(Subqueries.propertyIn("orderNumber", urgentReviewSamples));
         }
 
         if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
@@ -235,6 +240,26 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
         DetachedCriteria samples = getSamplesSubQuery();
         samples.add(Subqueries.propertyIn("enc.id", suspectedCancerEncIds));
+
+        return samples;
+    }
+
+    private static DetachedCriteria getUrgentReviewSubQuery(){
+        //find orders where
+        //  an obs with the UrgentReview = yes
+        // is part of an encounter that has an order number
+        // that equals the order's order number
+        DetachedCriteria urgentReviewEncIds =  DetachedCriteria.forClass(Obs.class)
+                .createAlias("concept", "conUrgent")
+                .createAlias("encounter", "encUrgent")
+                .createAlias("valueCoded", "vcUrgent")
+                .setProjection(Property.forName("encUrgent.id"))
+                .add(Restrictions.eq("voided", false))
+                .add(Restrictions.eq("conUrgent.uuid", LabTrackingConstants.LAB_TRACKING_URGENT_REVIEW_UUID))
+                .add(Restrictions.like("vcUrgent.uuid",LabTrackingConstants.YES));
+
+        DetachedCriteria samples = getSamplesSubQuery();
+        samples.add(Subqueries.propertyIn("enc.id", urgentReviewEncIds));
 
         return samples;
     }

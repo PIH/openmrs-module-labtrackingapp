@@ -31,8 +31,9 @@ public interface LabTrackingAppService extends OpenmrsService {
 	 * @param patientName - (optional) the patient name to search for
 	 * @param status - (optional) the status code to search for
 	 * @suspectedCancer - (optional) indicating if the sample is suspected for cancer
+	 * @urgentReview - (optional) indicating if the sample needs urgent review
 	 * @param maxResults - (optional) the max results to show, if 0 then all
-	 */	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, int maxResults);
+	 */	public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean urgentReview, int maxResults);
 
 	/* gets the specimen details encounter associated with the Test order
 	* @param orderNumber - an array of order numbers to look up

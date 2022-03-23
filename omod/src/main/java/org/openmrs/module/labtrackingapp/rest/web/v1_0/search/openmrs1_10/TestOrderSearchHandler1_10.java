@@ -25,12 +25,13 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 	private static final String REQUEST_PARAM_END_DATE = "endDateInMillis";
 	private static final String REQUEST_PARAM_STATUS = "status";
 	private static final String REQUEST_PARAM_SUSPECTED_CANCER = "suspectedCancer";
+	private static final String REQUEST_PARAM_URGENT_REVIEW = "urgentReview";
 	private static final String REQUEST_PARAM_TOTAL_COUNT = "totalCount";
 
 
 	private final SearchQuery searchQuery = new SearchQuery.Builder("Gets active test orders in the system")
 	        .withRequiredParameters(REQUEST_PARAM_PATIENT, REQUEST_PARAM_PATIENT_NAME,
-					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS, REQUEST_PARAM_SUSPECTED_CANCER, REQUEST_PARAM_TOTAL_COUNT).build();
+					REQUEST_PARAM_START_DATE,REQUEST_PARAM_END_DATE,REQUEST_PARAM_STATUS, REQUEST_PARAM_SUSPECTED_CANCER, REQUEST_PARAM_URGENT_REVIEW, REQUEST_PARAM_TOTAL_COUNT).build();
 	
 	private final SearchConfig searchConfig = new SearchConfig("getActiveOrders", RestConstants.VERSION_1 + "/order",
 	        Arrays.asList("1.10.*", "1.11.*", "1.12.*", "2.*"), searchQuery);
@@ -52,10 +53,11 @@ public class TestOrderSearchHandler1_10 implements SearchHandler {
 		String patientName = context.getParameter(REQUEST_PARAM_PATIENT_NAME);
 		int status = toInt(context.getParameter(REQUEST_PARAM_STATUS), 0);
 		boolean suspectedCancer = toBoolean(context.getParameter(REQUEST_PARAM_SUSPECTED_CANCER), false);
+		boolean urgentReview = toBoolean(context.getParameter(REQUEST_PARAM_URGENT_REVIEW), false);
 		long startDate = toLong(context.getParameter(REQUEST_PARAM_START_DATE), 0);
 		long endDate = toLong(context.getParameter(REQUEST_PARAM_END_DATE), 0);
 
-		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(startDate, endDate, patientUuid, patientName, status, suspectedCancer, 0);
+		List<Order> orders = Context.getService(LabTrackingAppService.class).getActiveOrders(startDate, endDate, patientUuid, patientName, status, suspectedCancer, urgentReview, 0);
 		return new NeedsPaging<Order>(orders, context);
 	}
 
