@@ -23,10 +23,10 @@ angular.module("labTrackingAddOrderController", [])
 
             // if a single day visit, just set the model value to that date
             if (sameDate($scope.visitStartDateTime, $scope.visitStopDateTime)) {
-                $scope.order.requestDate.value = $scope.visitStartDateTime;
+                $scope.order.sampleDate.value = $scope.visitStartDateTime;
             } // if not a single day visit, but an active visit, set request date to current date
             else if (!visitStopDateTime) {
-                $scope.order.requestDate.value = $scope.serverDatetime;
+                $scope.order.sampleDate.value = $scope.serverDatetime;
             }
 
             $scope.requestDateBoxOptions = {
@@ -52,11 +52,11 @@ angular.module("labTrackingAddOrderController", [])
             $scope.handleSaveOrder = function () {
                 $scope.savingModal = showSavingModal();
                 // keep the Order Request datetime within the boundaries of the visit
-                if ( $scope.order.requestDate.value < $scope.visitStartDateTime ) {
-                    $scope.order.requestDate.value = $scope.visitStartDateTime;
+                if ( $scope.order.sampleDate.value < $scope.visitStartDateTime ) {
+                    $scope.order.sampleDate.value = $scope.visitStartDateTime;
                 }
-                else if ( $scope.visitStopDateTime && $scope.order.requestDate.value > $scope.visitStopDateTime ) {
-                    $scope.order.requestDate.value = $scope.visitStopDateTime;
+                else if ( $scope.visitStopDateTime && $scope.order.sampleDate.value > $scope.visitStopDateTime ) {
+                    $scope.order.sampleDate.value = $scope.visitStopDateTime;
                 }
 
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {

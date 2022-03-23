@@ -32,7 +32,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                <div class="col-sm-10">
                   <div class='input-group date' id='date_of_request'>
                      <input type="text" class="form-control" uib-datepicker-popup="{{requestDateBoxOptions.format}}"
-                            ng-model="order.requestDate.value" is-open="requestDateBoxOptions.opened"
+                            ng-model="order.sampleDate.value" is-open="requestDateBoxOptions.opened"
                             datepicker-options="requestDateBoxOptions.options"
                             ng-required="false" close-text="Close" alt-input-formats="requestDateBoxOptions.altInputFormats" />
                      <span class="input-group-btn">

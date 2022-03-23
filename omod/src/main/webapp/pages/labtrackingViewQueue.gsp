@@ -93,7 +93,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                      <td  ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.name}}</a></td>
                      <td>{{a.accessionNumber.value}}</td>
                      <td>{{a.status.label}}</td>
-                     <td class="text-center small"><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>{{a.requestDate.value | date : dateFormat}}</td>
+                     <td class="text-center small"><span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>{{a.sampleDate.value | date : dateFormat}}</td>
                      <td class="text-center small">
                         <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && handleDetails(a, 'specimen')"><span title="Enter a value" ng-if="canEdit() && a.processedDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span><span ng-if="a.processedDate.value!=null">{{a.processedDate.value | date : dateFormat }}</span></a>
                      </td>

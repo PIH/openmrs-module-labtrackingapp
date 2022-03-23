@@ -61,7 +61,6 @@ angular.module("labTrackingOrderFactory", [])
             this.suspectedCancer = { value: false };
             this.accessionNumber = {value:null};
             this.status = {label: null, value: null};
-            this.requestDate = {value: null};
             this.sampleDate = {value: null};
             this.processedDate = { value: null };
             this.resultDate = {value: null, obsUuid: null};
@@ -214,7 +213,7 @@ angular.module("labTrackingOrderFactory", [])
             order.patient.value = webServiceResult.patient.person.uuid;
             order.patient.name = webServiceResult.patient.person.display;
             order.patient.id = webServiceResult.patient.identifiers[0].identifier;
-            order.requestDate.value = new Date($filter('serverDate')(webServiceResult.dateActivated));
+            order.sampleDate.value = new Date($filter('serverDate')(webServiceResult.dateActivated));
 
             if (webServiceResult.auditInfo != null && webServiceResult.auditInfo.voidedBy != null) {
                 order.canceled = true;
@@ -410,7 +409,7 @@ angular.module("labTrackingOrderFactory", [])
                 orderReasonNonCoded: labTrackingOrder.preLabDiagnosis !== null && typeof labTrackingOrder.preLabDiagnosis === 'string' ? labTrackingOrder.preLabDiagnosis : null,
                 instructions: labTrackingOrder.instructions.value,
                 clinicalHistory: labTrackingOrder.clinicalHistory.value,
-                dateActivated: labTrackingOrder.requestDate.value ? labTrackingOrder.requestDate.value : new Date()
+                dateActivated: labTrackingOrder.sampleDate.value ? labTrackingOrder.sampleDate.value : new Date()
             };
         };
 
@@ -435,7 +434,7 @@ angular.module("labTrackingOrderFactory", [])
 
 
             return new Encounter(LabTrackingOrder.concepts.order.encounterTypeUuid, currentProviderUUID, LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
-                labTrackingOrder.patient.value, labTrackingOrder.location.value, obs, labTrackingOrder.requestDate.value, labTrackingOrder.visit.value);
+                labTrackingOrder.patient.value, labTrackingOrder.location.value, obs, labTrackingOrder.sampleDate.value, labTrackingOrder.visit.value);
         };
 
 
