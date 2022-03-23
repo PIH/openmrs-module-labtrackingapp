@@ -208,8 +208,11 @@ angular.module("labTrackingOrderFactory", [])
             }
 
             order.encounter.value = webServiceResult.encounter.uuid;
-            order.location.value = webServiceResult.encounter.location.uuid;
-            order.location.label = webServiceResult.encounter.location.name;
+            if ( webServiceResult.encounter.location ) {
+              order.location.value = webServiceResult.encounter.location.uuid;
+              order.location.label = webServiceResult.encounter.location.name;
+            }
+
             order.patient.value = webServiceResult.patient.person.uuid;
             order.patient.name = webServiceResult.patient.person.display;
             order.patient.id = webServiceResult.patient.identifiers[0].identifier;
@@ -597,7 +600,7 @@ angular.module("labTrackingOrderFactory", [])
                                 currentProviderUUID,
                                 LabTrackingOrder.CONSTANTS.ORDER_ENCOUNTER_PROVIDER_ROLE_UUID,
                                 labTrackingOrder.patient.value,
-                                labTrackingOrder.locationWhereSpecimenCollected.value,
+                                labTrackingOrder.locationWhereSpecimenCollected.value ? labTrackingOrder.locationWhereSpecimenCollected.value : labTrackingOrder.location.value,
                                 obs,
                                 labTrackingOrder.sampleDate.value,
                                 labTrackingOrder.visit.value);
