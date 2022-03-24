@@ -110,16 +110,26 @@ angular.module("labTrackingViewQueueController", [])
             /*
              handles looking up the order details
              @param order - the order to view the details for
-             @param type - the type of page to show either: speciment, results
+             @param type - the type of page to show either: speciment, results, request
              @return none, navigates to the order details page
              */
             $scope.handleDetails = function (order, type) {
-                var url = "labtrackingOrderDetails.page?";
-                url += "patientId=" + order.patient.value;
-                url += "&orderUuid=" + order.uuid;
-                url += "&returnUrl=" + encodeURIComponent(LabTrackingDataService.getQueuePageUrl($scope.patientUuid));
-                url += "&pageType=" + type;
-                $window.location.href = url;
+                if ( type == 'request' ) {
+                  var url = "labtrackingAddOrder.page?";
+                  url += "patientId=" + order.patient.value;
+                  url += "&orderUuid=" + order.uuid;
+                  url += "&visitId=" + order.visit.value;
+                  url += "&returnUrl=" + encodeURIComponent(LabTrackingDataService.getQueuePageUrl($scope.patientUuid));
+                  url += "&pageType=" + type;
+                  $window.location.href = url;
+                } else {
+                  var url = "labtrackingOrderDetails.page?";
+                  url += "patientId=" + order.patient.value;
+                  url += "&orderUuid=" + order.uuid;
+                  url += "&returnUrl=" + encodeURIComponent(LabTrackingDataService.getQueuePageUrl($scope.patientUuid));
+                  url += "&pageType=" + type;
+                  $window.location.href = url;
+                }
             };
 
             /*
