@@ -31,13 +31,10 @@ angular.module("labTrackingOrderDetailsController", [])
                 return LabTrackingDataService.loadOrder(orderUuid).then(function (resp) {
                     if (resp.status.code == 200) {
                         $scope.order = resp.data;
+                        $scope.order.serverDatetime = $scope.serverDatetime;
                         if($scope.order.sampleDate.value == null){
                             //if we don't have a sample date, then set a default value
                             $scope.order.sampleDate.value =  $scope.serverDatetime;
-                        }
-                        if($scope.order.processedDate.value == null){
-                            //if we don't have a date processed, then set a default value
-                            $scope.order.processedDate.value =  $scope.serverDatetime;
                         }
                     }
                     else {
@@ -228,6 +225,10 @@ angular.module("labTrackingOrderDetailsController", [])
                     altInputFormats: ['M!/d!/yyyy']
                 };
 
+                if($scope.order.processedDate.value == null){
+                    //if we don't have a processedDate date, then set a default value
+                    $scope.order.processedDate.value =  $scope.order.serverDatetime;
+                }
                 /*shows the date box for the sample date*/
                 $scope.showProcedureDateBox = function () {
                     $scope.procedureDateBoxOptions.opened = true;
@@ -320,6 +321,10 @@ angular.module("labTrackingOrderDetailsController", [])
                     }
                     $scope.dateBoxOptions.opened = true;
                 };
+                if($scope.order.resultDate.value == null){
+                    //if we don't have a result date, then set a default value
+                    $scope.order.resultDate.value =  $scope.order.serverDatetime;
+                }
 
                 /*handles downloading the PDF, see http://stackoverflow.com/questions/283956/is-there-any-way-to-specify-a-suggested-filename-when-using-data-uri/6943481#6943481
                  * for details about how/why it id done like this*/

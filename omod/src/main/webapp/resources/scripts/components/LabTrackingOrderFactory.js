@@ -66,6 +66,7 @@ angular.module("labTrackingOrderFactory", [])
             this.resultDate = {value: null, obsUuid: null};
             this.notes = {value: null};
             this.file = {value: null, url: null, obsUuid: null};
+            this.serverDatetime = null;
             this.debug = {};
 
         }

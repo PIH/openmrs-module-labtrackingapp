@@ -4,7 +4,7 @@
             <a data-toggle="collapse" href="#specimen_panel">${ui.message("labtrackingapp.pathologyspecimendetailslabel")}</a>
         </h4>
     </div>
-    <div id="specimen_panel" class="panel-collapse in">
+    <div id="specimen_panel" class="panel-collapse in" ng-if="order.processedDate.value">
         <div class="panel-body">
             <div class="row">
                 <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.processedDatelabel")}</label>

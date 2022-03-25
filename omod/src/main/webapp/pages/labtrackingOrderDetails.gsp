@@ -24,7 +24,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                              diagnoses="diagnoses" alldiagnoses="alldiagnoses" concepts="concepts"></order-details-panel>
         <order-specimen-panel ng-if="pageType=='specimen'" order="order" locations="locations" providers="providers" procedures="procedures"
             diagnoses="diagnoses" alldiagnoses="alldiagnoses" concepts="concepts"></order-specimen-panel>
-        <order-specimen-panel-read-only ng-if="pageType=='results'" order="order"></order-specimen-panel-read-only>
+        <order-specimen-panel-read-only ng-if="(pageType=='results') || (pageType=='readonly')" order="order"></order-specimen-panel-read-only>
         <order-results-panel ng-if="pageType=='results'" order="order"></order-results-panel>
         <order-read-only-panel ng-if="pageType=='readonly'" order="order" concepts="concepts"></order-read-only-panel>
       </div>
@@ -32,9 +32,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
     <div class="row" ng-if="data_loading == false">
         <div class="col-sm-12 text-right">
             <button type="button" class="btn btn-default" ng-click="returnToList()">${ui.message("labtrackingapp.returnToListPage")}</button>
-            <button ng-if="pageType != 'readonly' && pageType != 'results'"type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>
+            <button ng-if="pageType != 'readonly' && pageType != 'results'" type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>
             <button ng-if="pageType != 'results'" type="button" class="btn btn-default" ng-click="printOrder()">${ui.message("uicommons.print")}</button>
-            <button type="button" class="btn btn-primary" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
+            <button ng-if="pageType != 'readonly'" type="button" class="btn btn-primary" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
         </div>
     </div>
 
