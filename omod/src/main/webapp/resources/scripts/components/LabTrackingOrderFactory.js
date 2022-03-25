@@ -391,7 +391,9 @@ angular.module("labTrackingOrderFactory", [])
                 labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
 
             }
-
+            if ( webServiceResult.visit && webServiceResult.visit.uuid ) {
+              labTrackingOrder.visit.value = webServiceResult.visit.uuid;
+            }
             return labTrackingOrder;
         };
 

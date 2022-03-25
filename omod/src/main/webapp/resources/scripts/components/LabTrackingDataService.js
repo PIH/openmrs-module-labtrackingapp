@@ -22,7 +22,7 @@ angular.module("labTrackingDataService", [])
                     + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS&suspectedCancer=SUSPECTED_CANCER&urgentReview=URGENT_REVIEW"
                     + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
                     VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
-                    VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid)))",
+                    VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid)))",
                     UPLOAD_FILE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs",
                     PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
                     ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
@@ -553,7 +553,13 @@ angular.module("labTrackingDataService", [])
                             if (res.data.specimenDetailsEncounter && res.data.specimenDetailsEncounter.encounterDatetime ) {
                                 order.dateActivated = res.data.specimenDetailsEncounter.encounterDatetime;
                             }
-                            return $http.post(CONSTANTS.URLS.SAVE_ORDER, order)
+                            if ( labTrackingOrder.uuid ) {
+                                // if the Order already exists, it cannot be updated (per ORDER REST API)
+                              return $http.get(CONSTANTS.URLS.SAVE_ORDER + "/" + labTrackingOrder.uuid);
+                            } else {
+                              return $http.post(CONSTANTS.URLS.SAVE_ORDER, order);
+                            }
+
                         }
                         else {
                             return res;

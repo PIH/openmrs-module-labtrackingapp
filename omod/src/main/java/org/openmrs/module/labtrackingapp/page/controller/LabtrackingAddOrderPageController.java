@@ -14,6 +14,7 @@ public class LabtrackingAddOrderPageController {
                              @RequestParam(value = "returnUrl", required = false) String returnUrl,
                              @RequestParam(value = "visitId", required = false) Visit visit,
                              @RequestParam(value = "patientId") Patient patient,
+                             @RequestParam(value = "orderUuid", required = false) String orderUuid,
                              UiSessionContext uiSessionContext) {
 
         model.addAttribute("appId", app != null ? app.getId() : null);
@@ -22,6 +23,7 @@ public class LabtrackingAddOrderPageController {
         model.addAttribute("location", uiSessionContext.getSessionLocation());
         model.addAttribute("patient", patient);
         model.addAttribute("visit", visit);
+        model.addAttribute("orderUuid", orderUuid);
         model.addAttribute("serverDatetime", new DateTime()); // just in case the server and client time are not in sync
 
         return null;

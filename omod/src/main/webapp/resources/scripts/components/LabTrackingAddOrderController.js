@@ -1,6 +1,6 @@
 angular.module("labTrackingAddOrderController", [])
-    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'visitStartDateTime', 'visitStopDateTime', 'serverDatetime', 'locationUuid', 'returnUrl',
-        function ($window, $filter, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, visitStartDateTime, visitStopDateTime, serverDatetime, locationUuid, returnUrl) {
+    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'orderUuid', 'visitStartDateTime', 'visitStopDateTime', 'serverDatetime', 'locationUuid', 'returnUrl',
+        function ($window, $filter, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, orderUuid, visitStartDateTime, visitStopDateTime, serverDatetime, locationUuid, returnUrl) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.procedures = []; //the list of procedures in the system
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
@@ -28,6 +28,24 @@ angular.module("labTrackingAddOrderController", [])
             else if (!visitStopDateTime) {
                 $scope.order.sampleDate.value = $scope.serverDatetime;
             }
+
+            $scope.loadOrder = function (orderUuid) {
+              $scope.lastUpdatedAtInMillis = new Date().getTime();
+
+              return LabTrackingDataService.loadOrder(orderUuid).then(function (resp) {
+                if (resp.status.code == 200) {
+                  $scope.order = resp.data;
+                  if($scope.order.sampleDate.value == null){
+                    //if we don't have a sample date, then set a default value
+                    $scope.order.sampleDate.value =  $scope.serverDatetime;
+                  }
+                }
+                else {
+                  $scope.errorMessage = resp.status.msg;
+                }
+                return resp;
+              });
+            };
 
             $scope.requestDateBoxOptions = {
                 opened: false,
@@ -174,6 +192,14 @@ angular.module("labTrackingAddOrderController", [])
                       $scope.diagnoses = res3.data;
                       return LabTrackingDataService.loadHumDiagnoses().then(function (humDiagnoses) {
                         $scope.alldiagnoses = humDiagnoses;
+                        if ( orderUuid ) {
+                          return $scope.loadOrder(orderUuid).then(function( respOrder ){
+                            if ( respOrder.status.code !== 200 ) {
+                              $scope.error = "failed to load the order: " + orderUuid;
+                              $scope.debugInfo = respOrder;
+                            }
+                          });
+                        }
                       });
                     });
                   });
