@@ -98,8 +98,12 @@
     <encounter encounter_id="8881" encounter_type="9991" patient_id="2" location_id="9991"
                encounter_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"
                voided="false" uuid="f13d6fae-baa9-4553-955d-888888888888"/>
+    <!-- the observation that maps the order to this encounter -->
+    <obs obs_id="1103" person_id="2" concept_id="9992" encounter_id="8881" obs_datetime="2016-12-11 00:00:00.0"
+         location_id="9991" value_text="ORD-888" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
+         uuid="0E806E62-2859-4222-BDA4-7A9B0941C3FF"/>
 
-    <orders uuid="f4740b0b-206c-48a4-a5b7-111111111112" order_id="9992" encounter_id="9991" order_type_id="1001" urgency="ROUTINE"
+    <orders uuid="f4740b0b-206c-48a4-a5b7-111111111112" order_id="9992" encounter_id="8881" order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
             order_number="ORD-888"
             auto_expire_date="2025-12-31 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0"

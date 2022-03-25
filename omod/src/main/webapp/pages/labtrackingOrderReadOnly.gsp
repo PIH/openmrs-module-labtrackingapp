@@ -4,7 +4,7 @@
          <a data-toggle="collapse" href="#order_panel">${ui.message("labtrackingapp.resultdetailslabel")} </a>
       </h4>
    </div>
-   <div id="order_panel" class="panel-collapse in">
+   <div id="order_panel" class="panel-collapse in" ng-if="order.resultDate.value">
       <div class="panel-body">
          <div class="row">
             <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.resultsdatelabel")}</label>

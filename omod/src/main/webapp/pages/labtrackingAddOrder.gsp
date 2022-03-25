@@ -135,9 +135,11 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label for="caresetting" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.caresettinglabel")}</label>
                <div class="col-sm-10">
-                  <select class="form-control" id="caresetting"  ng-required="true"
+                  <!-- Order fields are not editable, they could be set only when creating a new Order-->
+                  <select ng-if="!order.uuid" class="form-control" id="caresetting"  ng-required="true"
                      ng-options="item as item.label for item in careSettings | orderBy:'label' track by item.value "
                      ng-model="order.careSetting"></select>
+                  <p ng-if="order.uuid" class="form-control-static" >{{ order.careSetting.label }}</p>
                </div>
             </div>
             <div class="form-group row">
@@ -150,7 +152,9 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label for="instructions" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.instructionslabel")}</label>
                <div class="col-sm-10">
-                  <textarea class="form-control" id="instructions" placeholder="" ng-model="order.instructions.value"></textarea>
+                  <!-- Order fields are not editable-->
+                  <textarea ng-if="!order.uuid" class="form-control" id="instructions" placeholder="" ng-model="order.instructions.value"></textarea>
+                  <p ng-if="order.uuid" class="form-control-static" >{{order.instructions.value}}</p>
                </div>
             </div>
             <div class="form-group row">

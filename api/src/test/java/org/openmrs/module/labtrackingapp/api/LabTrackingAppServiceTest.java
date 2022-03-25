@@ -50,7 +50,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 
 	private static final int TOTAL_ACTIVE_ORDERS = 4;
 	private static final int TOTAL_SAMPLED_ORDERS = 1;
-	private static final int TOTAL_REQUESTED_ORDERS = 1;
+	private static final int TOTAL_REQUESTED_ORDERS = 2;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
 	private static final int TOTAL_ACCESSION_NUMBER_ORDERS = 1;
 	private static final int TOTAL_SUSPECTED_CANCER_ORDERS = 2;
@@ -154,7 +154,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		long startDate = testDate.getTime()-1000*60*60;
 		long endDate = testDate.getTime()+1000*60*60;
 		String patientUuid = null;
-		String patientName = "the quick brown fox";
+		String patientName = "non-existent patient";
 		int status = LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId();
 		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, false, 0);
 		assertEquals(0, list.size());

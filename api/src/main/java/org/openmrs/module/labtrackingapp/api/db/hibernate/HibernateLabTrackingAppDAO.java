@@ -96,8 +96,6 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
             final String query = new StringBuilder().append("%").append(patientName).append("%").toString();
 
-
-            DetachedCriteria samples = getSamplesSubQuery();
             //find orders where
             //  an obs with the accession number
             // is part of an encounter that has an order number
@@ -121,10 +119,13 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
         }
 
         if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
-            //this is all orders that have been requested but without any samples or results
-            DetachedCriteria samples = getSamplesSubQuery();
+            //this is all orders that have been requested but without a Processed Date
+            DetachedCriteria processedSamples = getProcessedSamplesSubQuery();
+            DetachedCriteria samples = getSamplesSubQuery().add(Subqueries.propertyNotIn("enc.id", processedSamples));
+
             criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY)
-                    .add(Subqueries.propertyNotIn("orderNumber", samples));
+                    .add(Subqueries.propertyIn("orderNumber", samples));
+
         }
         else if (LabTrackingConstants.LabTrackingOrderStatus.PROCESSED.getId() == status) {
            // all orders that have a samples encounter and Procedure Date obs but  no results
