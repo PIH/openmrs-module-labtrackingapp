@@ -24,7 +24,8 @@
 ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div class="container" ng-app="labTrackingApp" ng-controller="addOrderController">
    <div class="panel panel-primary" id="order_box">
-      <div class="panel-heading">${ui.message("labtrackingapp.addorderpagetitle")}</div>
+      <div ng-if="!order.uuid" class="panel-heading">${ui.message("labtrackingapp.addorderpagetitle")}</div>
+      <div ng-if="order.uuid" class="panel-heading">${ui.message("labtrackingapp.editOrderPageTitle")}</div>
       <div class="panel-body">
          <form name="addOrderForm">
             <div class="form-group row">
@@ -76,33 +77,29 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-9">
-                  <input type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
+                  <input ng-if="!order.uuid" type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
                      uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8" />
+                  <p ng-if="order.uuid" class="form-control-static" > {{ formatDiagnosis(order.preLabDiagnosis) }}</p>
                </div>
             </div>
             <div class="form-group row">
                <label for="procedure" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                <div class="col-sm-4">
-                  <div class="panel panel-default">
-                     <div class="panel-heading">${ui.message("labtrackingapp.proceduresAvailable")}</div>
-                     <div class="panel-body">
-                        <select id="procedure" class="form-control" multiple
-                           ng-options="item as item.label for item in procedures | orderBy:'label' track by item.value "
-                           ng-model="selectedProcedures" ></select>
-                     </div>
-                  </div>
+                  <input  type="text" ng-model="selectedProcedures"  class="form-control" ng-required="false"
+                          uib-typeahead="item as item.label for item in procedures | filter:${'$viewValue'} | limitTo:8"
+                          typeahead-on-select="onSelectProcedure(${'$item'}, ${'model'}, ${'label'})"/>
                </div>
                <div class="col-sm-1">
                   <p>&nbsp;</p>
-                  <button class="btn button-wrapper" type="button" ng-disabled="order.procedures.length > 2" ng-click="addProcedure()"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
-                  <button class="btn button-wrapper" type="button" ng-disabled="order.procedures.length == 0" ng-click="removeProcedure()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
+                  <button class="btn button-wrapper" type="button" ng-disabled="order.proceduresForSpecimen.length > 2" ng-click="addProcedure()"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
+                  <button class="btn button-wrapper" type="button" ng-disabled="order.proceduresForSpecimen.length == 0" ng-click="removeProcedure()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
                </div>
                <div class="col-sm-4">
                   <div class="panel panel-default">
                      <div class="panel-heading">${ui.message("labtrackingapp.proceduresSelected")}</div>
                      <div class="panel-body">
                           <select id="procedure" class="form-control" multiple
-                             ng-options="item as item.label for item in order.procedures | orderBy:'label' track by item.value "
+                             ng-options="item as item.label for item in order.proceduresForSpecimen | orderBy:'label' track by item.value "
                              ng-model="tempProcedures" ></select>
                      </div>
                   </div>
@@ -143,7 +140,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
-               <label class="col-sm-2 col-form-label"  for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
+               <label class="col-sm-2 col-form-label" for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
                <div class="col-sm-9">
                   <input type="text" ng-model="order.postopDiagnosis.diagnosis"  class="form-control"
                          uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8"  />
@@ -196,6 +193,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
       <div class="modal-body" id="modal-body">
           <img class="center-block"  src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" />
       </div>
+   </script>
+   <script type="text/ng-template" id="loadingModal.html">
+   <div class="modal-header">
+      <h3 class="modal-title" id="loading-title">${ui.message("labtrackingapp.loadingtitle")}</h3>
+   </div>
+   <div class="modal-body" id="loading-body">
+      <img class="center-block"  src="${ ui.resourceLink("uicommons", "images/spinner.gif") }" />
+   </div>
    </script>
    <h1 ng-if="error">Debug info</h1>
    <pre ng-if="error">debugInfo={{debugInfo | json }}</pre>
