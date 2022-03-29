@@ -53,7 +53,7 @@
             <div class="row">
                 <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                 <div class="col-sm-9">
-                    <p class="form-control-static" ng-repeat="a in order.procedures | orderBy:'label'" >{{ a.label }}</p>
+                    <p class="form-control-static" ng-repeat="a in order.proceduresForSpecimen | orderBy:'label'" >{{ a.label }}</p>
                 </div>
             </div>
             <div class="row">
