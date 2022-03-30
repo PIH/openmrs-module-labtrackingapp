@@ -30,7 +30,15 @@
 					</div>
 				</div>
 
-
+				<div class="row top-buffer">
+					<label class="col-sm-3 text-right">${ui.message("labtrackingapp.orderdetails.immunohistochemistrySentToBoston")}</label>
+					<div class="col-sm-9">
+						<div class="btn-group btn-toggle">
+							<button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.immunohistochemistrySentToBoston.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistrySentToBoston.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
+							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistrySentToBoston.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistrySentToBoston.value=''">${ui.message("uicommons.no")}</button>
+						</div>
+					</div>
+				</div>
 		</div>
 	</div>
 </div>

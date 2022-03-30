@@ -171,6 +171,15 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   </div>
                </div>
             </div>
+            <div class="form-group row">
+               <label class="control-label col-sm-3">${ui.message("labtrackingapp.orderdetails.immunohistochemistryNeeded")}</label>
+               <div class="col-sm-9">
+                  <div class="btn-group btn-toggle">
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.immunohistochemistryNeeded.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistryNeeded.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistryNeeded.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistryNeeded.value=''">${ui.message("uicommons.no")}</button>
+                  </div>
+               </div>
+            </div>
             <div class="pull-right">
                <button id="cancelB" type="button" class="btn btn-default cancel" ng-click="handleCancelOrder()">${ui.message("uicommons.cancel")}</button>
                <button class="btn btn-success" ng-click="handleSaveOrder()" ng-disabled="!readyToSubmit()" >${ui.message("uicommons.save")}</button>
