@@ -7,7 +7,7 @@
 	<div id="order_panel" class="panel-collapse in">
 		<div class="panel-body">
             <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.listpage.requestdate") }</label>
+                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.orderdetails.sampledatelabel") }</label>
                 <div class="col-sm-9">
                     <p class="form-control-static">{{order.sampleDate.value | date : 'd-MMM-yy'}}</p>
                 </div>
