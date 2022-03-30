@@ -7,7 +7,7 @@
 	<div id="order_panel" class="panel-collapse in">
 		<div class="panel-body">
             <div class="row">
-                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.listpage.requestdate") }</label>
+                <label class="control-label form-control-static text-right col-sm-3">${ ui.message("labtrackingapp.orderdetails.sampledatelabel") }</label>
                 <div class="col-sm-9">
                     <p class="form-control-static">{{order.sampleDate.value | date : 'd-MMM-yy'}}</p>
                 </div>
@@ -64,7 +64,7 @@
             </div>
 
 
-            <div class="row">
+            <div class="row top-buffer">
                 <label class="form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
                 <div class="col-sm-9">
                     <div class="btn-group btn-toggle">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row top-buffer">
                 <label class="form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.urgentreviewlabel")}</label>
                 <div class="col-sm-9">
                     <div class="btn-group btn-toggle">
@@ -115,6 +115,15 @@
                         <div class="col-sm-12">
                             <p ng-if="order.specimenDetails[${'$'}index].value" class="form-control-static" >{{${'$'}index+1 }}. {{ order.specimenDetails[${'$'}index].value }}</p>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row top-buffer">
+                <label class="form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.immunohistochemistryNeeded")}</label>
+                <div class="col-sm-9">
+                    <div class="btn-group btn-toggle">
+                        <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.immunohistochemistryNeeded.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}">${ui.message("uicommons.yes")}</button>
+                        <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistryNeeded.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}">${ui.message("uicommons.no")}</button>
                     </div>
                 </div>
             </div>
