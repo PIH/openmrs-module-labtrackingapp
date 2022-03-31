@@ -18,7 +18,6 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.locations = []; //the locations in the system
             $scope.diagnoses = []; //the oncology diagnoses in the system
             $scope.alldiagnoses = []; //all the diagnoses in the system
-            $scope.procedures = []; //the procedures in the system
 
             $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
 
@@ -134,15 +133,12 @@ angular.module("labTrackingOrderDetailsController", [])
                         if (resp3.status.code == 200) {
                             $scope.locations = resp3.data;
                         }
-                        return LabTrackingDataService.loadProcedures().then(function (res2) {
-                            $scope.procedures = res2.data;
-                            return LabTrackingDataService.loadDiagnonses().then(function (res3) {
-                                $scope.diagnoses = res3.data;
-                                return LabTrackingDataService.loadHumDiagnoses().then(function(humDiagnoses){
-                                    $scope.alldiagnoses = humDiagnoses;
-                                    $scope.data_loading = false;
-                                });
-                            })
+                        return LabTrackingDataService.loadDiagnonses().then(function (res3) {
+                            $scope.diagnoses = res3.data;
+                            return LabTrackingDataService.loadHumDiagnoses().then(function(humDiagnoses){
+                                $scope.alldiagnoses = humDiagnoses;
+                                $scope.data_loading = false;
+                            });
                         })
                     });
                 });
@@ -183,7 +179,6 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 providers: '=',
                 locations: '=',
-                procedures: '=',
                 diagnoses: '=',
                 alldiagnoses: '=',
                 concepts: '=',
@@ -202,15 +197,11 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 providers: '=',
                 locations: '=',
-                procedures: '=',
                 diagnoses: '=',
                 alldiagnoses: '=',
                 concepts: '=',
             },
             controller: function ($scope) {
-                $scope.selectedProcedures = $scope.order.proceduresForSpecimen; //the list of procedures available, used to manage the UI state
-                $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
-
 
                 $scope.procedureDateBoxOptions = {
                     opened: false,
@@ -234,50 +225,6 @@ angular.module("labTrackingOrderDetailsController", [])
                     $scope.procedureDateBoxOptions.opened = true;
                 };
 
-
-                /* init procedures */
-                $scope.initProcedures = function () {
-                    for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
-                        for (var j = 0; j < $scope.procedures.length; ++j) {
-                            if ($scope.procedures[j].value == $scope.selectedProcedures[i].value) {
-                                $scope.procedures.splice(j, 1);
-                                break;
-                            }
-                        }
-                    }
-                };
-                /* adds a procedures to the list*/
-                $scope.addProcedure = function () {
-                    for (var i = 0; i < $scope.selectedProcedures.length; ++i) {
-                        if ($scope.order.proceduresForSpecimen.length > 2) {
-                            //we only allow 3, so get out
-                            return;
-                        }
-                        $scope.order.proceduresForSpecimen.push($scope.selectedProcedures[i]);
-                        for (var j = 0; j < $scope.procedures.length; ++j) {
-                            if ($scope.procedures[j].value == $scope.selectedProcedures[i].value) {
-                                $scope.procedures.splice(j, 1);
-                                break;
-                            }
-                        }
-                    }
-                };
-
-                /*removes a procedure from the list*/
-                $scope.removeProcedure = function () {
-                    for (var i = 0; i < $scope.tempProcedures.length; ++i) {
-                        $scope.procedures.push($scope.tempProcedures[i]);
-                        for (var j = 0; j < $scope.order.proceduresForSpecimen.length; ++j) {
-                            if ($scope.order.proceduresForSpecimen[j].value == $scope.tempProcedures[i].value) {
-                                $scope.order.proceduresForSpecimen.splice(j, 1);
-                                break;
-                            }
-                        }
-                    }
-
-                };
-
-                $scope.initProcedures();
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };

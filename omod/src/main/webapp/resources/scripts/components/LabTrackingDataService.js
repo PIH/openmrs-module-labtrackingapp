@@ -7,6 +7,7 @@ angular.module("labTrackingDataService", [])
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
             var HUM_DIAGNOSIS_CONCEPT_SET_UUID = "8fcd0b0c-f977-4a66-a1b5-ad7ce68e6770";
+            var CONCEPT_CLASS_PROCEDURE_UUID = "8d490bf4-c2cc-11de-8d13-0010c6dffd0f";
             var CONSTANTS = {
                 MAX_QUEUE_SIZE: 10,
                 MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
@@ -25,7 +26,8 @@ angular.module("labTrackingDataService", [])
                     VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid)))",
                     UPLOAD_FILE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs",
                     PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
-                    ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit"
+                    ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit",
+                    CONCEPT_SEARCH: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/conceptsearch?q=PROCEDURE_NAME&conceptClasses=" + CONCEPT_CLASS_PROCEDURE_UUID + "&v=custom:(concept:(uuid,display))"
                 }
             };
 
@@ -116,7 +118,14 @@ angular.module("labTrackingDataService", [])
                 return _self.loadConceptSet(PROCEDURES_CONCEPT_SET_UUID);
             };
 
-
+          /**
+           * Search asynchronously concepts of class Procedure
+           * @param searchName
+           */
+            this.searchProcedures = function(searchName) {
+                var url = CONSTANTS.URLS.CONCEPT_SEARCH.replace("PROCEDURE_NAME", searchName);
+                return $http.get(url);
+            };
             /*
              load the dianosis that are available
              * */

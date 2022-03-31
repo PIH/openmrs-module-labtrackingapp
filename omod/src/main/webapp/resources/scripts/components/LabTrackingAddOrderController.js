@@ -3,7 +3,6 @@ angular.module("labTrackingAddOrderController", [])
         function ($window, $filter, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, orderUuid, visitStartDateTime, visitStopDateTime, serverDatetime, locationUuid, returnUrl) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.loadingModal = null; //this is a flag that lets us know we are in loading mode
-            $scope.procedures = []; //the list of procedures in the system
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
             $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
             $scope.careSettings = [];  //the list of care settings in the system
@@ -104,18 +103,38 @@ angular.module("labTrackingAddOrderController", [])
               return diagnosis !== null &&  typeof diagnosis === 'object' ? diagnosis.label : diagnosis;
             }
 
+            $scope.searchProcedures = function(name) {
+              return LabTrackingDataService.searchProcedures(name).then(function(response) {
+                var procedureArray = [];
+                if (LabTrackingDataService.isOk(response)) {
+                  for (var i = 0; i < response.data.results.length; ++i) {
+                    var item = response.data.results[i];
+                    procedureArray.push({ value: item.concept.uuid, label: item.concept.display})
+                  }
+                }
+                return procedureArray;
+              }, function (err) {
+                throw err;
+              });
+
+            }
+
             $scope.onSelectProcedure = function( $item, $model, $label ){
                 if ( $item.value ) {
-                  $scope.order.proceduresForSpecimen.push($item);
                   $scope.selectedProcedures = [];
+                  for (var i = 0; i < $scope.order.proceduresForSpecimen.length; i++ ) {
+                    if ($scope.order.proceduresForSpecimen[i].value == $item.value) {
+                      // this procedure is already on the list
+                      return;
+                    }
+                  }
+                  $scope.order.proceduresForSpecimen.push($item);
                 }
-
             }
 
             /*removes a procedure from the list*/
             $scope.removeProcedure = function () {
               for (var i = 0; i < $scope.tempProcedures.length; ++i) {
-                    //$scope.procedures.push($scope.tempProcedures[i]);
                     for (var j = 0; j < $scope.order.proceduresForSpecimen.length; ++j) {
                         if ($scope.order.proceduresForSpecimen[j].value == $scope.tempProcedures[i].value) {
                             $scope.order.proceduresForSpecimen.splice(j, 1);
@@ -196,8 +215,6 @@ angular.module("labTrackingAddOrderController", [])
                 }
                 return LabTrackingDataService.loadCareSettings().then(function (res) {
                   $scope.careSettings = res.data;
-                  return LabTrackingDataService.loadProcedures().then(function (res2) {
-                    $scope.procedures = res2.data;
                     return LabTrackingDataService.loadDiagnonses().then(function (res3) {
                       $scope.diagnoses = res3.data;
                       return LabTrackingDataService.loadHumDiagnoses().then(function (humDiagnoses) {
@@ -214,7 +231,7 @@ angular.module("labTrackingAddOrderController", [])
                         $scope.loadingModal.dismiss('cancel');
                       });
                     });
-                  });
+
                 });
               });
 

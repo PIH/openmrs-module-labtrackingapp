@@ -85,13 +85,23 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label for="procedure" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                <div class="col-sm-4">
-                  <input  type="text" ng-model="selectedProcedures"  class="form-control" ng-required="false"
-                          uib-typeahead="item as item.label for item in procedures | filter:${'$viewValue'} | limitTo:8"
+                  <input  type="text"
+                          ng-model="selectedProcedures"
+                          class="form-control"
+                          ng-required="false"
+                          uib-typeahead="item as item.label for item in searchProcedures(${'$viewValue'}) | limitTo:8"
+                          typeahead-min-length="3"
+                          typeahead-wait-ms="1000"
+                          typeahead-loading="loadingLocations"
+                          typeahead-no-results="noResults"
                           typeahead-on-select="onSelectProcedure(${'$item'}, ${'model'}, ${'label'})"/>
+                  <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                  <div ng-show="noResults">
+                     <i class="glyphicon glyphicon-remove"></i> No Results Found
+                  </div>
                </div>
                <div class="col-sm-1">
                   <p>&nbsp;</p>
-                  <button class="btn button-wrapper" type="button" ng-disabled="order.proceduresForSpecimen.length > 2" ng-click="addProcedure()"><span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span></button>
                   <button class="btn button-wrapper" type="button" ng-disabled="order.proceduresForSpecimen.length == 0" ng-click="removeProcedure()"><span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span></button>
                </div>
                <div class="col-sm-4">
