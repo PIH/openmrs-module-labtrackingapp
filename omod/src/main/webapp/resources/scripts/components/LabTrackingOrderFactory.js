@@ -94,7 +94,7 @@ angular.module("labTrackingOrderFactory", [])
             urgentReview: {value: '9e4b6acc-ab97-4ecd-a48c-b3d67e5ef778'},
             suspectedCancer: { value: 'd0718b9e-31e3-4bc8-a8d3-cfc5cc1ae2cb'},
             immunohistochemistryNeeded: { value: '237dbbf8-b654-4fed-8c09-b130d35879ac'},
-            immunohistochemistrySentToBoston: { value: '5338c4d5-2a7b-4a37-8acc-7d8bd249d2c4'},
+            immunohistochemistrySentToBoston: { value: '3ae1ac7c-fe6b-4c49-9150-f5047178a43e'},
             clinicalHistoryForSpecimen: {value: '160221AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             mdToNotify: {value: 'a787e577-5e32-42dc-b3a8-e4c6d5b107f5'},
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
