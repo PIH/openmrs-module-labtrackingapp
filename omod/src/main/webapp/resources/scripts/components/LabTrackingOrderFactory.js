@@ -160,7 +160,9 @@ angular.module("labTrackingOrderFactory", [])
             labTrackingOrder.careSetting.value = webServiceResult.careSetting.uuid;
             labTrackingOrder.careSetting.label = webServiceResult.careSetting.display;
           }
-          labTrackingOrder.locationWhereSpecimenCollected = labTrackingOrder.location;
+          if ( !labTrackingOrder.locationWhereSpecimenCollected.value) {
+            labTrackingOrder.locationWhereSpecimenCollected= labTrackingOrder.location;
+          }
           return labTrackingOrder;
         }
 
