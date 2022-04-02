@@ -91,7 +91,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                           ng-required="false"
                           uib-typeahead="item as item.label for item in searchProcedures(${'$viewValue'}) | limitTo:8"
                           typeahead-min-length="3"
-                          typeahead-wait-ms="1000"
+                          typeahead-wait-ms="500"
                           typeahead-loading="loadingLocations"
                           typeahead-no-results="noResults"
                           typeahead-on-select="onSelectProcedure(${'$item'}, ${'model'}, ${'label'})"/>
