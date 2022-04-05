@@ -90,14 +90,14 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                           class="form-control"
                           ng-required="false"
                           uib-typeahead="item as item.label for item in searchProcedures(${'$viewValue'}) | limitTo:8"
-                          typeahead-min-length="3"
-                          typeahead-wait-ms="500"
-                          typeahead-loading="loadingLocations"
+                          typeahead-min-length="2"
+                          typeahead-wait-ms="200"
+                          typeahead-loading="loadingProcedures"
                           typeahead-no-results="noResults"
                           typeahead-on-select="onSelectProcedure(${'$item'}, ${'model'}, ${'label'})"/>
-                  <i ng-show="loadingLocations" class="glyphicon glyphicon-refresh"></i>
+                  <i ng-show="loadingProcedures" class="glyphicon glyphicon-refresh"></i>
                   <div ng-show="noResults">
-                     <i class="glyphicon glyphicon-remove"></i> No Results Found
+                     <i class="glyphicon glyphicon-remove"></i> No Procedures Found
                   </div>
                </div>
                <div class="col-sm-1">
