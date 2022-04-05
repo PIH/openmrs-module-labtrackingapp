@@ -13,7 +13,8 @@ angular.module("labTrackingOrderFactory", [])
             DIAGNOSIS_CERTAINTY_CONCEPT_UUID: "3cd9ef9a-26fe-102b-80cb-0017a47871b2",
             DIAGNOSIS_CERTAINTY_PRESUMED: "3cd9be80-26fe-102b-80cb-0017a47871b2",
             DIAGNOSIS_CERTAINTY_CONFIRMED: "3cd9bd04-26fe-102b-80cb-0017a47871b2",
-            YES: "3cd6f600-26fe-102b-80cb-0017a47871b2"
+            YES: "3cd6f600-26fe-102b-80cb-0017a47871b2",
+            NO: "3cd6f86c-26fe-102b-80cb-0017a47871b2"
         };
 
         /**

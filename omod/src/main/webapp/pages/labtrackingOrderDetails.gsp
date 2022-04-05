@@ -34,7 +34,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <button type="button" class="btn btn-default" ng-click="returnToList()">${ui.message("labtrackingapp.returnToListPage")}</button>
             <button ng-if="pageType != 'readonly' && pageType != 'results'" type="button" class="btn btn-default" data-toggle="modal" data-target="#cancelOrderDialog" >${ui.message("labtrackingapp.cancelOrder")}</button>
             <button ng-if="pageType != 'results'" type="button" class="btn btn-default" ng-click="printOrder()">${ui.message("uicommons.print")}</button>
-            <button ng-if="pageType != 'readonly'" type="button" class="btn btn-primary" ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
+            <button ng-if="pageType != 'readonly'" type="button" class="btn btn-primary" ng-disabled="!readyToSubmit()"  ng-click="saveSpecimenDetails()">${ui.message("uicommons.save")}</button>
         </div>
     </div>
 

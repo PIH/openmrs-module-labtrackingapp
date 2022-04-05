@@ -57,6 +57,11 @@ angular.module("labTrackingOrderDetailsController", [])
                 });
             };
 
+            /* checks if you can submit the form*/
+            $scope.readyToSubmit = function () {
+                return ( $scope.order.processedDate.value && $scope.order.accessionNumber.value);
+            };
+
             /*
              shows the saving modal box, while the data is being saved
              */

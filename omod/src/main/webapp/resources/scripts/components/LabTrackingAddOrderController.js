@@ -41,7 +41,7 @@ angular.module("labTrackingAddOrderController", [])
                   }
                 }
                 else {
-                  $scope.errorMessage = resp.status.msg;
+                  $scope.error = resp.status.msg;
                 }
                 return resp;
               });
@@ -147,7 +147,11 @@ angular.module("labTrackingAddOrderController", [])
 
             /* checks if you can submit the form*/
             $scope.readyToSubmit = function () {
-                return ($scope.order.proceduresForSpecimen.length > 0
+                return ( $scope.order.sampleDate.value
+                    && $scope.order.suspectedCancer.value
+                    && $scope.order.clinicalHistoryForSpecimen.value
+                    && $scope.order.preLabDiagnosis.value
+                    && $scope.order.proceduresForSpecimen.length > 0
                     || ($scope.order.procedureNonCoded.value != null && $scope.order.procedureNonCoded.value.length > 0));
             };
 

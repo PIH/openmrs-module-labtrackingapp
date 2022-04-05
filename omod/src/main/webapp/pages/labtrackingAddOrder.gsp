@@ -28,8 +28,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
       <div ng-if="order.uuid" class="panel-heading">${ui.message("labtrackingapp.editOrderPageTitle")}</div>
       <div class="panel-body">
          <form name="addOrderForm">
-            <div class="form-group row">
-               <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.listpage.requestdate")}</label>
+            <div class="form-group row required">
+               <label class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.listpage.requestdate")}</label>
                <div class="col-sm-10">
                   <div class='input-group date' id='date_of_request'>
                      <input type="text" class="form-control" uib-datepicker-popup="{{requestDateBoxOptions.format}}"
@@ -74,16 +74,16 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <input type='text' class="form-control" id="phoneNumberForClinician" ng-model="order.phoneNumberForClinician.value"  />
                </div>
             </div>
-            <div class="form-group row">
-               <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
+            <div class="form-group row required">
+               <label class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-9">
                   <input ng-if="!order.uuid" type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
                      uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8" />
                   <p ng-if="order.uuid" class="form-control-static" > {{ formatDiagnosis(order.preLabDiagnosis) }}</p>
                </div>
             </div>
-            <div class="form-group row">
-               <label for="procedure" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
+            <div class="form-group row required">
+               <label for="procedure" class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.proceduresitelabel")}</label>
                <div class="col-sm-4">
                   <input  type="text"
                           ng-model="selectedProcedures"
@@ -121,12 +121,12 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <input type="text" class="form-control" id="procedurenoncoded" placeholder="" ng-model="order.procedureNonCoded.value"></input>
                </div>
             </div>
-            <div class="form-group row">
-               <label class="control-label col-sm-3">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
+            <div class="form-group row required">
+               <label class="control-label col-sm-3 control-label">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
                <div class="col-sm-9">
                   <div class="btn-group btn-toggle">
                      <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.suspectedCancer.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.suspectedCancer.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
-                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.suspectedCancer.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.suspectedCancer.value=''">${ui.message("uicommons.no")}</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.suspectedCancer.value=='3cd6f86c-26fe-102b-80cb-0017a47871b2'}" ng-click="order.suspectedCancer.value='3cd6f86c-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.no")}</button>
                   </div>
                </div>
             </div>
@@ -135,7 +135,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                <div class="col-sm-9">
                   <div class="btn-group btn-toggle">
                      <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.urgentReview.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
-                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgentReview.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value=''">${ui.message("uicommons.no")}</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.urgentReview.value=='3cd6f86c-26fe-102b-80cb-0017a47871b2'}" ng-click="order.urgentReview.value='3cd6f86c-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.no")}</button>
                   </div>
                </div>
             </div>
@@ -150,7 +150,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                </div>
             </div>
             <div class="form-group row">
-               <label class="col-sm-2 col-form-label" for="postopdiagnosis">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
+               <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
                <div class="col-sm-9">
                   <input type="text" ng-model="order.postopDiagnosis.diagnosis"  class="form-control"
                          uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8"  />
@@ -164,8 +164,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <p ng-if="order.uuid" class="form-control-static" >{{order.instructions.value}}</p>
                </div>
             </div>
-            <div class="form-group row">
-               <label for="history" class="col-sm-2 col-form-label">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
+            <div class="form-group row required">
+               <label for="history" class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
                <div class="col-sm-10">
                   <textarea type="text" class="form-control" id="history" placeholder="" ng-model="order.clinicalHistoryForSpecimen.value"></textarea>
                </div>
@@ -186,7 +186,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                <div class="col-sm-9">
                   <div class="btn-group btn-toggle">
                      <button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.immunohistochemistryNeeded.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistryNeeded.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
-                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistryNeeded.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistryNeeded.value=''">${ui.message("uicommons.no")}</button>
+                     <button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistryNeeded.value=='3cd6f86c-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistryNeeded.value='3cd6f86c-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.no")}</button>
                   </div>
                </div>
             </div>
@@ -195,7 +195,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                <button class="btn btn-success" ng-click="handleSaveOrder()" ng-disabled="!readyToSubmit()" >${ui.message("uicommons.save")}</button>
             </div>
          </form>
-         <div class="row">
+         <div class="row" ng-if="error">
             <div class="col-sm-12">
                <br/>
                <div class="alert alert-danger" ng-if="error">

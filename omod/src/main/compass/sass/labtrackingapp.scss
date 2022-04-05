@@ -28,6 +28,11 @@ $fontPath: "../../fonts";
     margin-top:0px;
 }
 
+.form-group.required .control-label:after{
+  content:"*";
+  color:red;
+}
+
 /* used for the urency icon*/
 .urgent-icon{
     color: #ff3d3d;

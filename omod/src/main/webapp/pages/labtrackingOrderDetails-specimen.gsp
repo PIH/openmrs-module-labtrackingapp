@@ -7,8 +7,8 @@
 	<div id="specimen_panel" class="panel-collapse in">
 		<div class="panel-body">
 
-                <div class="row">
-                    <div class="col-sm-3 text-right" for="date_of_procedure">${ui.message("labtrackingapp.orderdetails.processedDatelabel")}</div>
+                <div class="row form-group required">
+                    <div class="col-sm-3 text-right control-label" for="date_of_procedure">${ui.message("labtrackingapp.orderdetails.processedDatelabel")}</div>
 					<div class="col-md-9">
 						<div class='input-group date' id='date_of_procedure'>
 							<input type="text" class="form-control" uib-datepicker-popup="{{procedureDateBoxOptions.format}}" popup-placement="top"
@@ -23,10 +23,10 @@
 						</div>
                     </div>
                 </div>
-				<div class="row top-buffer">
+				<div class="row top-buffer form-group required">
 					<label class="control-label col-sm-3 text-right" for="accessionNumber">${ui.message("labtrackingapp.accessionNumber")}</label>
 					<div class="col-sm-9">
-						<input type='text' class="form-control" id="accessionNumber" ng-model="order.accessionNumber.value"  />
+						<input type='text' class="form-control" id="accessionNumber" ng-model="order.accessionNumber.value" required/>
 					</div>
 				</div>
 
