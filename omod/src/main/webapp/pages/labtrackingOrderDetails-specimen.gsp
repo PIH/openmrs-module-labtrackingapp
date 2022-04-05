@@ -24,7 +24,7 @@
                     </div>
                 </div>
 				<div class="row top-buffer">
-					<label class="control-label col-sm-3" for="accessionNumber">${ui.message("labtrackingapp.accessionNumber")}</label>
+					<label class="control-label col-sm-3 text-right" for="accessionNumber">${ui.message("labtrackingapp.accessionNumber")}</label>
 					<div class="col-sm-9">
 						<input type='text' class="form-control" id="accessionNumber" ng-model="order.accessionNumber.value"  />
 					</div>
@@ -35,7 +35,24 @@
 					<div class="col-sm-9">
 						<div class="btn-group btn-toggle">
 							<button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.immunohistochemistrySentToBoston.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistrySentToBoston.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
-							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistrySentToBoston.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistrySentToBoston.value=''">${ui.message("uicommons.no")}</button>
+							<button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.immunohistochemistrySentToBoston.value!='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.immunohistochemistrySentToBoston.value=''; order.dateImmunoSentToBoston.value=null">${ui.message("uicommons.no")}</button>
+						</div>
+					</div>
+				</div>
+				<!-- show the date when the Immunohistochemistry was sent to Boston if the previous button is Yes-->
+				<div class="row top-buffer" ng-show="order.immunohistochemistrySentToBoston.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'">
+					<div class="col-sm-3 text-right" for="date_immuno_sent">${ui.message("labtrackingapp.orderdetails.dateImmunoSentlabel")}</div>
+					<div class="col-md-9">
+						<div class='input-group date' id='date_immuno_sent'>
+							<input type="text" class="form-control" uib-datepicker-popup="{{immunoDateBoxOptions.format}}" popup-placement="top"
+								   ng-model="order.dateImmunoSentToBoston.value" is-open="immunoDateBoxOptions.opened"
+								   datepicker-options="immunoDateBoxOptions.options"
+								   ng-required="false" close-text="Close" alt-input-formats="immunoDateBoxOptions.altInputFormats" />
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-default" ng-click="showImmunoDateBox()">
+									<i class="glyphicon glyphicon-calendar"></i>
+								</button>
+							</span>
 						</div>
 					</div>
 				</div>

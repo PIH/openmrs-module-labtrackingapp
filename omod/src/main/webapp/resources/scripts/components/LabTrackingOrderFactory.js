@@ -61,6 +61,7 @@ angular.module("labTrackingOrderFactory", [])
             this.suspectedCancer = { value: false };
             this.immunohistochemistryNeeded = { value: false };
             this.immunohistochemistrySentToBoston = { value: false };
+            this.dateImmunoSentToBoston = { value: null };
             this.accessionNumber = {value:null};
             this.status = {label: null, value: null};
             this.sampleDate = {value: null};
@@ -95,6 +96,7 @@ angular.module("labTrackingOrderFactory", [])
             suspectedCancer: { value: 'd0718b9e-31e3-4bc8-a8d3-cfc5cc1ae2cb'},
             immunohistochemistryNeeded: { value: '237dbbf8-b654-4fed-8c09-b130d35879ac'},
             immunohistochemistrySentToBoston: { value: '3ae1ac7c-fe6b-4c49-9150-f5047178a43e'},
+            dateImmunoSentToBoston: { value: 'f4d0b62b-cbf9-4e6a-8a79-b291f82ae53c'}, //PIH:14239
             clinicalHistoryForSpecimen: {value: '160221AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             mdToNotify: {value: 'a787e577-5e32-42dc-b3a8-e4c6d5b107f5'},
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
@@ -353,6 +355,10 @@ angular.module("labTrackingOrderFactory", [])
                             labTrackingOrder.processedDate.value = new Date($filter('serverDate')(v));
                             labTrackingOrder.processedDate.obsUuid = uuid;
                         }
+                        else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
+                          labTrackingOrder.dateImmunoSentToBoston.value = new Date($filter('serverDate')(v));
+                          labTrackingOrder.dateImmunoSentToBoston.obsUuid = uuid;
+                        }
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
                             var regex = /(.*)\/\/[^\/]+\//;  // hack to remove hostname and just use relative link to solve https://tickets.pih-emr.org/browse/UHM-3500
                             labTrackingOrder.file.url = v.links.uri.replace(regex, '/');
@@ -557,6 +563,13 @@ angular.module("labTrackingOrderFactory", [])
             }
             else if (labTrackingOrder.processedDate.obsUuid != null) {
                 obsIdsToDelete.push(labTrackingOrder.processedDate.obsUuid);
+            }
+            if (labTrackingOrder.dateImmunoSentToBoston.value != null) {
+                var dtAsStr = Encounter.formatDateTime(labTrackingOrder.dateImmunoSentToBoston.value);
+                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.dateImmunoSentToBoston.value, dtAsStr, labTrackingOrder.dateImmunoSentToBoston.obsUuid));
+            }
+            else if (labTrackingOrder.dateImmunoSentToBoston.obsUuid != null) {
+                obsIdsToDelete.push(labTrackingOrder.dateImmunoSentToBoston.obsUuid);
             }
 
             if (labTrackingOrder.resultDate.value != null) {

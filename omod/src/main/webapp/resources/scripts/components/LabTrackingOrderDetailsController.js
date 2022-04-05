@@ -225,6 +225,24 @@ angular.module("labTrackingOrderDetailsController", [])
                     $scope.procedureDateBoxOptions.opened = true;
                 };
 
+              $scope.immunoDateBoxOptions = {
+                opened: false,
+                format: 'dd-MMM-yyyy',
+                options: {
+                  dateDisabled: false,
+                  formatYear: 'yy',
+                  minDate: $scope.order.sampleDate.value,
+                  maxDate:  new Date(),
+                  showWeeks: false
+                },
+                altInputFormats: ['M!/d!/yyyy']
+              };
+
+              /*shows the date box for the date when the immunohistochemistry was sent to Boston*/
+              $scope.showImmunoDateBox = function () {
+                $scope.immunoDateBoxOptions.opened = true;
+              };
+
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };
