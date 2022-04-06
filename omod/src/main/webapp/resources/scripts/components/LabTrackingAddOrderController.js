@@ -151,8 +151,8 @@ angular.module("labTrackingAddOrderController", [])
                     && ((typeof $scope.order.preLabDiagnosis === 'string' && $scope.order.preLabDiagnosis.length > 0) || ( typeof $scope.order.preLabDiagnosis === 'object' && $scope.order.preLabDiagnosis.value ))
                     && $scope.order.suspectedCancer.value
                     && $scope.order.clinicalHistoryForSpecimen.value
-                    && $scope.order.proceduresForSpecimen.length > 0
-                    || ($scope.order.procedureNonCoded.value != null && $scope.order.procedureNonCoded.value.length > 0));
+                    && ($scope.order.proceduresForSpecimen.length > 0
+                    || ($scope.order.procedureNonCoded.value != null && $scope.order.procedureNonCoded.value.length > 0)));
             };
 
 
