@@ -1,11 +1,11 @@
 angular.module("labTrackingViewQueueController", [])
-    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'SessionInfo', 'patientUuid','returnUrl',
-        function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, SessionInfo, patientUuid, returnUrl) {
+    .controller("viewQueueController", ['$scope', '$window', '$cookies', 'LabTrackingOrder', 'LabTrackingDataService', 'SessionInfo', 'patientUuid','returnUrl', 'translations',
+        function ($scope, $window, $cookies, LabTrackingOrder, LabTrackingDataService, SessionInfo, patientUuid, returnUrl, translations) {
 
             $scope.dateFormat = "d-MMM-yy";
 
             $scope.cookieForFilter = "queue_filter";
-            $scope.statusCodes = LabTrackingOrder.concepts.statusCodes;
+            $scope.statusCodes = [];
             $scope.data_loading = true;
             $scope.selectedOrder = null;
             $scope.orderCancelReason = null;
@@ -14,6 +14,17 @@ angular.module("labTrackingViewQueueController", [])
             $scope.patientUuid = (patientUuid == null || patientUuid == 'null') ? null : patientUuid;
             $scope.is_cancel=false;  //used to determine which warning message to show
             $scope.is_purge=false;   //used to determine which warning message to show
+            $scope.translations = translations;
+
+            for (var i = 0; i < LabTrackingOrder.concepts.statusCodes.length; i++) {
+                var status = LabTrackingOrder.concepts.statusCodes[i];
+                if($scope.translations.hasOwnProperty(status.label)){
+                    status.translatedLabel = $scope.translations[status.label];
+                } else {
+                  status.translatedLabel = status.label;
+                }
+                $scope.statusCodes.push(status);
+            }
 
             var fromDate = new Date();
             fromDate.setDate(fromDate.getDate() - LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
@@ -61,6 +72,13 @@ angular.module("labTrackingViewQueueController", [])
                         currentEntryEnd: 0
                     }
                 };
+            }
+
+            $scope.translateStatusCode = function(code) {
+                  if($scope.translations.hasOwnProperty(code)){
+                    return $scope.translations[code];
+                  }
+                  return code;
             }
 
             /*

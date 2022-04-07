@@ -25,7 +25,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
             <div class="col-md-4">
                <label for="status">${ui.message("labtrackingapp.listpage.status")}:</label>
                <select class="form-control" id="status" ng-model="filter.status" ng-change="handleFilterChange('status')"
-                  ng-options="item as item.label for item in statusCodes track by item.value">
+                  ng-options="item as item.translatedLabel for item in statusCodes track by item.value">
                </select>
             </div>
             <div class="col-md-4">
@@ -98,7 +98,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                      <td ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.id}}</a></td>
                      <td  ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.name}}</a></td>
                      <td>{{a.accessionNumber.value}}</td>
-                     <td>{{a.status.label}}</td>
+                     <td> {{ translateStatusCode(a.status.label) }}</td>
                      <td class="text-center small">
                         <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && a.visit.value && handleDetails(a, 'request')">
                            <span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>
