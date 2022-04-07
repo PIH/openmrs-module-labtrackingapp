@@ -6,8 +6,6 @@ angular.module("labTrackingAddOrderController", [])
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
             $scope.tempProcedures = [];  //the temp list of procedures that have been selected, used to manage the UI state
             $scope.careSettings = [];  //the list of care settings in the system
-            $scope.diagnoses = []; // the oncology diagnoses in the system
-            $scope.alldiagnoses = []; // all the diagnoses in the system
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid, visitUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
@@ -119,6 +117,22 @@ angular.module("labTrackingAddOrderController", [])
 
             }
 
+          $scope.searchDx = function(name) {
+            return LabTrackingDataService.searchDx(name).then(function(response) {
+              var dxArray = [];
+              if (LabTrackingDataService.isOk(response)) {
+                for (var i = 0; i < response.data.results.length; ++i) {
+                  var item = response.data.results[i];
+                  dxArray.push({ value: item.concept.uuid, label: item.concept.display})
+                }
+              }
+              return dxArray;
+            }, function (err) {
+              throw err;
+            });
+
+          }
+
             $scope.onSelectProcedure = function( $item, $model, $label ){
                 if ( $item.value ) {
                   $scope.selectedProcedures = [];
@@ -219,23 +233,16 @@ angular.module("labTrackingAddOrderController", [])
                 }
                 return LabTrackingDataService.loadCareSettings().then(function (res) {
                   $scope.careSettings = res.data;
-                    return LabTrackingDataService.loadDiagnonses().then(function (res3) {
-                      $scope.diagnoses = res3.data;
-                      return LabTrackingDataService.loadHumDiagnoses().then(function (humDiagnoses) {
-                        $scope.alldiagnoses = humDiagnoses;
-                        if ( orderUuid ) {
-                          return $scope.loadOrder(orderUuid).then(function( respOrder ){
-                            $scope.loadingModal.dismiss('cancel');
-                            if ( respOrder.status.code !== 200 ) {
-                              $scope.error = "failed to load the order: " + orderUuid;
-                              $scope.debugInfo = respOrder;
-                            }
-                          });
-                        }
-                        $scope.loadingModal.dismiss('cancel');
-                      });
+                  if ( orderUuid ) {
+                    return $scope.loadOrder(orderUuid).then(function( respOrder ){
+                      $scope.loadingModal.dismiss('cancel');
+                      if ( respOrder.status.code !== 200 ) {
+                        $scope.error = "failed to load the order: " + orderUuid;
+                        $scope.debugInfo = respOrder;
+                      }
                     });
-
+                  }
+                  $scope.loadingModal.dismiss('cancel');
                 });
               });
 

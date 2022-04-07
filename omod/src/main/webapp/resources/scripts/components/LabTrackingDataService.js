@@ -8,6 +8,7 @@ angular.module("labTrackingDataService", [])
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
             var HUM_DIAGNOSIS_CONCEPT_SET_UUID = "8fcd0b0c-f977-4a66-a1b5-ad7ce68e6770";
             var CONCEPT_CLASS_PROCEDURE_UUID = "8d490bf4-c2cc-11de-8d13-0010c6dffd0f";
+            var CONCEPT_CLASS_DX_UUID = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
             var CONSTANTS = {
                 MAX_QUEUE_SIZE: 10,
                 MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
@@ -27,7 +28,8 @@ angular.module("labTrackingDataService", [])
                     UPLOAD_FILE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs",
                     PATIENT_DASHBOARD: "coreapps/clinicianfacing/patient.page?patientId=PATIENT_UUID&app=pih.app.clinicianDashboard",
                     ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit",
-                    CONCEPT_SEARCH: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/conceptsearch?q=PROCEDURE_NAME&conceptClasses=" + CONCEPT_CLASS_PROCEDURE_UUID + "&v=custom:(concept:(uuid,display))"
+                    CONCEPT_SEARCH: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/conceptsearch?q=PROCEDURE_NAME&conceptClasses=" + CONCEPT_CLASS_PROCEDURE_UUID + "&v=custom:(concept:(uuid,display))",
+                    DX_SEARCH: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/conceptsearch?q=DX_NAME&conceptClasses=" + CONCEPT_CLASS_DX_UUID + "&v=custom:(concept:(uuid,display))"
                 }
             };
 
@@ -126,6 +128,15 @@ angular.module("labTrackingDataService", [])
                 var url = CONSTANTS.URLS.CONCEPT_SEARCH.replace("PROCEDURE_NAME", searchName);
                 return $http.get(url);
             };
+
+          /**
+           * Search asynchronously concepts of class Diagnosis
+           * @param dxName
+           */
+          this.searchDx = function(dxName) {
+            var url = CONSTANTS.URLS.DX_SEARCH.replace("DX_NAME", dxName);
+            return $http.get(url);
+          };
             /*
              load the dianosis that are available
              * */
