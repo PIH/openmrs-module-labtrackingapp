@@ -77,8 +77,21 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row required">
                <label class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-9">
-                  <input ng-if="!order.uuid" type="text" ng-model="order.preLabDiagnosis"  class="form-control" ng-required="false"
-                     uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8" />
+                  <div ng-if="!order.uuid" class="col-sm-9">
+                     <input  type="text"
+                             ng-model="order.preLabDiagnosis"
+                             class="form-control"
+                             ng-required="false"
+                             uib-typeahead="item as item.label for item in searchDx(${'$viewValue'}) | limitTo:8"
+                             typeahead-min-length="2"
+                             typeahead-wait-ms="200"
+                             typeahead-loading="loadingDx"
+                             typeahead-no-results="noDxResults"/>
+                     <i ng-show="loadingDx" class="glyphicon glyphicon-refresh"></i>
+                     <div ng-show="noDxResults">
+                        <i class="glyphicon glyphicon-remove"></i>${ui.message("labtrackingapp.dx.notfound")}
+                     </div>
+                  </div>
                   <p ng-if="order.uuid" class="form-control-static" > {{ formatDiagnosis(order.preLabDiagnosis) }}</p>
                </div>
             </div>
@@ -97,7 +110,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                           typeahead-on-select="onSelectProcedure(${'$item'}, ${'model'}, ${'label'})"/>
                   <i ng-show="loadingProcedures" class="glyphicon glyphicon-refresh"></i>
                   <div ng-show="noResults">
-                     <i class="glyphicon glyphicon-remove"></i> No Procedures Found
+                     <i class="glyphicon glyphicon-remove"></i>${ui.message("labtrackingapp.procedure.notfound")}
                   </div>
                </div>
                <div class="col-sm-1">
@@ -152,8 +165,19 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label class="col-sm-2 col-form-label">${ui.message("labtrackingapp.orderdetails.postopdiagnosislabel")}</label>
                <div class="col-sm-9">
-                  <input type="text" ng-model="order.postopDiagnosis.diagnosis"  class="form-control"
-                         uib-typeahead="item as item.label for item in alldiagnoses | filter:{label:${'$viewValue'}} | limitTo:8"  />
+                  <input  type="text"
+                          ng-model="order.postopDiagnosis.diagnosis"
+                          class="form-control"
+                          ng-required="false"
+                          uib-typeahead="item as item.label for item in searchDx(${'$viewValue'}) | limitTo:8"
+                          typeahead-min-length="2"
+                          typeahead-wait-ms="200"
+                          typeahead-loading="loadingDx"
+                          typeahead-no-results="noDxResults"/>
+                  <i ng-show="loadingDx" class="glyphicon glyphicon-refresh"></i>
+                  <div ng-show="noDxResults">
+                     <i class="glyphicon glyphicon-remove"></i>${ui.message("labtrackingapp.dx.notfound")}
+                  </div>
                </div>
             </div>
             <div class="form-group row">
