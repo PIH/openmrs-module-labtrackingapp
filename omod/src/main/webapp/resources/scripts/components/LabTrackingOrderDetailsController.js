@@ -16,8 +16,6 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.errorMessage = null;
             $scope.providers = []; // the proviers in the system
             $scope.locations = []; //the locations in the system
-            $scope.diagnoses = []; //the oncology diagnoses in the system
-            $scope.alldiagnoses = []; //all the diagnoses in the system
 
             $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
 
@@ -138,13 +136,7 @@ angular.module("labTrackingOrderDetailsController", [])
                         if (resp3.status.code == 200) {
                             $scope.locations = resp3.data;
                         }
-                        return LabTrackingDataService.loadDiagnonses().then(function (res3) {
-                            $scope.diagnoses = res3.data;
-                            return LabTrackingDataService.loadHumDiagnoses().then(function(humDiagnoses){
-                                $scope.alldiagnoses = humDiagnoses;
-                                $scope.data_loading = false;
-                            });
-                        })
+                        $scope.data_loading = false;
                     });
                 });
             });
@@ -184,8 +176,6 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 providers: '=',
                 locations: '=',
-                diagnoses: '=',
-                alldiagnoses: '=',
                 concepts: '=',
             },
             controller: function($scope) {
@@ -202,8 +192,6 @@ angular.module("labTrackingOrderDetailsController", [])
                 order: '=',
                 providers: '=',
                 locations: '=',
-                diagnoses: '=',
-                alldiagnoses: '=',
                 concepts: '=',
             },
             controller: function ($scope) {

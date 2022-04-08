@@ -20,10 +20,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
 <div class="container" ng-app="labTrackingApp" ng-controller="orderDetailsController">
       <div class="panel-group" ng-if="data_loading == false">
         <order-debug-panel order="order" ng-show="debug"></order-debug-panel>
-        <order-details-panel order="order" locations="locations" providers="providers"
-                             diagnoses="diagnoses" alldiagnoses="alldiagnoses" concepts="concepts"></order-details-panel>
-        <order-specimen-panel ng-if="pageType=='specimen'" order="order" locations="locations" providers="providers"
-            diagnoses="diagnoses" alldiagnoses="alldiagnoses" concepts="concepts"></order-specimen-panel>
+        <order-details-panel order="order" locations="locations" providers="providers" concepts="concepts"></order-details-panel>
+        <order-specimen-panel ng-if="pageType=='specimen'" order="order" locations="locations" providers="providers" concepts="concepts"></order-specimen-panel>
         <order-specimen-panel-read-only ng-if="(pageType=='results') || (pageType=='readonly')" order="order"></order-specimen-panel-read-only>
         <order-results-panel ng-if="pageType=='results'" order="order"></order-results-panel>
         <order-read-only-panel ng-if="pageType=='readonly'" order="order" concepts="concepts"></order-read-only-panel>
