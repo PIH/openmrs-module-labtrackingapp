@@ -101,16 +101,15 @@ angular.module("labTrackingViewQueueController", [])
                 var urgentReview = $scope.filter.urgentReview;
                 var patientName = $scope.filter.patient.name;
 
-                return LabTrackingDataService.loadQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer, urgentReview).then(function (resp) {
+                return LabTrackingDataService.loadPathologyQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer, urgentReview).then(function (resp) {
                     if (resp.status.code == 200) {
                         var cnt = resp.data.totalCount;
-                        return LabTrackingDataService.loadSpecimenDetailsForQueue(resp.data.orders).then(function (resp2) {
-                            $scope.testOrderQueue = resp2.data;
-                            $scope.setPage(pageNumber, cnt);
-                            $scope.data_loading = false;
-                            //update your cookies
-                            $cookies.putObject($scope.cookieForFilter, $scope.filter);
-                        })
+                        $scope.testOrderQueue = resp.data.orders;
+                        $scope.setPage(pageNumber, cnt);
+                        $scope.data_loading = false;
+                        //update your cookies
+                        $cookies.putObject($scope.cookieForFilter, $scope.filter);
+
                     }
                     else {
                         $scope.errorMessage = resp.status.msg;

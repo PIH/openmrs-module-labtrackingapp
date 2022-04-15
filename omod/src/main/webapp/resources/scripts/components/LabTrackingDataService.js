@@ -3,6 +3,7 @@ angular.module("labTrackingDataService", [])
         function ($q, $http, SessionInfo, Upload, LabTrackingOrder, Encounter) {
             var _self = this;
             var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,encounter,encounter:(obs,location),patient:(uuid,person:(uuid,display),identifiers:(identifier)),careSetting:(uuid,display),auditInfo";
+            var ENCOUNTER_FIELDS ="location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),orders:(uuid,dateActivated,dateStopped,orderType:(uuid,display),concept:(uuid,display),orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,careSetting:(uuid,display),voided),patient:(uuid,person:(uuid,display),identifiers:(identifier)),obs:(concept:(uuid),display,valueText,valueNumeric,valueCoded:(uuid,display),valueDatetime,uuid,groupMembers:(uuid,display,concept:(uuid,display),obsDatetime,valueCoded:(uuid,display),valueDatetime,valueNumeric,valueText,voided)),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid))";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
@@ -21,6 +22,9 @@ angular.module("labTrackingDataService", [])
                     VIEW_CARE_SETTINGS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/caresetting?v=custom:(uuid,display)",
                     VIEW_PROVIDERS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/provider?v=custom:(uuid,display,person)",
                     VIEW_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order?s=getActiveOrders&v=custom:(" + ORDER_FIELDS
+                    + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS&suspectedCancer=SUSPECTED_CANCER&urgentReview=URGENT_REVIEW"
+                    + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
+                    PATHOLOGY_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&v=custom:(" + ENCOUNTER_FIELDS
                     + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS&suspectedCancer=SUSPECTED_CANCER&urgentReview=URGENT_REVIEW"
                     + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
                     VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
@@ -316,6 +320,52 @@ angular.module("labTrackingDataService", [])
                     return {status: {code: 500, msg: "Error loading queue " + err}, data: []};
                 });
             };
+
+          /* load the LabTracking for a location
+            *  @param OPTIONAL {int} pageNumber - the page to load
+            *  @param OPTIONAL {Date} startDate - the location uuid
+            *  @param OPTIONAL {Date} endDate - the location uuid
+            *  @param OPTIONAL {int} status - the location uuid
+            *  @param OPTIONAL {String} patientUuid - the patient uuid
+            *  @param OPTIONAL {String} patientName - a look up string for the patient name
+            * @returns {LabTrackingOrder} an object containing the current page of LabTrackingOrder objects and the total count of all the orders
+            * */
+          this.loadPathologyQueue = function (pageNumber, startDate, endDate, status, patientUuid, patientName, suspectedCancer, urgentReview) {
+            var startIndex = 0;
+            if (pageNumber != null && pageNumber > 0) {
+              startIndex = (pageNumber - 1) * CONSTANTS.MAX_QUEUE_SIZE;
+            }
+            var url = CONSTANTS.URLS.PATHOLOGY_QUEUE
+            .replace("START_DATE", (startDate == null ? "" : startDate.getTime()))
+            .replace("END_DATE", (startDate == null ? "" : endDate.getTime()))
+            .replace("STATUS", (status == null ? "" : status))
+            .replace("PATIENT_UUID", (patientUuid == null ? "" : patientUuid))
+            .replace("PATIENT_NAME", (patientName == null ? "" : patientName))
+            .replace("SUSPECTED_CANCER", (suspectedCancer == null ? "false" : suspectedCancer))
+            .replace("URGENT_REVIEW", (urgentReview == null ? "false" : urgentReview))
+            .replace("MAX_QUEUE_SIZE", CONSTANTS.MAX_QUEUE_SIZE)
+            .replace("START_INDEX", startIndex);
+            return $http.get(url).then(function (resp) {
+              if (_self.isOk(resp)) {
+                var list = resp.data.results;
+                var testOrders = [];
+                for (var i =0; i < list.length; i++) {
+                  testOrders.push(LabTrackingOrder.fromEncounterRestObject(list[i]));
+                }
+
+                return {
+                  status: { code: resp.status, msg: null},
+                  data: { orders: testOrders, totalCount: resp.data.totalCount}
+                };
+              }
+              else {
+                return {status: {code: resp.status, msg: "Error loading queue " + resp.status}, data: []};
+              }
+
+            }, function (err) {
+              return {status: {code: 500, msg: "Error loading queue " + err}, data: []};
+            });
+          };
 
             /* load the LabTracking for a location
              *  @param OPTIONAL {int} pageNumber - the page to load

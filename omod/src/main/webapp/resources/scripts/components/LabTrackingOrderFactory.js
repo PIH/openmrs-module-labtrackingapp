@@ -169,6 +169,209 @@ angular.module("labTrackingOrderFactory", [])
           return labTrackingOrder;
         }
 
+      /*
+       creates a LabTracking order form an Encounter REST response
+       @param webServiceResult - the web service object
+       @return LabTrackingOrder object
+       */
+      LabTrackingOrder.fromEncounterRestObject = function (webServiceResult) {
+        var order = new LabTrackingOrder();
+
+        order.sampleDate.value = new Date($filter('serverDate')(webServiceResult.encounterDatetime));
+        order.specimenDetailsEncounter.uuid = webServiceResult.uuid;
+
+        order.encounter.value = webServiceResult.uuid;
+        if ( webServiceResult.location ) {
+          order.location.value = webServiceResult.location.uuid;
+          order.location.label = webServiceResult.location.name;
+        }
+
+        order.patient.value = webServiceResult.patient.person.uuid;
+        order.patient.name = webServiceResult.patient.person.display;
+        order.patient.id = webServiceResult.patient.identifiers[0].identifier;
+
+        // there is only one order associated with this encounter
+        var encounterOrder = (webServiceResult.orders && webServiceResult.orders.length > 0) ? webServiceResult.orders[0] : null;
+        if ( encounterOrder ) {
+          order.uuid = encounterOrder.uuid;
+          order.orderNumber.value = encounterOrder.orderNumber;
+          order.specimenDetailsEncounter.orderNumber = encounterOrder.orderNumber;
+
+          if (encounterOrder.orderReason != null) {
+            order.preLabDiagnosis.value = encounterOrder.orderReason.uuid;
+            order.preLabDiagnosis.label = encounterOrder.orderReason.display;
+          }
+          else if (encounterOrder.orderReasonNonCoded != null) {
+            order.preLabDiagnosis = encounterOrder.orderReasonNonCoded;
+          }
+          order.instructions.value = encounterOrder.instructions;
+          order.clinicalHistory.value = encounterOrder.clinicalHistory;
+          if (encounterOrder.careSetting) {
+            order.careSetting.value = encounterOrder.careSetting.uuid;
+            order.careSetting.label = encounterOrder.careSetting.display;
+          }
+
+          if (encounterOrder.voided == true) {
+            order.canceled = true;
+          }
+        }
+
+        //default this to the order values ---------------------------
+        order.locationWhereSpecimenCollected = order.location;
+
+        if (typeof order.preLabDiagnosis === 'object') {
+          order.postopDiagnosis.diagnosis = { ...order.preLabDiagnosis }   // clone, don't copy reference
+        } else {
+          order.postopDiagnosis.diagnosis = order.preLabDiagnosis;
+        }
+        order.clinicalHistoryForSpecimen.value = order.clinicalHistory.value;
+        //----------------------------------------------------------------------
+
+        var procs = [];
+        if (webServiceResult.obs != null && webServiceResult.obs.length > 0) {
+          var obs = webServiceResult.obs;
+
+          order.debug.orderEncounter = {
+            totalObs: obs.length,
+          };
+          order.debug.specimenDetails = {
+            totalObs: obs.length,
+          };
+
+          for (var i = 0; i < obs.length; i++) {
+
+            var groupMembers = obs[i].groupMembers;
+            if (obs[i] != null || groupMembers != null) {
+
+              var uuid = obs[i].uuid;
+              var conceptUuid = obs[i].concept.uuid;
+              if (_extractObsValue(order, 'mdToNotify', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              if (_extractObsValue(order, 'phoneNumberForClinician', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'clinicalHistoryForSpecimen', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'urgentReview', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'suspectedCancer', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'immunohistochemistryNeeded', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'immunohistochemistrySentToBoston', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'notes', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
+              else if (_extractObsValue(order, 'accessionNumber', conceptUuid, obs[i], uuid)) {
+                //continue;
+              } else if (_extractObsValue(order, 'procedureNonCoded', conceptUuid, obs[i], uuid)) {
+                //continue
+              } else if (_extractObsValue(order, 'procedureNonCodedForSpecimen', conceptUuid, obs[i], uuid)) {
+                //continue
+              } else if (conceptUuid == LabTrackingOrder.concepts.proceduresForSpecimen.value) {
+                procs.push({
+                  value: obs[i].valueCoded.uuid,
+                  label: obs[i].valueCoded.display,
+                  obsUuid: uuid
+                });
+              } else if ( conceptUuid == LabTrackingOrder.concepts.postopDiagnosis.constructUuid ) {
+                //the post diagnosis is a construct, so we need to handle that a little differently
+                order.postopDiagnosis.groupMemmberParentUuid = uuid;
+                for (var j = 0; j < groupMembers.length; j++) {
+                  var grpObs = groupMembers[j];
+                  var grpObsConceptUuid = grpObs.concept.uuid;
+                  if (grpObsConceptUuid == LabTrackingOrder.concepts.postopDiagnosis.value) {
+                    order.postopDiagnosis.diagnosis = {
+                        value: grpObs.valueCoded.uuid,
+                        label: grpObs.valueCoded.display
+                    };
+                    order.postopDiagnosis.originalType = 'coded';
+                    order.postopDiagnosis.obsUuid = grpObs.uuid;
+                  }
+                  else if (grpObsConceptUuid == LabTrackingOrder.concepts.postopDiagnosis.nonCodedValue) {
+                    order.postopDiagnosis.diagnosis = grpObs.valueText;
+                    order.postopDiagnosis.originalType = 'nonCoded';
+                    order.postopDiagnosis.obsUuid = grpObs.uuid;
+                  }
+                  else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID) {
+                    order.postopDiagnosis.certainty.obsUuid = grpObs.uuid;
+                  }
+                }
+              }
+              else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
+                order.resultDate.value = new Date($filter('serverDate')(obs[i].valueDatetime));
+                order.resultDate.obsUuid = uuid;
+              }
+              else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
+                order.processedDate.value = new Date($filter('serverDate')(obs[i].valueDatetime));
+                order.processedDate.obsUuid = uuid;
+              }
+              else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
+                order.dateImmunoSentToBoston.value = new Date($filter('serverDate')(obs[i].valueDatetime));
+                order.dateImmunoSentToBoston.obsUuid = uuid;
+              }
+              else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
+                // var regex = /(.*)\/\/[^\/]+\//;  // hack to remove hostname and just use relative link to solve https://tickets.pih-emr.org/browse/UHM-3500
+                // order.file.url = v.links.uri.replace(regex, '/');
+                order.file.url = "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs/" + uuid + "/value"
+                order.file.obsUuid = uuid;
+              } else {
+
+                //finally update the specimen details
+                for (var j = 0; j < LabTrackingOrder.concepts.specimenDetails.length; ++j) {
+                  if (conceptUuid == LabTrackingOrder.concepts.specimenDetails[j].value) {
+                    order.specimenDetails[j].value = obs[i].valueText;
+                    order.specimenDetails[j].obsUuid = uuid;
+                    break;
+                  }
+                }
+              }
+
+            }
+          }
+        }
+
+        order.procedures = procs;
+        if (procs.length > 0) {
+          order.proceduresForSpecimen = procs;
+          order.originalProceduresForSpecimen = procs.slice(0);
+        }
+        order.procedureNonCodedForSpecimen.value = order.procedureNonCoded.value;
+
+        order.status = calcStatus(order);
+
+        if ( webServiceResult.visit && webServiceResult.visit.uuid ) {
+          order.visit.value = webServiceResult.visit.uuid;
+        }
+
+        for (var i = 0; i < webServiceResult.encounterProviders.length; i++) {
+          var p = webServiceResult.encounterProviders[i];
+          if (p.provider != null && p.provider.person != null) {
+            var name = p.provider.person.display;
+            var uuid = p.provider.uuid;
+            if (p.encounterRole.uuid == LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_SURGEON_ROLE) {
+              order.surgeon.label = name;
+              order.surgeon.value = uuid;
+              order.specimenDetailsEncounter.surgeonEncounterProviderUuid = p.uuid;
+            }
+            else if (p.encounterRole.uuid == LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_RESIDENT_ROLE) {
+              order.resident.label = name;
+              order.resident.value = uuid;
+              order.specimenDetailsEncounter.residentEncounterProviderUuid = p.uuid;
+            }
+          }
+        }
+
+        return order;
+      };
+
         /*
          creates a LabTracking order form a web service object
          @param webServiceResult - the web service object
@@ -719,6 +922,33 @@ angular.module("labTrackingOrderFactory", [])
                 return false;
             }
         }
+
+      /* reads from obs to a labtracking order
+       * @param order - the order object
+       * @param conceptUuid -the concept id you are looking for
+       * @param obs - the obs object
+       * @param uuid - the uuid of the obs if it exists
+       * @return true if updated, false if not
+       * */
+      function _extractObsValue(order, propName, conceptUuid, obs, uuid) {
+        if (conceptUuid == LabTrackingOrder.concepts[propName].value) {
+          var p = order[propName];
+          p.obsUuid = uuid;
+          if (obs.valueText) {
+              p.value = obs.valueText;
+          } else if (obs.valueNumeric) {
+            p.value = obs.valueNumeric;
+          } else if (obs.valueDatetime) {
+            p.value = obs.valueDatetime;
+          } else if (obs.valueCoded) {
+            p.value = obs.valueCoded.uuid;
+          }
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
 
         /* adds to obs if the property is not empty
          * @param order - the order object
