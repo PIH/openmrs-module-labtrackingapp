@@ -128,7 +128,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
          </div>
          <div class="row">
             <div class="col-sm-6">  <br/>
-               <label for="paging">Showing {{filter.paging.currentEntryStart}} to {{filter.paging.currentEntryEnd}} of {{filter.paging.totalItems}} entries</label>
+               <label for="paging">${ui.message("labtrackingapp.listpage.showing")} {{filter.paging.currentEntryStart}} ${ui.message("labtrackingapp.listpage.to")} {{filter.paging.currentEntryEnd}} ${ui.message("labtrackingapp.listpage.of")} {{filter.paging.totalItems}} ${ui.message("labtrackingapp.listpage.entries")}</label>
             </div>
             <div class="col-sm-6 text-right">
                <ul id="paging" uib-pagination total-items="filter.paging.totalItems" ng-model="filter.paging.currentPage" max-size="filter.paging.maxSize" ng-change="pageChanged()"
