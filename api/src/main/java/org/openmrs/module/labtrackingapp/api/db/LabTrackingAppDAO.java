@@ -15,6 +15,8 @@ package org.openmrs.module.labtrackingapp.api.db;
 
 import org.openmrs.Encounter;
 import org.openmrs.Order;
+import org.openmrs.OrderType;
+
 import java.util.List;
 
 /**
@@ -40,5 +42,18 @@ public interface LabTrackingAppDAO {
 	* @return the list of Encounters if there is one, otherwise null
 	* */
 	public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers);
+
+	/**
+	 * gets all Orders within a timeframe
+	 * @param startDate
+	 * @param endDate
+	 * @param patientUuid
+	 * @param patientName
+	 * @param status
+	 * @param orderTypes
+	 * @param maxResults
+	 * @return
+	 */
+	public List<Order> getOrdersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, List<OrderType> orderTypes, int maxResults);
 
 }

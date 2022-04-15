@@ -23,8 +23,10 @@ import org.hibernate.criterion.Subqueries;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Order;
+import org.openmrs.OrderType;
 import org.openmrs.api.db.hibernate.DbSessionFactory;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
+import org.openmrs.util.OpenmrsUtil;
 
 import java.util.Calendar;
 import java.util.List;
@@ -50,6 +52,46 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
      */
     public DbSessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+
+    public List<Order> getOrdersByDate(
+            long startDate,
+            long endDate,
+            String patientUuid,
+            String patientName,
+            int status,
+            List<OrderType> orderTypes,
+            int maxResults) {
+
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Order.class);
+
+
+        Calendar calendar = Calendar.getInstance();
+        if(startDate > 0){
+            calendar.setTimeInMillis(startDate);
+            criteria.add(Restrictions.ge("dateActivated", OpenmrsUtil.firstSecondOfDay(calendar.getTime())));
+        }
+        if(endDate > 0){
+            calendar.setTimeInMillis(endDate);
+            criteria.add(Restrictions.le("dateActivated", OpenmrsUtil.getLastMomentOfDay(calendar.getTime())));
+        }
+        if(LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() == status){
+            criteria.add(Restrictions.eq("voided", true));
+        } else {
+            criteria.add(Restrictions.eq("voided", false));
+        }
+
+        if (orderTypes != null && !orderTypes.isEmpty()) {
+            criteria.add(Restrictions.in("orderType", orderTypes));
+        }
+
+        criteria.addOrder(org.hibernate.criterion.Order.desc("dateActivated"));
+
+        if(maxResults>0) {
+            criteria.setMaxResults(maxResults);
+        }
+
+        return criteria.list();
     }
 
     /*
@@ -323,7 +365,6 @@ public class HibernateLabTrackingAppDAO implements org.openmrs.module.labtrackin
 
         return criteria.list();
     }
-
 
 
     private Order getOrderByUuid(String orderUuid) {

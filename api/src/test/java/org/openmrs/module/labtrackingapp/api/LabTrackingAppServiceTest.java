@@ -49,6 +49,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private OrderService orderService;
 
 	private static final int TOTAL_ACTIVE_ORDERS = 4;
+	private static final int TOTAL_ACTIVE_ENCOUNTER_ORDERS = 3;
 	private static final int TOTAL_SAMPLED_ORDERS = 1;
 	private static final int TOTAL_REQUESTED_ORDERS = 2;
 	private static final int TOTAL_RESULTS_ORDERS = 1;
@@ -82,6 +83,36 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 		List<Order> list = service.getActiveOrders(startDate, endDate, patientUuid, patientName, status, false, false, 0);
 		assertEquals(TOTAL_ACTIVE_ORDERS, list.size());
+	}
+
+	@Test
+	@Verifies(value =  "should get ALL specimen collection encounters", method = "getSpecimenDetailsEncountersByDate")
+	public void getSpecimenDetailsEncountersByDate_shouldGetByDate() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = null;
+		String patientName = null;
+		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
+
+		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, patientName, status, false, false, 0);
+		assertEquals(TOTAL_ACTIVE_ENCOUNTER_ORDERS, specimenDetailsEncountersByDate.size());
+
+	}
+
+	@Test
+	@Verifies(value =  "should get specimen collection encounters by name", method = "getSpecimenDetailsEncountersByDate")
+	public void getSpecimenDetailsEncountersByDate_shouldGetByName() throws Exception {
+		Date testDate = getTestEncounterDate();
+		long startDate = testDate.getTime()-1000*60*60;
+		long endDate = testDate.getTime()+1000*60*60;
+		String patientUuid = null;
+		String patientName = null;
+		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
+
+		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, "Hamil", status, false, false, 0);
+		assertEquals(TOTAL_ACTIVE_ENCOUNTER_ORDERS, specimenDetailsEncountersByDate.size());
+
 	}
 
 	@Test

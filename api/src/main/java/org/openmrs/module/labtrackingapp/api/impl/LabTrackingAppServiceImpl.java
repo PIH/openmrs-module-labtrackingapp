@@ -9,9 +9,12 @@
  */
 package org.openmrs.module.labtrackingapp.api.impl;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
 import org.openmrs.Obs;
 import org.openmrs.Order;
+import org.openmrs.OrderType;
+import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
@@ -34,6 +37,80 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
 
     public List<Encounter> getSpecimenDetailsEncountersByOrderNumbers(String[] orderNumbers) {
         return dao.getSpecimenDetailsEncountersByOrderNumbers(orderNumbers);
+    }
+
+    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean urgentReview, int maxResults) {
+
+        List<Encounter> encounters = null;
+        List<OrderType> orderTypes = new ArrayList<OrderType>();
+        orderTypes.add(Context.getOrderService().getOrderTypeByUuid(LabTrackingConstants.LAB_TRACKING_PATHOLOGY_ORDER_TYPE_UUID));
+
+        List<Order> orders = dao.getOrdersByDate(startDate, endDate, patientUuid, patientName, status,  orderTypes, maxResults);
+        if ( orders != null && orders.size() > 0 ) {
+            encounters = new ArrayList<Encounter>();
+            for (Order order : orders) {
+                Encounter encounter = order.getEncounter();
+                boolean includeEncounter = true;
+
+                if ( StringUtils.isBlank(patientUuid)
+                        && StringUtils.isBlank(patientName)
+                        && (status == LabTrackingConstants.LabTrackingOrderStatus.ALL.getId() || status == LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() )
+                        && !suspectedCancer && !urgentReview) {
+                    // if the status is CANCELED the encounter was already filtered by the Order DAO method
+                    encounters.add(encounter);
+                    continue;
+                }
+                if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
+                    Obs obs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
+                    if ( obs != null && obs.getValueDatetime() != null) {
+                        includeEncounter = false;
+                    }
+                } else if (LabTrackingConstants.LabTrackingOrderStatus.PROCESSED.getId() == status) {
+                    Obs processedDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
+                    Obs resultDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID);
+                    if ( processedDate == null || processedDate.getValueDatetime() == null || resultDate != null ) {
+                        includeEncounter = false;
+                    }
+                } else if (LabTrackingConstants.LabTrackingOrderStatus.RESULTS.getId() == status){
+                    Obs resultDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID);
+                    if ( resultDate == null || resultDate.getValueDatetime() == null ) {
+                        includeEncounter = false;
+                    }
+                }
+
+                if (suspectedCancer) {
+                    Obs suspectedCancerObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SUSPECTED_CANCER_UUID);
+                    if ( suspectedCancerObs == null ||
+                            (suspectedCancerObs != null &&  !suspectedCancerObs.getValueCoded().getUuid().equalsIgnoreCase(LabTrackingConstants.YES))) {
+                        includeEncounter = false;
+                    }
+                }
+                if (urgentReview) {
+                    Obs urgentReviewObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_URGENT_REVIEW_UUID);
+                    if ( urgentReviewObs == null ||
+                            (urgentReviewObs != null &&  !urgentReviewObs.getValueCoded().getUuid().equalsIgnoreCase(LabTrackingConstants.YES))) {
+                        includeEncounter = false;
+                    }
+                }
+                if (StringUtils.isNotBlank(patientUuid)) {
+                    if (order.getPatient().getUuid().compareTo(patientUuid) != 0) {
+                        includeEncounter = false;
+                    }
+                }
+                if (StringUtils.isNotBlank(patientName)) {
+                    if ( !StringUtils.contains(order.getPatient().getFamilyName().toString(), patientName)
+                            && !StringUtils.contains(order.getPatient().getGivenName().toString(), patientName)
+                            && !StringUtils.contains(order.getPatient().getActiveIdentifiers().get(0).getIdentifier(), patientName)) {
+                        includeEncounter = false;
+                    }
+                }
+                if (includeEncounter) {
+                    encounters.add(encounter);
+                }
+            }
+        }
+
+        return encounters;
     }
 
     public Map<String,  Map<String,Object>> getActiveOrderSummaryForPatient(String patientUuid, int maxResults){
@@ -110,6 +187,13 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         return ret;
     }
 
+    private static Obs getFirstObsByConceptUuid(Encounter encounter, String conceptUuid) {
+        List<Obs> list = getObsListByConceptUUID(encounter, conceptUuid);
+        if ( list != null && list.size() > 0) {
+            return list.get(0);
+        }
+        return null;
+    }
     private static List<Obs> getObsListByConceptUUID(Encounter e, String conceptUUID){
         List<Obs> ret = new ArrayList<Obs>();
         if(e != null && e.getObs() != null){
