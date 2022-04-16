@@ -60,20 +60,23 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                     encounters.add(encounter);
                     continue;
                 }
+
+                Obs processedObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
+                Boolean processed = processedObs != null && processedObs.getValueDatetime() != null;
+
+                Obs resultDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID);
+                Boolean hasResult = resultDate != null && resultDate.getValueDatetime() != null;
+
                 if (LabTrackingConstants.LabTrackingOrderStatus.REQUESTED.getId() == status) {
-                    Obs obs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
-                    if ( obs != null && obs.getValueDatetime() != null) {
+                    if (processed || hasResult) {
                         includeEncounter = false;
                     }
                 } else if (LabTrackingConstants.LabTrackingOrderStatus.PROCESSED.getId() == status) {
-                    Obs processedDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
-                    Obs resultDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID);
-                    if ( processedDate == null || processedDate.getValueDatetime() == null || resultDate != null ) {
+                    if (!processed || hasResult) {
                         includeEncounter = false;
                     }
                 } else if (LabTrackingConstants.LabTrackingOrderStatus.RESULTS.getId() == status){
-                    Obs resultDate = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_RESULTS_DATE_UUID);
-                    if ( resultDate == null || resultDate.getValueDatetime() == null ) {
+                    if (!hasResult) {
                         includeEncounter = false;
                     }
                 }
