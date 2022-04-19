@@ -220,6 +220,8 @@ angular.module("labTrackingViewQueueController", [])
                 if (filterSource == 'from_date' || filterSource == 'to_date'
                     || filterSource == 'status' || filterSource == 'patient'
                     || filterSource == 'suspectedCancer' || filterSource == 'urgentReview') {
+                    // reset to the first page
+                    $scope.filter.paging.currentPage = 1;
                     return $scope.loadQueue();
                 }
             };

@@ -172,7 +172,11 @@ angular.module("labTrackingAddOrderController", [])
 
             /* cancels adding a test order*/
             $scope.handleCancelOrder = function () {
-                $window.history.go(-1);
+                if (returnUrl) {
+                  $window.location.href = returnUrl;
+                } else {
+                  $window.history.go(-1);
+                }
             };
 
 
