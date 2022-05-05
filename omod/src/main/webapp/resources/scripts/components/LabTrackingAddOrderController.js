@@ -13,18 +13,18 @@ angular.module("labTrackingAddOrderController", [])
             $scope.providers = []; // the proviers in the system
             $scope.concepts = LabTrackingOrder.concepts;
 
-            $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
-            $scope.visitStartDateTime = new Date( $filter('serverDate')(visitStartDateTime));
+            $scope.clientDatetime = new Date();
+            $scope.visitStartDateTime = new Date( visitStartDateTime);
             if (visitStopDateTime) {
-                $scope.visitStopDateTime = new Date( $filter('serverDate')(visitStopDateTime));
+                $scope.visitStopDateTime = new Date(visitStopDateTime);
             }
 
             // if a single day visit, just set the model value to that date
             if (sameDate($scope.visitStartDateTime, $scope.visitStopDateTime)) {
-                $scope.order.sampleDate.value = $scope.visitStartDateTime;
+                $scope.order.sampleDate.value = visitStartDateTime;
             } // if not a single day visit, but an active visit, set request date to current date
             else if (!visitStopDateTime) {
-                $scope.order.sampleDate.value = $scope.serverDatetime;
+                $scope.order.sampleDate.value = $scope.clientDatetime;
             }
 
             $scope.loadOrder = function (orderUuid) {
@@ -35,7 +35,7 @@ angular.module("labTrackingAddOrderController", [])
                   $scope.order = resp.data;
                   if($scope.order.sampleDate.value == null){
                     //if we don't have a sample date, then set a default value
-                    $scope.order.sampleDate.value =  $scope.serverDatetime;
+                    $scope.order.sampleDate.value =  $scope.clientDatetime;
                   }
                 }
                 else {
@@ -53,7 +53,7 @@ angular.module("labTrackingAddOrderController", [])
                     formatYear: 'yy',
                     minDate:  $scope.visitStartDateTime,
                     initDate:  $scope.visitStartDateTime,
-                    maxDate: $scope.visitStopDateTime ? $scope.visitStopDateTime : $scope.serverDatetime,
+                    maxDate: $scope.visitStopDateTime ? $scope.visitStopDateTime : $scope.clientDatetime,
                     showWeeks: false
                 },
                 altInputFormats: ['M!/d!/yyyy']
@@ -68,12 +68,12 @@ angular.module("labTrackingAddOrderController", [])
             $scope.handleSaveOrder = function () {
                 $scope.savingModal = showSavingModal();
                 // keep the Order Request datetime within the boundaries of the visit
-                if ( $scope.order.sampleDate.value < $scope.visitStartDateTime ) {
-                    $scope.order.sampleDate.value = $scope.visitStartDateTime;
-                }
-                else if ( $scope.visitStopDateTime && $scope.order.sampleDate.value > $scope.visitStopDateTime ) {
-                    $scope.order.sampleDate.value = $scope.visitStopDateTime;
-                }
+                // if ( $scope.order.sampleDate.value < $scope.visitStartDateTime ) {
+                //     $scope.order.sampleDate.value = $scope.visitStartDateTime;
+                // }
+                // else if ( $scope.visitStopDateTime && $scope.order.sampleDate.value > $scope.visitStopDateTime ) {
+                //     $scope.order.sampleDate.value = $scope.visitStopDateTime;
+                // }
 
                 return LabTrackingDataService.saveOrder($scope.order).then(function (res) {
                     if (LabTrackingDataService.isOk(res)) {
