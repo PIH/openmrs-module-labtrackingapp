@@ -24,6 +24,7 @@
 
 # SASS
 *.css
+*.css.map
 omod/node
 omod/node_modules
 omod/src/main/webapp/resources/styles/lib/
