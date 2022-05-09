@@ -17,7 +17,7 @@ angular.module("labTrackingOrderDetailsController", [])
             $scope.providers = []; // the proviers in the system
             $scope.locations = []; //the locations in the system
 
-            $scope.serverDatetime = new Date($filter('serverDate')(serverDatetime));  // we use the current Date from the server, not the client, to avoid problems if times aren't in sync
+            $scope.clientDatetime = new Date();
 
             /*
              loads the queue from the openmrs web services
@@ -28,10 +28,10 @@ angular.module("labTrackingOrderDetailsController", [])
                 return LabTrackingDataService.loadOrder(orderUuid).then(function (resp) {
                     if (resp.status.code == 200) {
                         $scope.order = resp.data;
-                        $scope.order.serverDatetime = $scope.serverDatetime;
+                        $scope.order.serverDatetime = $scope.clientDatetime;
                         if($scope.order.sampleDate.value == null){
                             //if we don't have a sample date, then set a default value
-                            $scope.order.sampleDate.value =  $scope.serverDatetime;
+                            $scope.order.sampleDate.value =  $scope.clientDatetime;
                         }
                     }
                     else {

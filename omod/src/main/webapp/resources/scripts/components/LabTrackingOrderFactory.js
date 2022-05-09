@@ -177,7 +177,7 @@ angular.module("labTrackingOrderFactory", [])
       LabTrackingOrder.fromEncounterRestObject = function (webServiceResult) {
         var order = new LabTrackingOrder();
 
-        order.sampleDate.value = new Date($filter('serverDate')(webServiceResult.encounterDatetime));
+        order.sampleDate.value = new Date(webServiceResult.encounterDatetime);
         order.specimenDetailsEncounter.uuid = webServiceResult.uuid;
 
         order.encounter.value = webServiceResult.uuid;
@@ -306,15 +306,15 @@ angular.module("labTrackingOrderFactory", [])
                 }
               }
               else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
-                order.resultDate.value = new Date($filter('serverDate')(obs[i].valueDatetime));
+                order.resultDate.value = new Date(obs[i].valueDatetime);
                 order.resultDate.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
-                order.processedDate.value = new Date($filter('serverDate')(obs[i].valueDatetime));
+                order.processedDate.value = new Date(obs[i].valueDatetime);
                 order.processedDate.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
-                order.dateImmunoSentToBoston.value = new Date($filter('serverDate')(obs[i].valueDatetime));
+                order.dateImmunoSentToBoston.value = new Date(obs[i].valueDatetime);
                 order.dateImmunoSentToBoston.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
@@ -431,7 +431,7 @@ angular.module("labTrackingOrderFactory", [])
             order.patient.value = webServiceResult.patient.person.uuid;
             order.patient.name = webServiceResult.patient.person.display;
             order.patient.id = webServiceResult.patient.identifiers[0].identifier;
-            order.sampleDate.value = new Date($filter('serverDate')(webServiceResult.dateActivated));
+            order.sampleDate.value = new Date(webServiceResult.dateActivated);
 
             if (webServiceResult.auditInfo != null && webServiceResult.auditInfo.voidedBy != null) {
                 order.canceled = true;
@@ -473,7 +473,7 @@ angular.module("labTrackingOrderFactory", [])
             labTrackingOrder.postopDiagnosis.diagnosis = {label: null, value: null};
 
             // now start setting values based on encounter
-            labTrackingOrder.sampleDate.value = new Date($filter('serverDate')(webServiceResult.encounterDatetime));
+            labTrackingOrder.sampleDate.value = new Date(webServiceResult.encounterDatetime);
             labTrackingOrder.specimenDetailsEncounter.uuid = webServiceResult.uuid;
 
             if (webServiceResult.location != null) {
@@ -552,15 +552,15 @@ angular.module("labTrackingOrderFactory", [])
                             }
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
-                            labTrackingOrder.resultDate.value = new Date($filter('serverDate')(v));
+                            labTrackingOrder.resultDate.value = new Date(v);
                             labTrackingOrder.resultDate.obsUuid = uuid;
                         }
                        else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
-                            labTrackingOrder.processedDate.value = new Date($filter('serverDate')(v));
+                            labTrackingOrder.processedDate.value = new Date(v);
                             labTrackingOrder.processedDate.obsUuid = uuid;
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
-                          labTrackingOrder.dateImmunoSentToBoston.value = new Date($filter('serverDate')(v));
+                          labTrackingOrder.dateImmunoSentToBoston.value = new Date(v);
                           labTrackingOrder.dateImmunoSentToBoston.obsUuid = uuid;
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
