@@ -196,15 +196,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Other dependenceis -->
-
-		<dependency>
-			<groupId>rubygems</groupId>
-			<artifactId>sass</artifactId>
-			<version>3.2.10</version>
-			<type>gem</type>
-			<scope>provided</scope>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -246,10 +237,6 @@
 			<id>openmrs-repo</id>
 			<name>OpenMRS Nexus Repository</name>
 			<url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
-		</repository>
-		<repository>
-			<id>rubygems-releases</id>
-			<url>http://rubygems-proxy.torquebox.org/releases</url>
 		</repository>
 	</repositories>
 

@@ -12,11 +12,6 @@
 	<name>Lab Tracking App Module OMOD</name>
 	<description>OMOD project for labtrackingapp</description>
 
-	<properties>
-		<gem.home>${basedir}/.rubygems</gem.home>
-		<gem.path>${basedir}/.rubygems</gem.path>
-	</properties>
-
 	<dependencies>
 
 
@@ -54,22 +49,6 @@
 		</dependency>
 
 		<!-- End OpenMRS modules -->
-
-		<dependency>
-			<groupId>rubygems</groupId>
-			<artifactId>compass</artifactId>
-			<version>1.0.3</version>
-			<type>gem</type>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>rubygems</groupId>
-			<artifactId>sass</artifactId>
-			<version>3.2.5</version>
-			<type>gem</type>
-			<scope>provided</scope>
-		</dependency>
 
 	</dependencies>
 
@@ -217,7 +196,7 @@
 									<version>${uicommonsVersion}</version>
 									<type>zip</type>
 									<overWrite>true</overWrite>
-									<outputDirectory>src/main/compass/sass-external</outputDirectory>
+									<outputDirectory>src/main/webapp/resources/styles/lib</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
@@ -226,54 +205,39 @@
 			</plugin>
 
 			<plugin>
-				<groupId>de.saumya.mojo</groupId>
-				<artifactId>gem-maven-plugin</artifactId>
-                <version>1.1.8</version>
-				<extensions>true</extensions>
+				<groupId>com.github.eirslett</groupId>
+				<artifactId>frontend-maven-plugin</artifactId>
+				<version>1.11.3</version>
+				<configuration>
+					<nodeVersion>v14.17.0</nodeVersion>
+					<npmVersion>7.6.2</npmVersion>
+				</configuration>
 				<executions>
 					<execution>
+						<id>install node and npm</id>
 						<goals>
-							<goal>exec</goal>
+							<goal>install-node-and-npm</goal>
 						</goals>
-						<phase>generate-resources</phase>
+					</execution>
+					<execution>
+						<id>npm install</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>npm run build</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<configuration>
+							<arguments>run build</arguments>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<jrubyVersion>9.2.5.0</jrubyVersion>
-					<execArgs>${gem.home}/bin/compass compile ${basedir}/src/main/compass</execArgs>
-				</configuration>
 			</plugin>
 
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>watch-sass</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>de.saumya.mojo</groupId>
-						<artifactId>gem-maven-plugin</artifactId>
-                        <version>1.1.8</version>
-						<extensions>true</extensions>
-						<executions>
-							<execution>
-								<goals>
-									<goal>exec</goal>
-								</goals>
-								<phase>generate-resources</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<includeGemsInResources>false</includeGemsInResources>
-							<jrubyVersion>9.2.5.0</jrubyVersion>
-							<execArgs>${gem.home}/bin/compass watch ${basedir}/src/main/compass</execArgs>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
