@@ -18,6 +18,15 @@
     color: #ff3d3d;
 }
 
+.date-link {
+  cursor:pointer;
+  color:blue;
+  text-decoration:underline;
+}
+.pointer {
+  cursor:pointer;
+}
+
 /* fix so that the 1000px max size works with bootstrap
    if the UI changes, we can remove this
 */

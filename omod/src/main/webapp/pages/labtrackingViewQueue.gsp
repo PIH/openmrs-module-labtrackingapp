@@ -99,14 +99,14 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                      <td  ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.name}}</a></td>
                      <td>{{a.accessionNumber.value}}</td>
                      <td> {{ translateStatusCode(a.status.label) }}</td>
-                     <td nowrap class="text-center small">
+                     <td nowrap class="text-center small date-link">
                         <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && a.visit.value && handleDetails(a, 'request')">
                            <span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>
                            <span ng-if="a.sampleDate.value!=null">{{a.sampleDate.value | date : dateFormat }}</span>
                            <i class="glyphicon glyphicon-edit" aria-hidden="true"></i>
                         </a>
                      </td>
-                     <td nowrap class="text-center small">
+                     <td nowrap class="text-center small date-link">
                         <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && handleDetails(a, 'specimen')">
                            <span title="Enter a value" ng-if="canEdit() && a.processedDate.value==null">
                               <i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span>
@@ -115,7 +115,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                            </span>
                         </a>
                      </td>
-                     <td nowrap class="text-center small"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
+                     <td nowrap class="text-center small date-link"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
                          <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && handleDetails(a, 'results')">
                             <span title="Enter a value" ng-if="canEdit() && a.processedDate.value!=null && a.resultDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span>
                             <span ng-if="a.resultDate.value!=null">{{a.resultDate.value | date : dateFormat}}
