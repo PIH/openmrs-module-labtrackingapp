@@ -268,6 +268,25 @@ angular.module("labTrackingOrderDetailsController", [])
                     altInputFormats: ['M!/d!/yyyy']
                 };
 
+                  $scope.searchDx = function(name) {
+                    return LabTrackingDataService.searchDx(name).then(function(response) {
+                      var dxArray = [];
+                      if (LabTrackingDataService.isOk(response)) {
+                        for (var i = 0; i < response.data.results.length; ++i) {
+                          var item = response.data.results[i];
+                          dxArray.push({ value: item.concept.uuid, label: item.concept.display})
+                        }
+                      }
+                      return dxArray;
+                    }, function (err) {
+                      throw err;
+                    });
+
+                  }
+
+                  $scope.formatDiagnosis = function (diagnosis) {
+                    return diagnosis !== null &&  typeof diagnosis === 'object' ? diagnosis.label : diagnosis;
+                  }
                 /*shows the date box for the reults date*/
                 $scope.showResultsDateBox = function () {
                     //for some reason the value isn't binding, if it does, then you can remove this line

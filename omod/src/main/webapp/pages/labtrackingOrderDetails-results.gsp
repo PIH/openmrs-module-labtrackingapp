@@ -49,6 +49,33 @@
                     </div>
 				</div>
 			</div>
+			<div class="row top-buffer">
+				<label class="control-label col-sm-3 control-label text-right">${ui.message("labtrackingapp.orderdetails.confirmedCancer")}</label>
+				<div class="col-sm-9">
+					<div class="btn-group btn-toggle">
+						<button class="btn btn-lg btn-default" ng-class="{'btn-danger': order.confirmedCancer.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'}" ng-click="order.confirmedCancer.value='3cd6f600-26fe-102b-80cb-0017a47871b2'">${ui.message("uicommons.yes")}</button>
+						<button class="btn btn-lg btn-default" ng-class="{'btn-primary': order.confirmedCancer.value=='3cd6f86c-26fe-102b-80cb-0017a47871b2'}" ng-click="order.confirmedCancer.value='3cd6f86c-26fe-102b-80cb-0017a47871b2'; order.confirmedDiagnosis.diagnosis=null">${ui.message("uicommons.no")}</button>
+					</div>
+				</div>
+			</div>
+			<div class="row top-buffer" ng-show="order.confirmedCancer.value=='3cd6f600-26fe-102b-80cb-0017a47871b2'">
+				<label class="col-sm-3 col-form-label text-right">${ui.message("labtrackingapp.orderdetails.diagnosislabel")}</label>
+				<div class="col-sm-9">
+					<input  type="text"
+							ng-model="order.confirmedDiagnosis.diagnosis"
+							class="form-control"
+							ng-required="false"
+							uib-typeahead="item as item.label for item in searchDx(${'$viewValue'}) | limitTo:8"
+							typeahead-min-length="2"
+							typeahead-wait-ms="200"
+							typeahead-loading="loadingDx"
+							typeahead-no-results="noDxResults"/>
+					<i ng-show="loadingDx" class="glyphicon glyphicon-refresh"></i>
+					<div ng-show="noDxResults">
+						<i class="glyphicon glyphicon-remove"></i>${ui.message("labtrackingapp.dx.notfound")}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </div>

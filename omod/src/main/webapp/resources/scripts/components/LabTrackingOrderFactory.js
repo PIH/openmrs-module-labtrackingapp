@@ -13,6 +13,7 @@ angular.module("labTrackingOrderFactory", [])
             DIAGNOSIS_CERTAINTY_CONCEPT_UUID: "3cd9ef9a-26fe-102b-80cb-0017a47871b2",
             DIAGNOSIS_CERTAINTY_PRESUMED: "3cd9be80-26fe-102b-80cb-0017a47871b2",
             DIAGNOSIS_CERTAINTY_CONFIRMED: "3cd9bd04-26fe-102b-80cb-0017a47871b2",
+            DIAGNOSIS_CONCEPT_UUID: "226ed7ad-b776-4b99-966d-fd818d3302c2",
             YES: "3cd6f600-26fe-102b-80cb-0017a47871b2",
             NO: "3cd6f86c-26fe-102b-80cb-0017a47871b2"
         };
@@ -39,6 +40,11 @@ angular.module("labTrackingOrderFactory", [])
                 diagnosis: {label: null, value: null},
                 certainty: {value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONFIRMED}
             };
+            this.confirmedDiagnosis = {
+              obsUuid: null, groupMemmberParentUuid: null,
+              diagnosis: {label: null, value: null},
+              certainty: {value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONFIRMED}
+            };
             this.procedures = [];  //this is an array of values
             this.procedureNonCoded = {value: null};
             this.instructions = {value: ""};
@@ -61,6 +67,7 @@ angular.module("labTrackingOrderFactory", [])
             this.phoneNumberForClinician = { value: null };
             this.urgentReview = {value: false};
             this.suspectedCancer = { value: false };
+            this.confirmedCancer = { value: false };
             this.immunohistochemistryNeeded = { value: false };
             this.immunohistochemistrySentToBoston = { value: false };
             this.dateImmunoSentToBoston = { value: null };
@@ -84,11 +91,16 @@ angular.module("labTrackingOrderFactory", [])
                 encounterTypeUuid: 'b3a0e3ad-b80c-4f3f-9626-ace1ced7e2dd',
                 conceptUuid: "d6d585b6-4887-4aac-8361-424c17b030f2",
             },
-            preLabDiagnosis: {value: '226ed7ad-b776-4b99-966d-fd818d3302c2'},
+            preLabDiagnosis: {value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CONCEPT_UUID},
             postopDiagnosis: {
-                value: '226ed7ad-b776-4b99-966d-fd818d3302c2',
+                value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CONCEPT_UUID,
                 nonCodedValue: '970d41ce-5098-47a4-8872-4dd843c0df3f',
                 constructUuid: '2da3ec67-62aa-4be8-a32c-cb32723742c8'
+            },
+            confirmedDiagnosis: {
+              value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CONCEPT_UUID,
+              nonCodedValue: '970d41ce-5098-47a4-8872-4dd843c0df3f',
+              constructUuid: '39180297-6499-4bdc-8bbb-5870a5fab19d'
             },
             procedure: {value: 'd6d585b6-4887-4aac-8361-424c17b030f2'},
             procedureNonCoded: {value: '823242df-e317-4426-9bd6-548146546b15'},
@@ -96,6 +108,7 @@ angular.module("labTrackingOrderFactory", [])
             procedureNonCodedForSpecimen: {value: '2ccfa5d8-b2a0-4ff0-9d87-c2471ef069f4'},
             urgentReview: {value: '9e4b6acc-ab97-4ecd-a48c-b3d67e5ef778'},
             suspectedCancer: { value: 'd0718b9e-31e3-4bc8-a8d3-cfc5cc1ae2cb'},
+            confirmedCancer: { value: '5773fb74-8c4f-41b7-ac41-3c6eeae3939f'},
             immunohistochemistryNeeded: { value: '237dbbf8-b654-4fed-8c09-b130d35879ac'},
             immunohistochemistrySentToBoston: { value: '3ae1ac7c-fe6b-4c49-9150-f5047178a43e'},
             dateImmunoSentToBoston: { value: 'f4d0b62b-cbf9-4e6a-8a79-b291f82ae53c'}, //PIH:14239
@@ -261,6 +274,9 @@ angular.module("labTrackingOrderFactory", [])
               else if (_extractObsValue(order, 'suspectedCancer', conceptUuid, obs[i], uuid)) {
                 //continue;
               }
+              else if (_extractObsValue(order, 'confirmedCancer', conceptUuid, obs[i], uuid)) {
+                //continue;
+              }
               else if (_extractObsValue(order, 'immunohistochemistryNeeded', conceptUuid, obs[i], uuid)) {
                 //continue;
               }
@@ -303,6 +319,29 @@ angular.module("labTrackingOrderFactory", [])
                   }
                   else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID) {
                     order.postopDiagnosis.certainty.obsUuid = grpObs.uuid;
+                  }
+                }
+              } else if ( conceptUuid == LabTrackingOrder.concepts.confirmedDiagnosis.constructUuid ) {
+                //the post diagnosis is a construct, so we need to handle that a little differently
+                order.confirmedDiagnosis.groupMemmberParentUuid = uuid;
+                for (var j = 0; j < groupMembers.length; j++) {
+                  var grpObs = groupMembers[j];
+                  var grpObsConceptUuid = grpObs.concept.uuid;
+                  if (grpObsConceptUuid == LabTrackingOrder.concepts.confirmedDiagnosis.value) {
+                    order.confirmedDiagnosis.diagnosis = {
+                      value: grpObs.valueCoded.uuid,
+                      label: grpObs.valueCoded.display
+                    };
+                    order.confirmedDiagnosis.originalType = 'coded';
+                    order.confirmedDiagnosis.obsUuid = grpObs.uuid;
+                  }
+                  else if (grpObsConceptUuid == LabTrackingOrder.concepts.confirmedDiagnosis.nonCodedValue) {
+                    order.confirmedDiagnosis.diagnosis = grpObs.valueText;
+                    order.confirmedDiagnosis.originalType = 'nonCoded';
+                    order.confirmedDiagnosis.obsUuid = grpObs.uuid;
+                  }
+                  else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID) {
+                    order.confirmedDiagnosis.certainty.obsUuid = grpObs.uuid;
                   }
                 }
               }
@@ -476,6 +515,7 @@ angular.module("labTrackingOrderFactory", [])
             labTrackingOrder.procedureNonCodedForSpecimen = {value: null};
             labTrackingOrder.clinicalHistoryForSpecimen = {value: ""};
             labTrackingOrder.postopDiagnosis.diagnosis = {label: null, value: null};
+            labTrackingOrder.confirmedDiagnosis.diagnosis = {label: null, value: null};
 
             // now start setting values based on encounter
             labTrackingOrder.sampleDate.value = new Date(webServiceResult.encounterDatetime);
@@ -514,6 +554,9 @@ angular.module("labTrackingOrderFactory", [])
                             //continue;
                         }
                         else if (_fromObsIfExists(labTrackingOrder, 'suspectedCancer', conceptUuid, vAsUuid, uuid)) {
+                          //continue;
+                        }
+                        else if (_fromObsIfExists(labTrackingOrder, 'confirmedCancer', conceptUuid, vAsUuid, uuid)) {
                           //continue;
                         }
                         else if (_fromObsIfExists(labTrackingOrder, 'immunohistochemistryNeeded', conceptUuid, vAsUuid, uuid)) {
@@ -555,6 +598,25 @@ angular.module("labTrackingOrderFactory", [])
                                     labTrackingOrder.postopDiagnosis.certainty.obsUuid = obs2.uuid;
                                 }
                             }
+                        } else if (conceptUuid == LabTrackingOrder.concepts.confirmedDiagnosis.constructUuid) {
+                          labTrackingOrder.confirmedDiagnosis.groupMemmberParentUuid = uuid;
+                          for (var j = 0; j < groupMembers.length; ++j) {
+                            var obs2 = groupMembers[j];
+                            var conceptUuid2 = obs2.concept.uuid;
+                            if (conceptUuid2 == LabTrackingOrder.concepts.confirmedDiagnosis.value) {
+                              labTrackingOrder.confirmedDiagnosis.diagnosis = { value: obs2.value.uuid, label: obs2.value.display };
+                              labTrackingOrder.confirmedDiagnosis.originalType = 'coded';
+                              labTrackingOrder.confirmedDiagnosis.obsUuid = obs2.uuid;
+                            }
+                            else if (conceptUuid2 == LabTrackingOrder.concepts.confirmedDiagnosis.nonCodedValue) {
+                              labTrackingOrder.confirmedDiagnosis.diagnosis = obs2.value;
+                              labTrackingOrder.confirmedDiagnosis.originalType = 'nonCoded';
+                              labTrackingOrder.confirmedDiagnosis.obsUuid = obs2.uuid;
+                            }
+                            else if (conceptUuid2 == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID) {
+                              labTrackingOrder.confirmedDiagnosis.certainty.obsUuid = obs2.uuid;
+                            }
+                          }
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
                             labTrackingOrder.resultDate.value = new Date(v);
@@ -707,6 +769,7 @@ angular.module("labTrackingOrderFactory", [])
             _updateObsIfExists(labTrackingOrder, "orderNumber", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "urgentReview", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "suspectedCancer", obs, obsIdsToDelete);
+            _updateObsIfExists(labTrackingOrder, "confirmedCancer", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "immunohistochemistryNeeded", obs, obsIdsToDelete);
             _updateObsIfExists(labTrackingOrder, "immunohistochemistrySentToBoston", obs, obsIdsToDelete);
 
@@ -769,6 +832,64 @@ angular.module("labTrackingOrderFactory", [])
 
                 obs.push(groupMembers);
             }
+
+          if (((labTrackingOrder.confirmedDiagnosis.diagnosis !== null
+              && typeof labTrackingOrder.confirmedDiagnosis.diagnosis === 'object'
+              && labTrackingOrder.confirmedDiagnosis.diagnosis.value === null)     // it's an object, but value is null
+              || labTrackingOrder.confirmedDiagnosis.diagnosis === null
+              || labTrackingOrder.confirmedDiagnosis.diagnosis.length === 0)) {    // not an object, and null or empty
+            // if no post-op diagnosis specified, but there's an existing value, we need to delete the whole existing obs group
+            if (labTrackingOrder.confirmedDiagnosis.groupMemmberParentUuid !== null) {
+              obsIdsToDelete.push(labTrackingOrder.confirmedDiagnosis.groupMemmberParentUuid);
+            }
+          }
+          else {
+            // a post-op diagnosis value has been entered
+            var v = [];
+
+            if (typeof labTrackingOrder.confirmedDiagnosis.diagnosis === 'object') {
+              // coded obs
+              if (labTrackingOrder.confirmedDiagnosis.obsUuid === null || labTrackingOrder.confirmedDiagnosis.originalType === 'coded') {
+                // if there's no existing obs (obsUuid === null) or the existing type was coded, just create/update
+                v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.confirmedDiagnosis.value,
+                  labTrackingOrder.confirmedDiagnosis.diagnosis.value,
+                  labTrackingOrder.confirmedDiagnosis.obsUuid));
+              }
+              else {
+                // otherwise, we need to void the existing and create new obs (since there's funky behavior when updating the concept_id of an obs)
+                v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.confirmedDiagnosis.value,
+                  labTrackingOrder.confirmedDiagnosis.diagnosis.value, null));
+                obsIdsToDelete.push(labTrackingOrder.confirmedDiagnosis.obsUuid);
+              }
+            }
+            else {
+              // else, non-coded obs
+              if (labTrackingOrder.confirmedDiagnosis.obsUuid === null || labTrackingOrder.confirmedDiagnosis.originalType === 'nonCoded') {
+                // if there's no existing obs (obsUuid === null) or the existing type was coded, just create/update
+                v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.confirmedDiagnosis.nonCodedValue,
+                  labTrackingOrder.confirmedDiagnosis.diagnosis,
+                  labTrackingOrder.confirmedDiagnosis.obsUuid));
+              }
+              else {
+                // otherwise, we need to void the existing and create new obs (since there's funky behavior when updating the concept_id of an obs)
+                v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.confirmedDiagnosis.nonCodedValue,
+                  labTrackingOrder.confirmedDiagnosis.diagnosis, null));
+                obsIdsToDelete.push(labTrackingOrder.confirmedDiagnosis.obsUuid);
+              }
+            }
+
+            v.push(Encounter.toObsWebServiceObject(LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID,
+              labTrackingOrder.confirmedDiagnosis.certainty.value,
+              labTrackingOrder.confirmedDiagnosis.certainty.obsUuid));
+
+            var groupMembers = {
+              groupMembers: v,
+              concept: LabTrackingOrder.concepts.confirmedDiagnosis.constructUuid,
+              uuid: labTrackingOrder.confirmedDiagnosis.groupMemmberParentUuid
+            };
+
+            obs.push(groupMembers);
+          }
 
            if (labTrackingOrder.processedDate.value != null) {
                 var dtAsStr = Encounter.formatDateTime(labTrackingOrder.processedDate.value);
