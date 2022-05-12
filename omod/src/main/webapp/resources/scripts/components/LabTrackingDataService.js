@@ -492,7 +492,7 @@ angular.module("labTrackingDataService", [])
                 //if the providers have changed then remove the old ones and add the new ones
                 var changed = LabTrackingOrder.haveProvidersChanged(providers, labTrackingOrder.orginalSurgeonAndResident);
 
-                if (!changed.surgeon && !changed.resident) {
+                if (!changed.surgeon && !changed.resident && !changed.provider) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
                 else {
@@ -503,6 +503,10 @@ angular.module("labTrackingDataService", [])
 
                     if (changed.resident) {
                         encounterProvidersToDelete.push(labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid);
+                    }
+
+                    if (changed.provider) {
+                        encounterProvidersToDelete.push(labTrackingOrder.specimenDetailsEncounter.encounterProviderUuid);
                     }
 
                     return Encounter.deleteEncounterProviders(labTrackingOrder.specimenDetailsEncounter.uuid, encounterProvidersToDelete).then(function () {
@@ -519,11 +523,16 @@ angular.module("labTrackingDataService", [])
                                     labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid = resp3.data.uuid;
                                     //  msg += "resident is " + labTrackingOrder.specimenDetailsEncounter.residentEncounterProviderUuid + "\n";
                                 }
-                                //labTrackingOrder.debug.message = msg;
+                              return Encounter.createProvider(labTrackingOrder.specimenDetailsEncounter.uuid, providers.provider).then(function (resp4) {
+                                if (resp4.data != null) {
+                                  //update the encounter provider uuid
+                                  labTrackingOrder.specimenDetailsEncounter.encounterProviderUuid = resp4.data.uuid;
+                                }
                                 //reset this with the updated values
                                 labTrackingOrder.orginalSurgeonAndResident = LabTrackingOrder.getEncounterProviders(labTrackingOrder);
 
                                 return {status: 200, data: labTrackingOrder};
+                              });
                             });
                         });
                     });
@@ -652,6 +661,9 @@ angular.module("labTrackingDataService", [])
 
             };
 
+            this.getSessionProvider = function() {
+              return _self.session.currentProvider ? _self.session.currentProvider : null;
+            }
 
             /* helper function to determine if REST response is ok
              * @param {WSResps} res - the response from the server

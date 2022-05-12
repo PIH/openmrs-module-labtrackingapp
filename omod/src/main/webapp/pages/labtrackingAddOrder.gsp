@@ -50,6 +50,19 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <select class="form-control" id="location" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
                </div>
             </div>
+            <div class="form-group row required">
+               <label class="col-sm-2 col-form-label control-label">${ui.message("emr.patientDashBoard.providerRequired")}</label>
+               <div class="col-sm-9">
+                  <input  type="text"
+                          ng-model="order.provider"
+                          class="form-control"
+                          uib-typeahead="item as item.label for item in providers | filter:${'$viewValue'} | limitTo:6"
+                          typeahead-no-results="noProviderResults"/>
+                  <div ng-show="noProviderResults">
+                     <i class="glyphicon glyphicon-remove"></i>${ui.message("labtrackingapp.provider.notfound")}
+                  </div>
+               </div>
+            </div>
             <div class="form-group row">
                <label class="col-sm-2 col-form-label" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
                <div class="col-sm-9">

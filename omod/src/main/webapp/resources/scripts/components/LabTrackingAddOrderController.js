@@ -45,6 +45,20 @@ angular.module("labTrackingAddOrderController", [])
               });
             };
 
+            $scope.setDefaultProvider = function() {
+              if (!$scope.order.provider.value) {
+                // if the encounter does not have an Provider then set it to the current user logged on
+                var sessionProvider = LabTrackingDataService.getSessionProvider();
+                if (sessionProvider != null) {
+                  //$scope.provider = $scope.providers[1];
+                  $scope.order.provider = {
+                    label: sessionProvider.person.display,
+                    value: sessionProvider.uuid
+                  };
+                }
+              }
+            }
+
             $scope.requestDateBoxOptions = {
                 opened: false,
                 format: 'dd-MMM-yyyy',
@@ -239,6 +253,7 @@ angular.module("labTrackingAddOrderController", [])
                   $scope.careSettings = res.data;
                   if ( orderUuid ) {
                     return $scope.loadOrder(orderUuid).then(function( respOrder ){
+                      $scope.setDefaultProvider();
                       $scope.loadingModal.dismiss('cancel');
                       if ( respOrder.status.code !== 200 ) {
                         $scope.error = "failed to load the order: " + orderUuid;
@@ -246,6 +261,7 @@ angular.module("labTrackingAddOrderController", [])
                       }
                     });
                   }
+                  $scope.setDefaultProvider();
                   $scope.loadingModal.dismiss('cancel');
                 });
               });

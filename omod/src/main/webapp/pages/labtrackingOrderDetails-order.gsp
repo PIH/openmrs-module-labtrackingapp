@@ -19,6 +19,12 @@
                 </div>
             </div>
             <div class="row">
+                <label class="form-control-static text-right col-sm-3" for="provider">${ui.message("emr.patientDashBoard.providerRequired")}</label>
+                <div class="col-sm-9">
+                    <p class="form-control-static" id="provider">{{ order.provider.label }}</p>
+                </div>
+            </div>
+            <div class="row">
                 <label class="form-control-static text-right col-sm-3" for="surgeon">${ui.message("labtrackingapp.orderdetails.attendingsurgeonlabel")}</label>
                 <div class="col-sm-9">
                     <p class="form-control-static" id="surgeon">{{ order.surgeon.label }}</p>
