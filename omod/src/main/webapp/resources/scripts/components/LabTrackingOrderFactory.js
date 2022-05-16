@@ -14,6 +14,12 @@ angular.module("labTrackingOrderFactory", [])
             DIAGNOSIS_CERTAINTY_PRESUMED: "3cd9be80-26fe-102b-80cb-0017a47871b2",
             DIAGNOSIS_CERTAINTY_CONFIRMED: "3cd9bd04-26fe-102b-80cb-0017a47871b2",
             DIAGNOSIS_CONCEPT_UUID: "226ed7ad-b776-4b99-966d-fd818d3302c2",
+            LOCATION_OTHER_NON_CODED: "3cee7fb4-26fe-102b-80cb-0017a47871b2",
+            SPECIMEN_SENT_CONSTRUCT: "4373a272-162e-4e20-91c0-e79b15defe15",
+            SPECIMEN_SENT_TO_PAP: "97f23d65-664a-42ee-854b-443d88b308db",
+            SPECIMEN_SENT_DATE:   "f4d0b62b-cbf9-4e6a-8a79-b291f82ae53c",
+            SPECIMEN_RETURN_DATE: "c19867c0-fec9-404c-bf25-6cf7a8c54eb7",
+            LAB_PAP_LOCATION:     "e9732df4-971d-4a9a-9129-e2e610552468",
             YES: "3cd6f600-26fe-102b-80cb-0017a47871b2",
             NO: "3cd6f86c-26fe-102b-80cb-0017a47871b2"
         };
@@ -36,14 +42,24 @@ angular.module("labTrackingOrderFactory", [])
             this.orderNumber = {value: null};
             this.preLabDiagnosis = {label: null, value: null};
             this.postopDiagnosis = {
-                obsUuid: null, groupMemmberParentUuid: null,
+                obsUuid: null,
+                groupMemmberParentUuid: null,
                 diagnosis: {label: null, value: null},
                 certainty: {value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONFIRMED}
             };
             this.confirmedDiagnosis = {
-              obsUuid: null, groupMemmberParentUuid: null,
+              obsUuid: null,
+              groupMemmberParentUuid: null,
               diagnosis: {label: null, value: null},
               certainty: {value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONFIRMED}
+            };
+            this.specimenSentToPaP = {
+              obsUuid: null,
+              groupMemmberParentUuid: null,
+              specimenSent: { value: false},
+              dateSent: { value: null},
+              dateReturned: { value: null },
+              labPaPLocation: { value: LabTrackingOrder.CONSTANTS.LOCATION_OTHER_NON_CODED }
             };
             this.procedures = [];  //this is an array of values
             this.procedureNonCoded = {value: null};
@@ -101,6 +117,13 @@ angular.module("labTrackingOrderFactory", [])
               value: LabTrackingOrder.CONSTANTS.DIAGNOSIS_CONCEPT_UUID,
               nonCodedValue: '970d41ce-5098-47a4-8872-4dd843c0df3f',
               constructUuid: '39180297-6499-4bdc-8bbb-5870a5fab19d'
+            },
+            specimenSentToPaP: {
+              constructUuid: LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_CONSTRUCT,
+              specimenSentToPaPValue: LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_TO_PAP,
+              dateSentValue: LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE,
+              dateReturnValue: LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE,
+              labPaPLocationValue: LabTrackingOrder.CONSTANTS.LAB_PAP_LOCATION
             },
             procedure: {value: 'd6d585b6-4887-4aac-8361-424c17b030f2'},
             procedureNonCoded: {value: '823242df-e317-4426-9bd6-548146546b15'},
@@ -344,6 +367,31 @@ angular.module("labTrackingOrderFactory", [])
                     order.confirmedDiagnosis.certainty.obsUuid = grpObs.uuid;
                   }
                 }
+              } else if ( conceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_CONSTRUCT ) {
+                //the specimen sent to PaP is a construct
+                order.specimenSentToPaP.groupMemmberParentUuid = uuid;
+                for (var j = 0; j < groupMembers.length; j++) {
+                  var grpObs = groupMembers[j];
+                  var grpObsConceptUuid = grpObs.concept.uuid;
+                  if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_TO_PAP) {
+                    order.specimenSentToPaP.specimenSent = {
+                      value: grpObs.valueCoded.uuid,
+                      label: grpObs.valueCoded.display
+                    };
+                    order.specimenSentToPaP.specimenSent.obsUuid = grpObs.uuid;
+                  }
+                  else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.LAB_PAP_LOCATION) {
+                    order.specimenSentToPaP.labPaPLocation.value = grpObs.valueCoded.uuid;
+                    order.specimenSentToPaP.labPaPLocation.obsUuid = grpObs.uuid;
+                  }
+                  else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE) {
+                    order.specimenSentToPaP.dateSent.value = new Date(grpObs.valueDatetime);
+                    order.specimenSentToPaP.dateSent.obsUuid = grpObs.uuid;
+                  } else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE) {
+                    order.specimenSentToPaP.dateReturned.value = new Date(grpObs.valueDatetime);
+                    order.specimenSentToPaP.dateReturned.obsUuid = grpObs.uuid;
+                  }
+                }
               }
               else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
                 order.resultDate.value = new Date(obs[i].valueDatetime);
@@ -516,6 +564,14 @@ angular.module("labTrackingOrderFactory", [])
             labTrackingOrder.clinicalHistoryForSpecimen = {value: ""};
             labTrackingOrder.postopDiagnosis.diagnosis = {label: null, value: null};
             labTrackingOrder.confirmedDiagnosis.diagnosis = {label: null, value: null};
+            this.specimenSentToPaP = {
+              obsUuid: null,
+              groupMemmberParentUuid: null,
+              specimenSent: { value: false},
+              dateSent: { value: null},
+              dateReturned: { value: null },
+              labPaPLocation: { value: null }
+            };
 
             // now start setting values based on encounter
             labTrackingOrder.sampleDate.value = new Date(webServiceResult.encounterDatetime);
@@ -615,6 +671,29 @@ angular.module("labTrackingOrderFactory", [])
                             }
                             else if (conceptUuid2 == LabTrackingOrder.CONSTANTS.DIAGNOSIS_CERTAINTY_CONCEPT_UUID) {
                               labTrackingOrder.confirmedDiagnosis.certainty.obsUuid = obs2.uuid;
+                            }
+                          }
+                        } else if (conceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_CONSTRUCT) {
+                          //the Specimen sent to PaP is a construct
+                          labTrackingOrder.specimenSentToPaP.groupMemmberParentUuid = uuid;
+                          for (var j = 0; j < groupMembers.length; ++j) {
+                            var obs2 = groupMembers[j];
+                            var conceptUuid2 = obs2.concept.uuid;
+                            if ( conceptUuid2 == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_TO_PAP ) {
+                              labTrackingOrder.specimenSentToPaP.specimenSent.value = obs2.value.uuid;
+                              labTrackingOrder.specimenSentToPaP.specimenSent.label = obs2.value.display;
+                              labTrackingOrder.specimenSentToPaP.specimenSent.obsUuid = obs2.uuid;
+                            }
+                            else if ( conceptUuid2 == LabTrackingOrder.CONSTANTS.LAB_PAP_LOCATION ) {
+                              labTrackingOrder.specimenSentToPaP.labPaPLocation.value = obs2.value.uuid;
+                              labTrackingOrder.specimenSentToPaP.labPaPLocation.obsUuid = obs2.uuid;
+                            }
+                            else if ( conceptUuid2 == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE ) {
+                              labTrackingOrder.specimenSentToPaP.dateSent.value = new Date(obs2.value);
+                              labTrackingOrder.specimenSentToPaP.dateSent.obsUuid = obs2.uuid;
+                            } else if ( conceptUuid2 == LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE ) {
+                              labTrackingOrder.specimenSentToPaP.dateReturned.value = new Date(obs2.value);
+                              labTrackingOrder.specimenSentToPaP.dateReturned.obsUuid = obs2.uuid;
                             }
                           }
                         }
@@ -886,6 +965,61 @@ angular.module("labTrackingOrderFactory", [])
               groupMembers: v,
               concept: LabTrackingOrder.concepts.confirmedDiagnosis.constructUuid,
               uuid: labTrackingOrder.confirmedDiagnosis.groupMemmberParentUuid
+            };
+
+            obs.push(groupMembers);
+          }
+
+          // special case for Specimen Sent to Port-au-Prince obs group
+          if ( labTrackingOrder.specimenSentToPaP.specimenSent.value !== LabTrackingOrder.CONSTANTS.YES) {
+            // if no specimenSentToPaP specified, but there's an existing value, we need to delete the whole existing obs group
+            if (labTrackingOrder.specimenSentToPaP.groupMemmberParentUuid !== null) {
+              obsIdsToDelete.push(labTrackingOrder.specimenSentToPaP.groupMemmberParentUuid);
+            }
+          }
+          else {
+            // Specimen was sent to PAP
+            var v = [];
+
+            // coded question Sample Sent: Y/N
+            v.push(Encounter.toObsWebServiceObject(
+              LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_TO_PAP,
+              labTrackingOrder.specimenSentToPaP.specimenSent.value,
+              labTrackingOrder.specimenSentToPaP.specimenSent.obsUuid));
+
+            // non-coded Lab location
+            var labLocationObs = Encounter.toObsWebServiceObject(
+              LabTrackingOrder.CONSTANTS.LAB_PAP_LOCATION,
+              LabTrackingOrder.CONSTANTS.LOCATION_OTHER_NON_CODED,
+              labTrackingOrder.specimenSentToPaP.labPaPLocation.obsUuid);
+            labLocationObs.comment = "Port-au-Prince";
+            v.push(labLocationObs);
+
+            if (labTrackingOrder.specimenSentToPaP.dateSent.value != null) {
+              var dtAsStr = Encounter.formatDateTime(labTrackingOrder.specimenSentToPaP.dateSent.value);
+              v.push(Encounter.toObsWebServiceObject(
+                LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE,
+                dtAsStr,
+                labTrackingOrder.specimenSentToPaP.dateSent.obsUuid));
+            } else if (labTrackingOrder.specimenSentToPaP.dateSent.obsUuid != null) {
+              obsIdsToDelete.push(labTrackingOrder.specimenSentToPaP.dateSent.obsUuid);
+            }
+
+            if (labTrackingOrder.specimenSentToPaP.dateReturned.value != null) {
+              var dtAsStr = Encounter.formatDateTime(labTrackingOrder.specimenSentToPaP.dateReturned.value);
+              v.push(Encounter.toObsWebServiceObject(
+                LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE,
+                dtAsStr,
+                labTrackingOrder.specimenSentToPaP.dateReturned.obsUuid));
+            } else if (labTrackingOrder.specimenSentToPaP.dateReturned.obsUuid != null) {
+              obsIdsToDelete.push(labTrackingOrder.specimenSentToPaP.dateReturned.obsUuid);
+            }
+
+
+            var groupMembers = {
+              groupMembers: v,
+              concept: LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_CONSTRUCT,
+              uuid: labTrackingOrder.specimenSentToPaP.groupMemmberParentUuid
             };
 
             obs.push(groupMembers);

@@ -236,6 +236,41 @@ angular.module("labTrackingOrderDetailsController", [])
                 $scope.immunoDateBoxOptions.opened = true;
               };
 
+              $scope.specimenSentDateBoxOptions = {
+                opened: false,
+                format: 'dd-MMM-yyyy',
+                options: {
+                  dateDisabled: false,
+                  formatYear: 'yy',
+                  minDate: $scope.order.sampleDate.value,
+                  maxDate:  new Date(),
+                  showWeeks: false
+                },
+                altInputFormats: ['M!/d!/yyyy']
+              };
+
+              $scope.showSentDateBox = function () {
+                $scope.specimenSentDateBoxOptions.opened = true;
+              };
+
+              $scope.specimenReturnedDateBoxOptions = {
+                opened: false,
+                format: 'dd-MMM-yyyy',
+                options: {
+                  dateDisabled: false,
+                  formatYear: 'yy',
+                  minDate: $scope.order.sampleDate.value,
+                  maxDate:  new Date(),
+                  showWeeks: false
+                },
+                altInputFormats: ['M!/d!/yyyy']
+              };
+
+              $scope.showReturnedDateBox = function () {
+                $scope.specimenReturnedDateBoxOptions.opened = true;
+              };
+
+
             },
             templateUrl: 'labtrackingOrderDetails-specimen.page'
         };
