@@ -3,16 +3,25 @@
    ui.includeFragment("labtrackingapp", "libs")
    ui.includeJavascript("labtrackingapp", "components/LabTrackingAddOrderController.js")
    ui.includeJavascript("labtrackingapp", "app_add_order.js")
-   %>
-<script type="text/javascript" xmlns="http://www.w3.org/1999/html">
-   var breadcrumbs = [
-       {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
-       {
-           label: "${ ui.message("labtrackingapp.title") }", link: "${ ui.pageLink("labtrackingapp", "labtrackingViewQueue?appId=labtrackingapp.app.viewQueue") }"
-       }
 
+   def returnLabel = ui.message("labtrackingapp.title")
+   if (returnUrl.indexOf("visit.page") != -1) {
+      returnLabel = ui.escapeJs(patientDomainWrapper.formattedName)
+   }
+   def pageLabel = ui.message("labtrackingapp.addorderpagetitle")
+   if (orderUuid) {
+      pageLabel = ui.message("labtrackingapp.editOrderPageTitle")
+   }
+%>
+
+<script type="text/javascript">
+   var breadcrumbs = [
+      {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},
+      {label: "${ returnLabel }", link: "${ returnUrl }"},
+      {label: "${ pageLabel }"}
    ];
 </script>
+
 <style>
    .button-wrapper {
    margin-bottom:5px;

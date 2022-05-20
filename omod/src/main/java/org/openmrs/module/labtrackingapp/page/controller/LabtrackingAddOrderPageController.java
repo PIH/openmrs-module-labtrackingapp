@@ -5,6 +5,8 @@ import org.openmrs.Patient;
 import org.openmrs.Visit;
 import org.openmrs.module.appframework.domain.AppDescriptor;
 import org.openmrs.module.appui.UiSessionContext;
+import org.openmrs.module.emrapi.patient.PatientDomainWrapper;
+import org.openmrs.ui.framework.annotation.InjectBeans;
 import org.openmrs.ui.framework.page.PageModel;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -19,6 +21,7 @@ public class LabtrackingAddOrderPageController {
                              @RequestParam(value = "visitId", required = false) Visit visit,
                              @RequestParam(value = "patientId") Patient patient,
                              @RequestParam(value = "orderUuid", required = false) String orderUuid,
+                             @InjectBeans PatientDomainWrapper patientDomainWrapper,
                              UiSessionContext uiSessionContext) {
 
         model.addAttribute("appId", app != null ? app.getId() : null);
@@ -45,6 +48,8 @@ public class LabtrackingAddOrderPageController {
         model.addAttribute("orderUuid", orderUuid);
         model.addAttribute("serverDatetime", new DateTime()); // just in case the server and client time are not in sync
 
+        patientDomainWrapper.setPatient(patient);
+        model.addAttribute("patientDomainWrapper", patientDomainWrapper);
         return null;
 
     }
