@@ -65,10 +65,10 @@ angular.module("labTrackingOrderFactory", [])
             this.procedureNonCoded = {value: null};
             this.instructions = {value: ""};
             this.clinicalHistory = {value: ""};
-            this.specimenDetails = [{value: "", obsUuid: null}, {value: "", obsUuid: null}, {
-                value: "",
-                obsUuid: null
-            }, {value: "", obsUuid: null}];
+            this.specimenDetails = [{value: "", obsUuid: null}, {value: "", obsUuid: null},
+                {value: "", obsUuid: null}, {value: "", obsUuid: null},
+                {value: "", obsUuid: null}, {value: "", obsUuid: null},
+                {value: "", obsUuid: null}, {value: "", obsUuid: null}];
             this.clinicalHistoryForSpecimen = {value: ""};
             this.proceduresForSpecimen = [];  //this is an array of values
             this.originalProceduresForSpecimen = [];  //this is an array of values
@@ -138,7 +138,9 @@ angular.module("labTrackingOrderFactory", [])
             clinicalHistoryForSpecimen: {value: '160221AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             mdToNotify: {value: 'a787e577-5e32-42dc-b3a8-e4c6d5b107f5'},
             specimenDetails: [{value: '7d557ddc-eca3-421e-98ae-5469a1ecba4d'}, {value: 'a6f54c87-a6aa-4312-bbc9-1346842a7f3f'},
-                {value: '873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'}],
+                {value: '873d2496-4576-4948-80c3-e36913d2a9a7'}, {value: '96010c0d-0328-4d5f-a4e4-b8bb391a3882'},
+                {value: '9c79f6ba-3331-44e9-9f64-2b951825dc06'}, {value: '468ef788-c7e2-4a17-9344-60989a77134c'},
+                {value: '6ec3616f-4f0e-46f0-b479-68b28f887a52'}, {value: '124ca694-b184-4ada-b6d2-b575b662d9f3'}],
             accessionNumber:{value:'162086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'},
             phoneNumberForClinician: { value:'f51531c0-e3f6-4611-9a32-d709551307a7' },
             orderNumber: { value: LabTrackingOrder.CONSTANTS.SPECIMEN_COLLECTION_ENCOUNTER_ORDER_NUMBER },
