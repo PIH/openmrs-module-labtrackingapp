@@ -96,7 +96,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <input type='text' class="form-control" id="phoneNumberForClinician" ng-model="order.phoneNumberForClinician.value"  />
                </div>
             </div>
-            <div class="form-group row required">
+            <div class="form-group row">
                <label class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.prelabdiagnosislabel")}</label>
                <div class="col-sm-9">
                   <div ng-if="!order.uuid" class="col-sm-9">
@@ -156,7 +156,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <input type="text" class="form-control" id="procedurenoncoded" placeholder="" ng-model="order.procedureNonCoded.value"></input>
                </div>
             </div>
-            <div class="form-group row required">
+            <div class="form-group row">
                <label class="control-label col-sm-3 control-label">${ui.message("labtrackingapp.orderdetails.suspectedCancer")}</label>
                <div class="col-sm-9">
                   <div class="btn-group btn-toggle">
@@ -210,7 +210,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
                   <p ng-if="order.uuid" class="form-control-static" >{{order.instructions.value}}</p>
                </div>
             </div>
-            <div class="form-group row required">
+            <div class="form-group row">
                <label for="history" class="col-sm-2 col-form-label control-label">${ui.message("labtrackingapp.clinicalhistorylabel")}</label>
                <div class="col-sm-10">
                   <textarea type="text" class="form-control" id="history" placeholder="" ng-model="order.clinicalHistoryForSpecimen.value"></textarea>
