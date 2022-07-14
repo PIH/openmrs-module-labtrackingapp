@@ -21,7 +21,7 @@ angular.module("labTrackingAddOrderController", [])
 
             // if a single day visit, just set the model value to that date
             if (sameDate($scope.visitStartDateTime, $scope.visitStopDateTime)) {
-                $scope.order.sampleDate.value = visitStartDateTime;
+                $scope.order.sampleDate.value = new Date(visitStartDateTime);
             } // if not a single day visit, but an active visit, set request date to current date
             else if (!visitStopDateTime) {
                 $scope.order.sampleDate.value = $scope.clientDatetime;
