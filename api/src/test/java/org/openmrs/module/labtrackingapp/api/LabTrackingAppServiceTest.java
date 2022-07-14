@@ -95,7 +95,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 
-		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, patientName, status, false, false, 0);
+		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, patientName, status, false, false, false, 0);
 		assertEquals(TOTAL_ACTIVE_ENCOUNTER_ORDERS, specimenDetailsEncountersByDate.size());
 
 	}
@@ -110,7 +110,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 
-		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, "Hamil", status, false, false, 0);
+		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, "Hamil", status, false, false,false, 0);
 		assertEquals(TOTAL_ACTIVE_ENCOUNTER_ORDERS, specimenDetailsEncountersByDate.size());
 
 	}

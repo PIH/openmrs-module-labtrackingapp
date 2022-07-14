@@ -39,7 +39,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         return dao.getSpecimenDetailsEncountersByOrderNumbers(orderNumbers);
     }
 
-    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean urgentReview, int maxResults) {
+    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults) {
 
         List<Encounter> encounters = null;
         List<OrderType> orderTypes = new ArrayList<OrderType>();
@@ -55,7 +55,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                 if ( StringUtils.isBlank(patientUuid)
                         && StringUtils.isBlank(patientName)
                         && (status == LabTrackingConstants.LabTrackingOrderStatus.ALL.getId() || status == LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() )
-                        && !suspectedCancer && !urgentReview) {
+                        && !suspectedCancer && !confirmedCancer && !urgentReview) {
                     // if the status is CANCELED the encounter was already filtered by the Order DAO method
                     encounters.add(encounter);
                     continue;
@@ -85,6 +85,13 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                     Obs suspectedCancerObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SUSPECTED_CANCER_UUID);
                     if ( suspectedCancerObs == null ||
                             (suspectedCancerObs != null &&  !suspectedCancerObs.getValueCoded().getUuid().equalsIgnoreCase(LabTrackingConstants.YES))) {
+                        includeEncounter = false;
+                    }
+                }
+                if (confirmedCancer) {
+                    Obs confirmedCancerObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_CONFIRMED_CANCER_UUID);
+                    if ( confirmedCancerObs == null ||
+                            (confirmedCancerObs != null &&  !confirmedCancerObs.getValueCoded().getUuid().equalsIgnoreCase(LabTrackingConstants.YES))) {
                         includeEncounter = false;
                     }
                 }

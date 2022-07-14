@@ -53,10 +53,16 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
          </div>
 
          <div class="row top-buffer" ng-show="patientUuid==null">
-            <div class="col-md-3 text-left">
+            <div class="col-md-2 text-left">
                <label>
                   <input id="suspectedCancer-search" type="checkbox" ng-change="handleFilterChange('suspectedCancer')" ng-model="filter.suspectedCancer"/>
                   ${ui.message("labtrackingapp.orderdetails.suspectedCancer")}
+               </label>
+            </div>
+            <div class="col-md-2 text-left">
+               <label>
+                  <input id="confirmedCancer-search" type="checkbox" ng-change="handleFilterChange('confirmedCancer')" ng-model="filter.confirmedCancer"/>
+                  ${ui.message("labtrackingapp.orderdetails.confirmedCancer")}
                </label>
             </div>
             <div class="col-md-2 text-left">
@@ -66,7 +72,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                </label>
             </div>
             <div class="col-md-2 text-right">${ui.message("labtrackingapp.listpage.search")}</div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                <div class='input-group' id='search'>
                   <input  id="patient-search" type='text' class="form-control" ng-model="filter.patient.name" ng-keypress="handleSearchChange(${'$'}event)" placeholder="${ui.message("labtrackingapp.findPatient.search.placeholder")}" autofocus />
                   <span role="button" class="input-group-addon" ng-click="filter.patient.name=null;handleFilterChange('patient')">
