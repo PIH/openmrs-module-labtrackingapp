@@ -49,6 +49,7 @@ angular.module("labTrackingViewQueueController", [])
                     status: LabTrackingOrder.concepts.statusCodes[0],
                     patient: {uuid: null, name: null},
                     suspectedCancer: false,
+                    confirmedCancer: false,
                     urgentReview: false,
                     from_date: {opened: false, value: fromDate},
                     to_date: {opened: false, value: new Date()},
@@ -98,10 +99,11 @@ angular.module("labTrackingViewQueueController", [])
                 endDate.setHours(23, 59, 59, 999);
                 var status = $scope.filter.status.value;
                 var suspectedCancer = $scope.filter.suspectedCancer;
+                var confirmedCancer = $scope.filter.confirmedCancer;
                 var urgentReview = $scope.filter.urgentReview;
                 var patientName = $scope.filter.patient.name;
 
-                return LabTrackingDataService.loadPathologyQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer, urgentReview).then(function (resp) {
+                return LabTrackingDataService.loadPathologyQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer, confirmedCancer, urgentReview).then(function (resp) {
                     if (resp.status.code == 200) {
                         var cnt = resp.data.totalCount;
                         $scope.testOrderQueue = resp.data.orders;
@@ -219,7 +221,7 @@ angular.module("labTrackingViewQueueController", [])
             $scope.handleFilterChange = function (filterSource) {
                 if (filterSource == 'from_date' || filterSource == 'to_date'
                     || filterSource == 'status' || filterSource == 'patient'
-                    || filterSource == 'suspectedCancer' || filterSource == 'urgentReview') {
+                    || filterSource == 'suspectedCancer' || filterSource == 'confirmedCancer' || filterSource == 'urgentReview') {
                     // reset to the first page
                     $scope.filter.paging.currentPage = 1;
                     return $scope.loadQueue();

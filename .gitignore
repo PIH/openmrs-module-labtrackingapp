@@ -28,3 +28,5 @@
 omod/node
 omod/node_modules
 omod/src/main/webapp/resources/styles/lib/
+omod/.rubygems
+omod/.rubygems-provided

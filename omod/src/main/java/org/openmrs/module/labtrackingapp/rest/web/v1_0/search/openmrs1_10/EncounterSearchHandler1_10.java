@@ -24,6 +24,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 	private static final String REQUEST_PARAM_END_DATE = "endDateInMillis";
 	private static final String REQUEST_PARAM_STATUS = "status";
 	private static final String REQUEST_PARAM_SUSPECTED_CANCER = "suspectedCancer";
+	private static final String REQUEST_PARAM_CONFIRMED_CANCER = "confirmedCancer";
 	private static final String REQUEST_PARAM_URGENT_REVIEW = "urgentReview";
 	private static final String REQUEST_PARAM_PATIENT = "patient";
 	private static final String REQUEST_PARAM_PATIENT_NAME = "name";
@@ -52,6 +53,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 		String patientName = context.getParameter(REQUEST_PARAM_PATIENT_NAME);
 		int status = toInt(context.getParameter(REQUEST_PARAM_STATUS), 0);
 		boolean suspectedCancer = toBoolean(context.getParameter(REQUEST_PARAM_SUSPECTED_CANCER), false);
+		boolean confirmedCancer = toBoolean(context.getParameter(REQUEST_PARAM_CONFIRMED_CANCER), false);
 		boolean urgentReview = toBoolean(context.getParameter(REQUEST_PARAM_URGENT_REVIEW), false);
 		long startDate = toLong(context.getParameter(REQUEST_PARAM_START_DATE), 0);
 		long endDate = toLong(context.getParameter(REQUEST_PARAM_END_DATE), 0);
@@ -69,6 +71,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 					patientName,
 					status,
 					suspectedCancer,
+					confirmedCancer,
 					urgentReview,
 					0);
 		}
