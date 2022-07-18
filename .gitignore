@@ -28,5 +28,6 @@
 omod/node
 omod/node_modules
 omod/src/main/webapp/resources/styles/lib/
+omod/src/main/compass/
 omod/.rubygems
 omod/.rubygems-provided
