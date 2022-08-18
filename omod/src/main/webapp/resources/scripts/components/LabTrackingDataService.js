@@ -2,7 +2,7 @@ angular.module("labTrackingDataService", [])
     .service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'Upload', 'LabTrackingOrder', 'Encounter',
         function ($q, $http, SessionInfo, Upload, LabTrackingOrder, Encounter) {
             var _self = this;
-            var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,encounter,encounter:(obs,location),patient:(uuid,person:(uuid,display),identifiers:(identifier)),careSetting:(uuid,display),auditInfo";
+            var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,encounter:(uuid,location:(uuid,name),encounterDatetime,visit:(uuid,startDatetime,stopDatetime),encounterProviders:(uuid,encounterRole:(uuid),provider:(uuid,person:(display))),obs:(concept:(uuid),display,value,uuid,groupMembers)),patient:(uuid,person:(uuid,display),identifiers:(identifier)),careSetting:(uuid,display),auditInfo";
             var ENCOUNTER_FIELDS ="location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),orders:(uuid,dateActivated,dateStopped,orderType:(uuid,display),concept:(uuid,display),orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,careSetting:(uuid,display),voided),patient:(uuid,person:(uuid,display),identifiers:(identifier)),obs:(concept:(uuid),display,valueText,valueNumeric,valueCoded:(uuid,display),valueDatetime,uuid,groupMembers:(uuid,display,concept:(uuid,display),obsDatetime,valueCoded:(uuid,display),valueDatetime,valueNumeric,valueText,voided)),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid))";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
@@ -227,49 +227,11 @@ angular.module("labTrackingDataService", [])
              * @returns {LabTrackingOrder} the LabTrackingOrder object
              * */
             this.loadOrder = function (orderUuid) {
-              console.log("orderUuid: " + orderUuid);
                 var url = CONSTANTS.URLS.VIEW_ORDER.replace("ORDER_UUID", orderUuid);
                 return $http.get(url).then(function (resp) {
                     if (_self.isOk(resp)) {
                         var labTrackingOrder = LabTrackingOrder.fromWebServiceObject(resp.data);
-
-                        return _self.loadSpecimenDetailsForOrder(labTrackingOrder);
-
-                        //return {status:{ code: resp.status, msg:null},data:LabTrackingOrder.fromWebServiceObject(resp.data)};
-                    }
-                    else {
-                        return {status: {code: resp.status, msg: "Error loading queue " + resp.status}, data: []};
-                    }
-
-                }, function (err) {
-                    return {status: {code: 500, msg: "Error loading queue " + err}, data: []};
-                });
-            };
-
-            /* loads the specimen details for an order
-             *  @param {LabTrackingOrder} labTrackingOrder - the order to update with the info
-             * @returns {LabTrackingOrder} the LabTrackingOrder object
-             * */
-            this.loadSpecimenDetailsForOrder = function (labTrackingOrder) {
-                var url = CONSTANTS.URLS.VIEW_SPECIMEN_DETAILS.replace("ORDER_NUMBER", labTrackingOrder.orderNumber.value);
-                return $http.get(url).then(function (resp) {
-
-                    if (_self.isOk(resp)) {
-                        if (resp.data.results != null && resp.data.results.length > 0 && resp.data.results[0] != null) {
-                            LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject(resp.data.results[0], labTrackingOrder);
-                        }
-                        else {
-                            if (labTrackingOrder.procedures.length > 0) {
-                                for (var i = 0; i < labTrackingOrder.procedures.length; ++i) {
-                                    labTrackingOrder.proceduresForSpecimen.push({
-                                        value: labTrackingOrder.procedures[i].value,
-                                        label: labTrackingOrder.procedures[i].label,
-                                        obsUuid: null
-                                    });
-                                }
-
-                            }
-                        }
+                        LabTrackingOrder.fromSpecimenCollectionEncounterWebServiceObject(resp.data.encounter, labTrackingOrder);
                         return {status: {code: resp.status, msg: null}, data: labTrackingOrder};
                     }
                     else {
