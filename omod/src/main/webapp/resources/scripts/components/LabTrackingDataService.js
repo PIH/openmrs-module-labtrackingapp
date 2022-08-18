@@ -12,7 +12,7 @@ angular.module("labTrackingDataService", [])
             var CONCEPT_CLASS_DX_UUID = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
             var CONSTANTS = {
                 MAX_QUEUE_SIZE: 10,
-                MONITOR_PAGE_DAYS_BACK: 30,  //the default days back for the monitor page from filter
+                MONITOR_PAGE_DAYS_BACK: 365,  //the default days back for the monitor page from filter
                 URLS: {
                     FIND_PATIENT: "coreapps/findpatient/findPatient.page?app=edtriageapp.app.edTriage",
                     CANCEL_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID",
@@ -227,6 +227,7 @@ angular.module("labTrackingDataService", [])
              * @returns {LabTrackingOrder} the LabTrackingOrder object
              * */
             this.loadOrder = function (orderUuid) {
+              console.log("orderUuid: " + orderUuid);
                 var url = CONSTANTS.URLS.VIEW_ORDER.replace("ORDER_UUID", orderUuid);
                 return $http.get(url).then(function (resp) {
                     if (_self.isOk(resp)) {
