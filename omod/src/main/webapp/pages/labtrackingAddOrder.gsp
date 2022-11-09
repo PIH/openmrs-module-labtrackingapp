@@ -238,7 +238,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             </div>
             <div class="pull-right">
                <button id="cancelB" type="button" class="btn btn-default cancel" ng-click="handleCancelOrder()">${ui.message("uicommons.cancel")}</button>
-               <button class="btn btn-success" ng-click="handleSaveOrder()" ng-disabled="!readyToSubmit()" >${ui.message("uicommons.save")}</button>
+               <button class="btn btn-success confirm" ng-click="handleSaveOrder()" ng-disabled="!readyToSubmit()" >${ui.message("uicommons.save")}</button>
             </div>
          </form>
          <div class="row" ng-if="error">
