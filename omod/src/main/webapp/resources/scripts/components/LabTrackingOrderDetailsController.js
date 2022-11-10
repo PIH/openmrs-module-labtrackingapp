@@ -351,13 +351,19 @@ angular.module("labTrackingOrderDetailsController", [])
 
                 /*  uploads the PDF to the server
                  * @param file - the HTML form file elelemt*/
-                $scope.uploadPdf = function (file) {
+                $scope.uploadPdf = function (files) {
                     //just set the value, we will update when we save the encounter
-                    $scope.order.file.value = file;
-                    $scope.order.file.label = file.name;
-                    if ($scope.order.resultDate.value == null) {
-                        $scope.order.resultDate.value =  new Date();
+                  if (files && files.length ) {
+                    for (let i = 0; i < files.length; i++) {
+                      $scope.order.files.push({
+                        value: files[i],
+                        label: files[i].name,
+                      });
                     }
+                  }
+                  if ($scope.order.resultDate.value == null) {
+                      $scope.order.resultDate.value =  new Date();
+                  }
                 };
 
             },

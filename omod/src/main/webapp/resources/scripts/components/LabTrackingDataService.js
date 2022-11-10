@@ -2,8 +2,8 @@ angular.module("labTrackingDataService", [])
     .service('LabTrackingDataService', ['$q', '$http', 'SessionInfo', 'Upload', 'LabTrackingOrder', 'Encounter',
         function ($q, $http, SessionInfo, Upload, LabTrackingOrder, Encounter) {
             var _self = this;
-            var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,encounter:(uuid,location:(uuid,name),encounterDatetime,visit:(uuid,startDatetime,stopDatetime),encounterProviders:(uuid,encounterRole:(uuid),provider:(uuid,person:(display))),obs:(concept:(uuid),display,value,uuid,groupMembers)),patient:(uuid,person:(uuid,display),identifiers:(identifier)),careSetting:(uuid,display),auditInfo";
-            var ENCOUNTER_FIELDS ="location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),orders:(uuid,dateActivated,dateStopped,orderType:(uuid,display),concept:(uuid,display),orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,careSetting:(uuid,display),voided),patient:(uuid,person:(uuid,display),identifiers:(identifier)),obs:(concept:(uuid),display,valueText,valueNumeric,valueCoded:(uuid,display),valueDatetime,uuid,groupMembers:(uuid,display,concept:(uuid,display),obsDatetime,valueCoded:(uuid,display),valueDatetime,valueNumeric,valueText,voided)),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid))";
+            var ORDER_FIELDS = "uuid,dateActivated,orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,encounter:(uuid,location:(uuid,name),encounterDatetime,visit:(uuid,startDatetime,stopDatetime),encounterProviders:(uuid,encounterRole:(uuid),provider:(uuid,person:(display))),obs:(concept:(uuid),display,value,uuid,groupMembers,comment)),patient:(uuid,person:(uuid,display),identifiers:(identifier)),careSetting:(uuid,display),auditInfo";
+            var ENCOUNTER_FIELDS ="location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),orders:(uuid,dateActivated,dateStopped,orderType:(uuid,display),concept:(uuid,display),orderReason:(uuid,display),orderReasonNonCoded,orderNumber,instructions,clinicalHistory,careSetting:(uuid,display),voided),patient:(uuid,person:(uuid,display),identifiers:(identifier)),obs:(concept:(uuid),display,valueText,valueNumeric,valueCoded:(uuid,display),valueDatetime,uuid,comment,groupMembers:(uuid,display,concept:(uuid,display),obsDatetime,valueCoded:(uuid,display),valueDatetime,valueNumeric,valueText,comment,voided)),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid))";
             var LOCATION_CONSULT_NOTE_UUID = "dea8febf-0bbe-4111-8152-a9cf7df622b6";
             var PROCEDURES_CONCEPT_SET_UUID = "3c9a5a8c-1e0c-4697-92e1-0313c99311b6";
             var DIAGNOSIS_CONCEPT_SET_UUID = "36489682-f68a-4a82-9cf8-4d2dca2221c6";
@@ -542,36 +542,53 @@ angular.module("labTrackingDataService", [])
              * */
             this.uploadResultsPdf = function (labTrackingOrder) {
 
-                if (labTrackingOrder.file.value == null) {
+                if (labTrackingOrder.files.length == 0) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
 
-                var obs = {
+                var deferred = $q.defer();
+                var promises = [];
+
+                for (let index = 0; index < labTrackingOrder.files.length; index++) {
+                  var obs = {
                     person: labTrackingOrder.patient.value,
                     obsDatetime: Encounter.toObsDate(new Date()),
                     concept: LabTrackingOrder.concepts.file.value,
                     encounter: labTrackingOrder.specimenDetailsEncounter.uuid,
-                    location: labTrackingOrder.location.value
-                    //file: file
-                    //value: dataUrl
-                };
+                    location: labTrackingOrder.location.value,
+                    comment: labTrackingOrder.files[index].label
+                  };
 
-                return Upload.upload({
+                  promises.push(Upload.upload({
                     url: CONSTANTS.URLS.UPLOAD_FILE,
-                    data: {json: JSON.stringify(obs), file: labTrackingOrder.file.value},
-                }).then(function (resp) {
-                    //console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
-                    labTrackingOrder.file.url = resp.data.value.links.uri;
-                    labTrackingOrder.file.obsUuid = resp.data.uuid;
+                    data: {
+                      json: JSON.stringify(obs),
+                      file: labTrackingOrder.files[index].value
+                    },
+                  }).then(function(resp) {
+                    return resp;
+                  }));
+                }
 
-                    return {status: 200, data: labTrackingOrder};
-                }, function (resp) {
-                    console.log('Error status: ' + resp.status);
-                    return {status: 500, data: resp};
-                }, function (evt) {
-                    //var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                    //console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+                $q.all(promises).then(function(results) {
+                    for (let index = 0; index < results.length; index ++) {
+                      for (const file of labTrackingOrder.files) {
+                        if ( file.value.name == results[index].config.data.file.name ) {
+                          file.url = results[index].data.value.links.uri;
+                          file.obsUuid = results[index].data.uuid;
+                          break;
+                        }
+                      }
+                    }
+                   deferred.resolve({status: 200, data: labTrackingOrder});
+                }, function (error) {
+                  deferred.reject( {status: 500, data: response});
+                }).catch( function(error) {
+                  console.log("error=" + error);
+                  deferred.reject({status: 500, data: error});
                 });
+
+                return deferred.promise;
             };
 
             /*

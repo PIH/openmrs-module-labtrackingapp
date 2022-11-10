@@ -21,7 +21,7 @@
             <div class="row">
                <label class="control-label form-control-static text-right col-sm-3">${ui.message("labtrackingapp.orderdetails.uploadfilelabel")}</label>
                <div class="col-sm-9">
-                  <button type="button" class="btn btn-primary btn-sm" ng-show="order.file.url!=null" ng-click="downloadPdf()">Download PDF <i class="glyphicon glyphicon-download" aria-hidden="true"></i></button>
+                  <button type="button" class="btn btn-primary btn-sm" ng-show="order.files.length > 0" ng-click="downloadPdf()">Download PDF <i class="glyphicon glyphicon-download" aria-hidden="true"></i></button>
                </div>
             </div>
             <div class="row">

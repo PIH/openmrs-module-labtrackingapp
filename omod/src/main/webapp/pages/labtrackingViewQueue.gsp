@@ -121,7 +121,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                            </span>
                         </a>
                      </td>
-                     <td nowrap class="text-center small date-link"><span role="button" ng-show="a.file.url!=null" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
+                     <td nowrap class="text-center small date-link"><span role="button" ng-show="a.files.length > 0" ng-click="downloadPdf(a)" title="Download"><i class="glyphicon glyphicon-download" aria-hidden="true"></i></span>
                          <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && handleDetails(a, 'results')">
                             <span title="Enter a value" ng-if="canEdit() && a.processedDate.value!=null && a.resultDate.value==null"><i class="glyphicon glyphicon-edit" aria-hidden="true"></i> ${ui.message("labtrackingapp.listpage.enter")}</span>
                             <span ng-if="a.resultDate.value!=null">{{a.resultDate.value | date : dateFormat}}

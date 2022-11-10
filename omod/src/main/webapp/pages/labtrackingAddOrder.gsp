@@ -56,7 +56,8 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
             <div class="form-group row">
                <label class="col-sm-2 col-form-label" for="location">${ui.message("labtrackingapp.orderdetails.locationlabel")}</label>
                <div class="col-sm-9">
-                  <select class="form-control" id="location" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
+                  <select ng-if="!order.uuid" class="form-control" id="location" type="text" ng-model="order.locationWhereSpecimenCollected"  ng-options="a as a.label for a in locations | orderBy:'label' track by a.value" class="form-control"></select>
+                  <p ng-if="order.uuid" class="form-control-static" > {{ order.locationWhereSpecimenCollected.label }}</p>
                </div>
             </div>
             <div class="form-group row required">

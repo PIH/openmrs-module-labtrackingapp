@@ -32,21 +32,30 @@
 			<div class="row top-buffer">
 				<label class="control-label col-sm-3 text-right" for="upload_file">${ui.message("labtrackingapp.orderdetails.uploadfilelabel")}</label>
 				<div class="col-sm-9">
-                    <div class="btn-toolbar">
-                        <label class="btn btn-primary btn-sm" for="file">
-				            <span ng-show="order.file.url==null">${ui.message("labtrackingapp.addPDF")}</span>
-				            <span ng-show="order.file.url!=null">${ui.message("labtrackingapp.replacePDF")}</span>
-				            <i class="glyphicon glyphicon-open" aria-hidden="true"></i>
-				        </label>
-                      <button type="button" class="btn btn-primary btn-sm" ng-show="order.file.url!=null" ng-click="removePdf()">${ui.message("labtrackingapp.removePDF")} <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
-                      <button type="button" class="btn btn-primary btn-sm" ng-show="order.file.url!=null" ng-click="downloadPdf()">${ui.message("labtrackingapp.downloadPDF")} <i class="glyphicon glyphicon-download" aria-hidden="true"></i></button>
-				        <form name="resultsForm" id="resultsForm">
-					      <input type="file"  name="file" id="file" ng-show="0"
-                                 accept="application/pdf" ngf-select="uploadPdf(${'$'}file)"
-                                 ngf-model-invalid="errorFile">
-                        </form>
-                        <span ng-if="order.file.label">{{order.file.label}}</span>
-                    </div>
+					<div class="row justify-content-start" ng-if="order.files.length" ng-repeat="f in order.files">
+						<div class="col-sm-3">
+							<iframe ng-if="f.value" ngf-src="f.value" width="100" height="100"></iframe>
+							<a ng-if="f.url" href="{{ f.url }}">{{ f.label }}</a>
+						</div>
+						<div class="col-sm-9">
+							<button type="button" class="btn btn-primary btn-sm" ng-click="downloadPdf()">${ui.message("labtrackingapp.downloadPDF")} <i class="glyphicon glyphicon-download" aria-hidden="true"></i></button>
+							<button type="button" class="btn btn-primary btn-sm" ng-click="removePdf()">${ui.message("labtrackingapp.removePDF")} <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
+							<br>
+						</div>
+					</div>
+					<div class="btn-toolbar">
+						<label class="btn btn-primary btn-sm" for="file">
+							<span>${ui.message("labtrackingapp.addPDF")}</span>
+							<i class="glyphicon glyphicon-open" aria-hidden="true"></i>
+						</label>
+						<form name="resultsForm" id="resultsForm">
+							<input type="file"  name="file" id="file" ng-show="0"
+								   accept="application/pdf"
+								   ngf-select="uploadPdf(${'$'}files)"
+								   ngf-multiple="true"
+								   ngf-model-invalid="errorFile">
+						</form>
+					</div>
 				</div>
 			</div>
 			<div class="row top-buffer">
