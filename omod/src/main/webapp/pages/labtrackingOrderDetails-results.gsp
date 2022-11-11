@@ -1,3 +1,8 @@
+<style>
+	.file-column {
+		margin-bottom:5px;
+	}
+</style>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h4 class="panel-title">
@@ -32,14 +37,13 @@
 			<div class="row top-buffer">
 				<label class="control-label col-sm-3 text-right" for="upload_file">${ui.message("labtrackingapp.orderdetails.uploadfilelabel")}</label>
 				<div class="col-sm-9">
-					<div class="row justify-content-start" ng-if="order.files.length" ng-repeat="f in order.files">
-						<div class="col-sm-3">
-							<iframe ng-if="f.value" ngf-src="f.value" width="100" height="100"></iframe>
+					<div class="row justify-content-start file-column" ng-if="order.files.length" ng-repeat="f in order.files">
+						<div class="col-sm-4">
 							<a ng-if="f.url" href="{{ f.url }}">{{ f.label }}</a>
+							<span ng-if="!f.url">{{ f.label }}</span>
 						</div>
-						<div class="col-sm-9">
-							<button type="button" class="btn btn-primary btn-sm" ng-click="downloadPdf()">${ui.message("labtrackingapp.downloadPDF")} <i class="glyphicon glyphicon-download" aria-hidden="true"></i></button>
-							<button type="button" class="btn btn-primary btn-sm" ng-click="removePdf()">${ui.message("labtrackingapp.removePDF")} <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
+						<div class="col-sm-8">
+							<button type="button" class="btn btn-primary btn-sm" ng-click="removePdfFile(f)">${ui.message("labtrackingapp.removePDF")} <i class="glyphicon glyphicon-remove" aria-hidden="true"></i></button>
 							<br>
 						</div>
 					</div>

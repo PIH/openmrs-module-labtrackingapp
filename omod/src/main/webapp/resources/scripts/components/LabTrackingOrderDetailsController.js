@@ -344,10 +344,19 @@ angular.module("labTrackingOrderDetailsController", [])
                     LabTrackingDataService.downloadPdf($scope.order);
                 };
 
-                /*removes the PDF*/
-                $scope.removePdf = function () {
-                    return LabTrackingDataService.deleteResultsPdf($scope.order);
-                };
+                /* removes PDF file from the list of files to be uploaded to the server*/
+                $scope.removePdfFile = function(file) {
+                  if ( file.obsUuid ) {
+                    LabTrackingDataService.deleteResultsPdf($scope.order, file).then(function (status) {
+                      if (status == "200") {
+                        $scope.order.files = $scope.order.files.filter(pdf => pdf.obsUuid != file.obsUuid);
+                      }
+                    });
+                  } else {
+                    // the file has not been uploaded yet
+                    $scope.order.files = $scope.order.files.filter(pdf => pdf.label != file.label);
+                  }
+                }
 
                 /*  uploads the PDF to the server
                  * @param file - the HTML form file elelemt*/

@@ -517,7 +517,7 @@ angular.module("labTrackingDataService", [])
                         var downloadLink = angular.element('<a></a>');
                         downloadLink.attr('target', "_blank");
                         downloadLink.attr('href', window.URL.createObjectURL(blob));
-                        downloadLink.attr('download', 'results.pdf');
+                        downloadLink.attr('download', labTrackingOrder.file.label);
                         downloadLink[0].click();
                     });
             };
@@ -525,14 +525,14 @@ angular.module("labTrackingDataService", [])
             /*  deletes the PDF to the server
              * @param {LabTrackingOrder} labTrackingOrder - the order that contains the PDF you want to delete
              *             */
-            this.deleteResultsPdf = function (labTrackingOrder) {
+            this.deleteResultsPdf = function (labTrackingOrder, file) {
 
-                if (labTrackingOrder.file.obsUuid == null) {
+                if (file.obsUuid == null) {
                     return Encounter.emptyPromise(labTrackingOrder);
                 }
 
-                return Encounter.deleteObs([labTrackingOrder.file.obsUuid]).then(function (res) {
-                    labTrackingOrder.file = {value: null, url: null, obsUuid: null};
+                return Encounter.deleteObs([file.obsUuid]).then(function (res) {
+                  return res.status;
                 });
             };
 
@@ -550,6 +550,10 @@ angular.module("labTrackingDataService", [])
                 var promises = [];
 
                 for (let index = 0; index < labTrackingOrder.files.length; index++) {
+                  if ( labTrackingOrder.files[index].obsUuid ) {
+                    // this file was already uploaded previousily
+                    continue;
+                  }
                   var obs = {
                     person: labTrackingOrder.patient.value,
                     obsDatetime: Encounter.toObsDate(new Date()),
@@ -573,7 +577,7 @@ angular.module("labTrackingDataService", [])
                 $q.all(promises).then(function(results) {
                     for (let index = 0; index < results.length; index ++) {
                       for (const file of labTrackingOrder.files) {
-                        if ( file.value.name == results[index].config.data.file.name ) {
+                        if (!file.obsUuid && file.value && file.value.name == results[index].config.data.file.name && file.value.size == results[index].config.data.file.size) {
                           file.url = results[index].data.value.links.uri;
                           file.obsUuid = results[index].data.uuid;
                           break;
@@ -584,7 +588,6 @@ angular.module("labTrackingDataService", [])
                 }, function (error) {
                   deferred.reject( {status: 500, data: response});
                 }).catch( function(error) {
-                  console.log("error=" + error);
                   deferred.reject({status: 500, data: error});
                 });
 
