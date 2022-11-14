@@ -5,6 +5,12 @@ ${ ui.includeFragment("labtrackingapp", "libs") }
     ui.includeJavascript("labtrackingapp", "app_order_details.js")
 %>
 
+<style>
+    .file-column {
+        margin-bottom:5px;
+    }
+</style>
+
 <script type="text/javascript">
     var breadcrumbs = [
         {icon: "icon-home", link: '/' + OPENMRS_CONTEXT_PATH + '/index.htm'},

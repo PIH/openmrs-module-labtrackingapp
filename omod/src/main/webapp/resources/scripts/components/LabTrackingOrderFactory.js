@@ -93,7 +93,7 @@ angular.module("labTrackingOrderFactory", [])
             this.processedDate = { value: null };
             this.resultDate = {value: null, obsUuid: null};
             this.notes = {value: null};
-            this.file = {value: null, url: null, obsUuid: null};
+            this.files = []; // array of files
             this.serverDatetime = null;
             this.debug = {};
 
@@ -408,10 +408,12 @@ angular.module("labTrackingOrderFactory", [])
                 order.dateImmunoSentToBoston.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
-                // var regex = /(.*)\/\/[^\/]+\//;  // hack to remove hostname and just use relative link to solve https://tickets.pih-emr.org/browse/UHM-3500
-                // order.file.url = v.links.uri.replace(regex, '/');
-                order.file.url = "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs/" + uuid + "/value"
-                order.file.obsUuid = uuid;
+                let fileObs = {
+                  url: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/obs/" + uuid + "/value",
+                  obsUuid: uuid,
+                  label: obs[i].comment,
+                };
+                order.files.push(fileObs);
               } else {
 
                 //finally update the specimen details
@@ -713,8 +715,11 @@ angular.module("labTrackingOrderFactory", [])
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
                             var regex = /(.*)\/\/[^\/]+\//;  // hack to remove hostname and just use relative link to solve https://tickets.pih-emr.org/browse/UHM-3500
-                            labTrackingOrder.file.url = v.links.uri.replace(regex, '/');
-                            labTrackingOrder.file.obsUuid = uuid;
+                            labTrackingOrder.files.push({
+                              url: v.links.uri.replace(regex, '/'),
+                              obsUuid: uuid,
+                              label: obs[i].comment
+                            });
                         } else {
 
                             //finally update the specimen details
@@ -1087,13 +1092,14 @@ angular.module("labTrackingOrderFactory", [])
 
             }
 
-            if (labTrackingOrder.file.valueBase64 != null) {
-                obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.file.value,
-                    labTrackingOrder.file.valueBase64, labTrackingOrder.file.obsUuid));
-                if (labTrackingOrder.file.obsUuid != null) {
-                    //b/c of a bug in the web services, you cannot update a complex obs
-                    //so just delete the existing id
-                    //obsIdsToDelete.push(labTrackingOrder.file.obsUuid);
+            if (labTrackingOrder.files.length > 0 ) {
+                for (let index = 0; index < labTrackingOrder.files.length; ++index) {
+                  if (labTrackingOrder.files[index].valueBase64 != null ) {
+                    obs.push(Encounter.toObsWebServiceObject(
+                      LabTrackingOrder.concepts.file.value,
+                      labTrackingOrder.files[index].valueBase64,
+                      labTrackingOrder.files[index].obsUuid));
+                  }
                 }
             }
 
@@ -1168,7 +1174,7 @@ angular.module("labTrackingOrderFactory", [])
         /* gets the Test Order status */
         function calcStatus(order) {
             var idx = 1; //Requested
-            if (order.canceled && order.notes.value == null && order.file.url == null) {
+            if (order.canceled && order.notes.value == null && order.files.length < 1) {
                 idx = 4; // Canceled
             }  else if (order.specimenDetailsEncounter.uuid) {
                 if (order.resultDate.value) {
