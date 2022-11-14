@@ -1,8 +1,3 @@
-<style>
-	.file-column {
-		margin-bottom:5px;
-	}
-</style>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h4 class="panel-title">
@@ -39,7 +34,7 @@
 				<div class="col-sm-9">
 					<div class="row justify-content-start file-column" ng-if="order.files.length" ng-repeat="f in order.files">
 						<div class="col-sm-4">
-							<a ng-if="f.url" href="{{ f.url }}">{{ f.label }}</a>
+							<a ng-if="f.url" href="{{ f.url }}">{{ f.label ? f.label : 'results.pdf' }}</a>
 							<span ng-if="!f.url">{{ f.label }}</span>
 						</div>
 						<div class="col-sm-8">
