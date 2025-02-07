@@ -3,7 +3,7 @@
 
 	<groupId>org.openmrs.module</groupId>
 	<artifactId>labtrackingapp</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.2.0</version>
 	<packaging>pom</packaging>
 	<name>Lab Tracking App</name>
 	<description>Tracks lab specimens and their results</description>
@@ -14,7 +14,7 @@
 		<connection>scm:git:git@github.com:PIH/openmrs-module-labtrackingapp.git</connection>
 		<developerConnection>scm:git:git@github.com:PIH/openmrs-module-labtrackingapp.git</developerConnection>
 		<url>https://github.com/PIH/openmrs-module-labtrackingapp/</url>
-		<tag>HEAD</tag>
+		<tag>1.2.0</tag>
   	</scm>
 
 	<distributionManagement>
