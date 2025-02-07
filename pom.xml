@@ -14,7 +14,8 @@
 		<connection>scm:git:git@github.com:PIH/openmrs-module-labtrackingapp.git</connection>
 		<developerConnection>scm:git:git@github.com:PIH/openmrs-module-labtrackingapp.git</developerConnection>
 		<url>https://github.com/PIH/openmrs-module-labtrackingapp/</url>
-  </scm>
+		<tag>HEAD</tag>
+  	</scm>
 
 	<distributionManagement>
 		<repository>
