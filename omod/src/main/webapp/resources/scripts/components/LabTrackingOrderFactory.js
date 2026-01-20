@@ -693,24 +693,24 @@ angular.module("labTrackingOrderFactory", [])
                               labTrackingOrder.specimenSentToPaP.labPaPLocation.obsUuid = obs2.uuid;
                             }
                             else if ( conceptUuid2 == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE ) {
-                              labTrackingOrder.specimenSentToPaP.dateSent.value = new Date(obs2.value);
+                              labTrackingOrder.specimenSentToPaP.dateSent.value = _constructDateFromWebServiceDateString(obs2.value);
                               labTrackingOrder.specimenSentToPaP.dateSent.obsUuid = obs2.uuid;
                             } else if ( conceptUuid2 == LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE ) {
-                              labTrackingOrder.specimenSentToPaP.dateReturned.value = new Date(obs2.value);
+                              labTrackingOrder.specimenSentToPaP.dateReturned.value = _constructDateFromWebServiceDateString(obs2.value);
                               labTrackingOrder.specimenSentToPaP.dateReturned.obsUuid = obs2.uuid;
                             }
                           }
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
-                            labTrackingOrder.resultDate.value = new Date(v);
+                            labTrackingOrder.resultDate.value = _constructDateFromWebServiceDateString(v);
                             labTrackingOrder.resultDate.obsUuid = uuid;
                         }
                        else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
-                            labTrackingOrder.processedDate.value = new Date(v);
+                            labTrackingOrder.processedDate.value = _constructDateFromWebServiceDateString(v);
                             labTrackingOrder.processedDate.obsUuid = uuid;
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
-                          labTrackingOrder.dateImmunoSentToBoston.value = new Date(v);
+                          labTrackingOrder.dateImmunoSentToBoston.value = _constructDateFromWebServiceDateString(v);
                           labTrackingOrder.dateImmunoSentToBoston.obsUuid = uuid;
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
@@ -1251,6 +1251,16 @@ angular.module("labTrackingOrderFactory", [])
             }
         }
 
+        function _constructDateFromWebServiceDateString(dateStr) {
+            var dateObj = "";
+            if (dateStr) {
+                const[yearStr, monthStr, dayStr] = dateStr.split('-');
+                if (yearStr && monthStr && dayStr) {
+                    dateObj = new Date(yearStr, monthStr - 1, dayStr);
+                }
+            }
+            return dateObj;
+        }
         /**
          * Return the constructor function
          */
