@@ -706,7 +706,7 @@ angular.module("labTrackingOrderFactory", [])
                             labTrackingOrder.resultDate.obsUuid = uuid;
                         }
                        else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
-                            labTrackingOrder.processedDate.value = new Date(v);
+                            labTrackingOrder.processedDate.value = _constructDateFromWebServiceDateString(v);
                             labTrackingOrder.processedDate.obsUuid = uuid;
                         }
                         else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
@@ -1251,6 +1251,16 @@ angular.module("labTrackingOrderFactory", [])
             }
         }
 
+        function _constructDateFromWebServiceDateString(dateStr) {
+            var dateObj = "";
+            if (dateStr) {
+                const[yearStr, monthStr, dayStr] = dateStr.split('-');
+                if (yearStr && monthStr && dayStr) {
+                    dateObj = new Date(yearStr, monthStr - 1, dayStr);
+                }
+            }
+            return dateObj;
+        }
         /**
          * Return the constructor function
          */
