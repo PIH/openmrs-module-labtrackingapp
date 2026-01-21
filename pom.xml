@@ -62,8 +62,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-
-
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>
@@ -71,8 +69,6 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-
-
 
 		<dependency>
 			<groupId>org.openmrs.test</groupId>
@@ -87,14 +83,6 @@
 			<groupId>org.openmrs.module</groupId>
 			<artifactId>appframework-api</artifactId>
 			<version>${appframeworkVersion}</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.openmrs.module</groupId>
-			<artifactId>appframework-api</artifactId>
-			<version>${appframeworkVersion}</version>
-			<classifier>tests</classifier>
 			<scope>provided</scope>
 		</dependency>
 
@@ -156,6 +144,20 @@
 			<version>${metadatamappingVersion}</version>
 			<scope>test</scope>
 		</dependency>
+
+        <!-- This is needed for appframework testing -->
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.0</version>
+            <scope>test</scope>
+        </dependency>
 
 	</dependencies>
 

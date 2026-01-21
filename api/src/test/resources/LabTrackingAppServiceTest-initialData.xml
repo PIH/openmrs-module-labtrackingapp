@@ -69,22 +69,22 @@
     <!-- suspectedCancer obs -->
     <obs obs_id="9999" person_id="2" concept_id="1101" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_coded="9997" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="B30D60F7-7C56-41B6-AE55-3C891E5AFB19"/>
+         uuid="B30D60F7-7C56-41B6-AE55-3C891E5AFB19" status="FINAL"/>
 
     <!-- urgentReview obs -->
     <obs obs_id="1102" person_id="2" concept_id="9996" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_coded="9997" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="B77273A0-3A2E-48EF-AF34-B3B79D98914E"/>
+         uuid="B77273A0-3A2E-48EF-AF34-B3B79D98914E" status="FINAL"/>
 
     <!-- the observation that contains the PROCESSED DATE -->
     <obs obs_id="100003" person_id="2" concept_id="9899" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_datetime="2016-12-11 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="A136033D-1FEF-45F8-94F8-B31F7842845B"/>
+         uuid="A136033D-1FEF-45F8-94F8-B31F7842845B" status="FINAL"/>
 
     <!-- the observation that maps the order to this encounter -->
     <obs obs_id="9991" person_id="2" concept_id="9992" encounter_id="9992" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="ORD-999" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="3ce93824-26fe-102b-80cb-0017a47871b2"/>
+         uuid="3ce93824-26fe-102b-80cb-0017a47871b2" status="FINAL"/>
 
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-111111111111" order_id="9991" encounter_id="9991" order_type_id="1001" urgency="ROUTINE"
@@ -101,7 +101,7 @@
     <!-- the observation that maps the order to this encounter -->
     <obs obs_id="1103" person_id="2" concept_id="9992" encounter_id="8881" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="ORD-888" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="0E806E62-2859-4222-BDA4-7A9B0941C3FF"/>
+         uuid="0E806E62-2859-4222-BDA4-7A9B0941C3FF" status="FINAL"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-111111111112" order_id="9992" encounter_id="8881" order_type_id="1001" urgency="ROUTINE"
             order_action="NEW" concept_id="9991" orderer="1" date_activated="2016-12-11 00:00:00.0"
@@ -123,22 +123,22 @@
     <!-- the observation that maps the order to this encounter -->
     <obs obs_id="9992" person_id="2" concept_id="9992" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="ORD-777" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="3ce93824-26fe-102b-80cb-777777777777"/>
+         uuid="3ce93824-26fe-102b-80cb-777777777777" status="FINAL"/>
 
     <!-- the observation that contains the results date -->
     <obs obs_id="9993" person_id="2" concept_id="9993" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_datetime="2016-12-12 00:00:00.0" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="3ce93824-26fe-102b-80cb-777777777778"/>
+         uuid="3ce93824-26fe-102b-80cb-777777777778" status="FINAL"/>
 
     <!-- the accessionNumber UUID that contains the notes -->
     <obs obs_id="9994" person_id="2" concept_id="9995" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="the quick brown fox jumps over the lazy dog." creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="3ce93824-26fe-102b-80cb-777777777779"/>
+         uuid="3ce93824-26fe-102b-80cb-777777777779" status="FINAL"/>
 
     <!-- suspectedCancer obs -->
     <obs obs_id="9998" person_id="2" concept_id="9996" encounter_id="9994" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_coded="9997" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="CE73E78F-BF33-4051-8F9F-62BD2E157445"/>
+         uuid="CE73E78F-BF33-4051-8F9F-62BD2E157445" status="FINAL"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-111111111113" order_id="9993" encounter_id="9993"
             order_type_id="1001" urgency="ROUTINE"
@@ -174,12 +174,12 @@
     <!-- the observation that maps the order to this encounter -->
     <obs obs_id="5555" person_id="2" concept_id="9992" encounter_id="5556" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="ORD-555" creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="3ce93824-26fe-102b-80cb-555555555555"/>
+         uuid="3ce93824-26fe-102b-80cb-555555555555" status="FINAL"/>
 
     <!-- the observation that contains the notes -->
     <obs obs_id="5556" person_id="2" concept_id="9994" encounter_id="5556" obs_datetime="2016-12-11 00:00:00.0"
          location_id="9991" value_text="the quick brown fox jumps over the lazy dog." creator="1" date_created="2016-12-11 00:00:00.0" voided="false"
-         uuid="3ce93824-26fe-102b-80cb-555555555556"/>
+         uuid="3ce93824-26fe-102b-80cb-555555555556" status="FINAL"/>
 
     <orders uuid="f4740b0b-206c-48a4-a5b7-555555555555" order_id="5555" encounter_id="5555"
             order_type_id="1001" urgency="ROUTINE"
