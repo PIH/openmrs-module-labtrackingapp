@@ -27,13 +27,8 @@
   cursor:pointer;
 }
 
-/* fix so that the 1000px max size works with bootstrap
-   if the UI changes, we can remove this
-*/
-@media (min-width: 1200px) {
-	.container {
-		width: 970px;
-	}
+.container {
+  width: 100%;
 }
 
 /* two columns when printing pathology form */
