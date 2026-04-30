@@ -37,14 +37,14 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <openMRSVersion>2.8.3</openMRSVersion>
+        <openMRSVersion>2.8.6</openMRSVersion>
 
         <appframeworkVersion>2.18.0</appframeworkVersion>
         <appuiVersion>1.18.0</appuiVersion>
         <calculationVersion>2.0.0</calculationVersion>
-        <emrapiVersion>3.2.1</emrapiVersion>
-        <metadatamappingVersion>1.7.0</metadatamappingVersion>
-        <reportingVersion>2.0.0</reportingVersion>
+        <emrapiVersion>3.3.0</emrapiVersion>
+        <metadatamappingVersion>2.0.0</metadatamappingVersion>
+        <reportingVersion>2.1.0</reportingVersion>
         <serializationxstreamVersion>0.3.0</serializationxstreamVersion>
         <uicommonsVersion>3.0.0</uicommonsVersion>
         <uiframeworkVersion>4.0.0</uiframeworkVersion>
