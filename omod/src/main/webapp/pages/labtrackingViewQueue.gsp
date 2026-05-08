@@ -22,13 +22,13 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
       <div class="panel-heading">${ui.message("labtrackingapp.listpage.panelheading")}</div>
       <div class="panel-body">
          <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
                <label for="status">${ui.message("labtrackingapp.listpage.status")}:</label>
                <select class="form-control" id="status" ng-model="filter.status" ng-change="handleFilterChange('status')"
                   ng-options="item as item.translatedLabel for item in statusCodes track by item.value">
                </select>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                <label for="from_date">${ui.message("labtrackingapp.listpage.from")}:</label>
                <div class='input-group date' id='from_date'>
                   <input type="text" class="form-control" uib-datepicker-popup="{{filter.date_box.format}}" ng-model="filter.from_date.value" is-open="filter.from_date.opened"
@@ -39,7 +39,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                   </span>
                </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                <label for="to_date">${ui.message("labtrackingapp.listpage.to")}:</label>
                <div class='input-group date' id='to_date'>
                   <input type="text" class="form-control" uib-datepicker-popup="{{filter.date_box.format}}" ng-model="filter.to_date.value" is-open="filter.to_date.opened"
@@ -50,6 +50,13 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                   </span>
                </div>
             </div>
+             <div class="col-md-3">
+                 <label for="location">${ui.message("Encounter.location")}:</label>
+                 <select class="form-control" id="location" ng-model="filter.location" ng-change="handleFilterChange('location')"
+                         ng-options="item as item.name for item in visitLocations track by item.uuid">
+                     <option value="">${ui.message("labtrackingapp.listpage.location.all")}</option>
+                 </select>
+             </div>
          </div>
 
          <div class="row top-buffer" ng-show="patientUuid==null">
@@ -93,6 +100,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                      <th ng-show="patientUuid==null">${ui.message("labtrackingapp.listpage.name")}</th>
                      <th>${ui.message("labtrackingapp.accessionNumber")}</th>
                      <th>${ui.message("labtrackingapp.listpage.status")}</th>
+                     <th>${ui.message("Encounter.location")}</th>
                      <th>${ui.message("labtrackingapp.listpage.requestdate")}</th>
                      <th>${ui.message("labtrackingapp.listpage.processingDate")}</th>
                      <th>${ui.message("labtrackingapp.listpage.resultdate")}</th>
@@ -105,6 +113,7 @@ ${patient?ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) 
                      <td  ng-show="patientUuid==null"><a href="/${ ui.contextPath() }/coreapps/clinicianfacing/patient.page?patientId={{ a.patient.value }}">{{a.patient.name}}</a></td>
                      <td>{{a.accessionNumber.value}}</td>
                      <td> {{ translateStatusCode(a.status.label) }}</td>
+                      <td>{{ getVisitLocation(a.location) ? getVisitLocation(a.location).name : '' }}</td>
                      <td nowrap class="text-center small date-link">
                         <a role="button" ng-class="{ 'no-link': !canEdit() }" ng-click="canEdit() && a.visit.value && handleDetails(a, 'request')">
                            <span ng-if="a.urgentReview.value" class="glyphicon glyphicon-exclamation-sign urgent-icon" title="Requires urgent review!"></span>

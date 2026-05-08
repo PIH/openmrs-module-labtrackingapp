@@ -11,6 +11,7 @@ package org.openmrs.module.labtrackingapp.api.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
@@ -18,6 +19,7 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
+import org.openmrs.module.labtrackingapp.api.VisitLocation;
 import org.openmrs.module.labtrackingapp.api.db.LabTrackingAppDAO;
 
 import java.util.ArrayList;
@@ -28,7 +30,34 @@ import java.util.Map;
 
 public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements LabTrackingAppService {
 
+    private static Map<String, VisitLocation> locationsByUuid = new HashMap<String, VisitLocation>();
+
     private LabTrackingAppDAO dao;
+
+    private static void initializeLocationsMap() {
+        if (locationsByUuid.isEmpty()) {
+            for (Location location : Context.getLocationService().getAllLocations()) {
+                VisitLocation visitLocation = new VisitLocation(location);
+                visitLocation.setNearestVisitLocation(findNearestVisitLocation(location.getParentLocation()));
+                locationsByUuid.put(location.getUuid(), visitLocation);
+            }
+        }
+    }
+
+    private static Location findNearestVisitLocation(Location location) {
+        if (location == null) {
+            return null;
+        }
+        if (location.hasTag("Visit Location")) {
+            return location;
+        }
+        return findNearestVisitLocation(location.getParentLocation());
+    }
+
+    public static Map<String, VisitLocation> getLocationsByUuid() {
+        initializeLocationsMap();
+        return locationsByUuid;
+    }
 
     public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status,
                                        boolean suspectedCancer, boolean urgentReview, int maxResults){
@@ -39,7 +68,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         return dao.getSpecimenDetailsEncountersByOrderNumbers(orderNumbers);
     }
 
-    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults) {
+    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults, String visitLocationUuid) {
 
         List<Encounter> encounters = null;
         List<OrderType> orderTypes = new ArrayList<OrderType>();
@@ -52,7 +81,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                 Encounter encounter = order.getEncounter();
                 boolean includeEncounter = true;
 
-                if ( StringUtils.isBlank(patientUuid)
+                if ( StringUtils.isBlank(patientUuid) && StringUtils.isBlank(visitLocationUuid)
                         && StringUtils.isBlank(patientName)
                         && (status == LabTrackingConstants.LabTrackingOrderStatus.ALL.getId() || status == LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() )
                         && !suspectedCancer && !confirmedCancer && !urgentReview) {
@@ -60,7 +89,15 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                     encounters.add(encounter);
                     continue;
                 }
-
+                if (StringUtils.isNotBlank(visitLocationUuid) && encounter.getLocation() != null) {
+                    VisitLocation encounterLocation = getLocationsByUuid().get(encounter.getLocation().getUuid());
+                    if ( encounterLocation != null && encounterLocation.getNearestVisitLocation() != null && visitLocationUuid.equals(encounterLocation.getNearestVisitLocation().getUuid()) ) {
+                        includeEncounter =true;
+                    } else {
+                        //no match on the visitLocationUuid, so skip this encounter
+                        continue;
+                    }
+                }
                 Obs processedObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
                 Boolean processed = processedObs != null && processedObs.getValueDatetime() != null;
 

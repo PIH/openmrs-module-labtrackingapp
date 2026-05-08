@@ -27,6 +27,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 	private static final String REQUEST_PARAM_CONFIRMED_CANCER = "confirmedCancer";
 	private static final String REQUEST_PARAM_URGENT_REVIEW = "urgentReview";
 	private static final String REQUEST_PARAM_PATIENT = "patient";
+    private static final String REQUEST_PARAM_VISIT_LOCATION = "visitLocation";
 	private static final String REQUEST_PARAM_PATIENT_NAME = "name";
 	private static final String REQUEST_PARAM_TOTAL_COUNT = "totalCount";
 	
@@ -50,6 +51,7 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 	public PageableResult search(RequestContext context) throws ResponseException {
 		String orderNumberParam = context.getParameter(REQUEST_PARAM_ORDER_NUMBER);
 		String patientUuid = context.getParameter(REQUEST_PARAM_PATIENT);
+        String visitLocationUuid = context.getParameter(REQUEST_PARAM_VISIT_LOCATION);
 		String patientName = context.getParameter(REQUEST_PARAM_PATIENT_NAME);
 		int status = toInt(context.getParameter(REQUEST_PARAM_STATUS), 0);
 		boolean suspectedCancer = toBoolean(context.getParameter(REQUEST_PARAM_SUSPECTED_CANCER), false);
@@ -73,7 +75,8 @@ public class EncounterSearchHandler1_10 implements SearchHandler {
 					suspectedCancer,
 					confirmedCancer,
 					urgentReview,
-					0);
+					0,
+					visitLocationUuid);
 		}
 
 
