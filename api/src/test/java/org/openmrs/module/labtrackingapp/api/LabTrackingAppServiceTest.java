@@ -19,7 +19,6 @@ import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import org.openmrs.module.labtrackingapp.api.impl.LabTrackingAppServiceImpl;
-import org.openmrs.module.labtrackingapp.api.VisitLocation;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 
@@ -80,7 +79,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		orderService = Context.getService(OrderService.class);
 		executeDataSet("LabTrackingAppServiceTest-initialData.xml");
 		// clear the static map so each test loads fresh from the current DB state
-		LabTrackingAppServiceImpl.getLocationsByUuid().clear();
+		LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap().clear();
 	}
 	
 	@Test
@@ -255,67 +254,54 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 
 	
 	@Test
-	@Verifies(value = "should load all OpenMRS locations into the map", method = "getLocationsByUuid()")
-	public void locationsByUuid_shouldNotBeEmpty() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
+	@Verifies(value = "should load all OpenMRS locations into the map", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldNotBeEmpty() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
 		assertNotNull(map);
 		assertTrue(map.size() > 0);
 	}
 
 	@Test
-	@Verifies(value = "should contain one entry per OpenMRS location", method = "getLocationsByUuid()")
-	public void locationsByUuid_shouldContainAllLocations() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
+	@Verifies(value = "should contain one entry per OpenMRS location", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldContainAllLocations() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
 		int allLocationsCount = Context.getLocationService().getAllLocations().size();
 		assertEquals(allLocationsCount, map.size());
 	}
 
 	@Test
-	@Verifies(value = "should map each uuid key to the Location with that uuid", method = "getLocationsByUuid()")
-	public void locationsByUuid_keyShouldMatchLocationUuid() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
-		for (Map.Entry<String, VisitLocation> entry : map.entrySet()) {
-			assertEquals(entry.getKey(), entry.getValue().getLocation().getUuid());
-		}
+	@Verifies(value = "should return null for a location with no Visit Location tag and no parent", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldReturnNullForNonTaggedRootLocation() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(TEST_LOCATION_UUID);
+		assertNull(associatedVisitLocationUuid);
 	}
 
 	@Test
-	@Verifies(value = "should have null nearestVisitLocation for a root location with no Visit Location tag", method = "getLocationsByUuid()")
-	public void locationsByUuid_shouldHaveNullNearestVisitLocationWhenNoTaggedParent() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
-		VisitLocation testLocation = map.get(TEST_LOCATION_UUID);
-		assertNotNull(testLocation);
-		assertNull(testLocation.getNearestVisitLocation());
+	@Verifies(value = "should return itself for a location that is tagged Visit Location", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldReturnItselfForVisitLocation() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(VISIT_LOCATION_UUID);
+		// A location tagged "Visit Location" should return its own UUID
+		assertEquals(VISIT_LOCATION_UUID, associatedVisitLocationUuid);
 	}
 
 	@Test
-	@Verifies(value = "should have null nearestVisitLocation for a root location that is itself tagged Visit Location", method = "getLocationsByUuid()")
-	public void locationsByUuid_shouldHaveNullNearestVisitLocationForRootVisitLocation() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
-		VisitLocation visitLocation = map.get(VISIT_LOCATION_UUID);
-		assertNotNull(visitLocation);
-		// search starts at getParentLocation(), so a root visit location resolves to null
-		assertNull(visitLocation.getNearestVisitLocation());
+	@Verifies(value = "should resolve to the directly tagged parent Visit Location", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldResolveToTaggedParent() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(CHILD_LOCATION_UUID);
+		assertNotNull(associatedVisitLocationUuid);
+		assertEquals(VISIT_LOCATION_UUID, associatedVisitLocationUuid);
 	}
 
 	@Test
-	@Verifies(value = "should resolve nearestVisitLocation to the directly tagged parent", method = "getLocationsByUuid()")
-	public void locationsByUuid_shouldResolveNearestVisitLocationFromTaggedParent() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
-		VisitLocation childLocation = map.get(CHILD_LOCATION_UUID);
-		assertNotNull(childLocation);
-		assertNotNull(childLocation.getNearestVisitLocation());
-		assertEquals(VISIT_LOCATION_UUID, childLocation.getNearestVisitLocation().getUuid());
-	}
-
-	@Test
-	@Verifies(value = "should recursively resolve nearestVisitLocation across multiple levels", method = "getLocationsByUuid()")
-	public void locationsByUuid_shouldRecursivelyResolveNearestVisitLocation() {
-		Map<String, VisitLocation> map = LabTrackingAppServiceImpl.getLocationsByUuid();
-		VisitLocation grandchildLocation = map.get(GRANDCHILD_LOCATION_UUID);
-		assertNotNull(grandchildLocation);
-		assertNotNull(grandchildLocation.getNearestVisitLocation());
-		assertEquals(VISIT_LOCATION_UUID, grandchildLocation.getNearestVisitLocation().getUuid());
+	@Verifies(value = "should recursively resolve to nearest Visit Location across multiple levels", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldRecursivelyResolveToNearestVisitLocation() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(GRANDCHILD_LOCATION_UUID);
+		assertNotNull(associatedVisitLocationUuid);
+		assertEquals(VISIT_LOCATION_UUID, associatedVisitLocationUuid);
 	}
 
 	/* gets the hours back for testing, b/c the test data date is static*/

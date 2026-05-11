@@ -122,17 +122,17 @@ angular.module("labTrackingDataService", [])
              loads all the Locations in the system
              @return An Array of location objects with uuid, name, tags, parentLocation props
              */
-            this.loadVisitLocations = function () {
+            this.loadAllLocations = function () {
                 return $http.get(CONSTANTS.URLS.GET_LOCATIONS).then(function (resp) {
                     if (resp.data && resp.data.results) {
                         return {status: {code: resp.status, msg: null}, data: resp.data.results};
                     }
                     else {
-                        return {status: {code: resp.status, msg: "Error loading visit locations " + resp.status}, data: []};
+                        return {status: {code: resp.status, msg: "Error loading locations " + resp.status}, data: []};
                     }
                 }, function (error) {
                     console.error("Error loading locations:", error);
-                    return {status: {code: 500, msg: "Error loading visit locations " + error}, data: []};
+                    return {status: {code: 500, msg: "Error loading locations " + error}, data: []};
                 });
             };
 

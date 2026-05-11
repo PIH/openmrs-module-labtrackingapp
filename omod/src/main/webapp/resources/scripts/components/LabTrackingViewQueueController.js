@@ -34,7 +34,7 @@ angular.module("labTrackingViewQueueController", [])
              * @param {Set} visitedUuids - optional set to track visited locations and prevent infinite loops
              * @return {Object|null} - the parent location with "Visit Location" tag, or null if not found
              */
-            $scope.findVisitLocationParent = function(location,  visitedUuids) {
+            $scope.findNearestVisitLocation = function(location,  visitedUuids) {
                 // Initialize visited set on first call to prevent infinite loops
                 if (!visitedUuids) {
                     visitedUuids = new Set();
@@ -82,7 +82,7 @@ angular.module("labTrackingViewQueueController", [])
                 }
 
                 // Recursively search the parent location
-                return $scope.findVisitLocationParent(parentLocation, visitedUuids);
+                return $scope.findNearestVisitLocation(parentLocation, visitedUuids);
             };
 
             $scope.getVisitLocation = function(encounterLocation) {
@@ -98,7 +98,7 @@ angular.module("labTrackingViewQueueController", [])
             }
 
             $scope.loadLocations = function() {
-                LabTrackingDataService.loadVisitLocations().then(function(resp) {
+                LabTrackingDataService.loadAllLocations().then(function(resp) {
                     if (resp.status.code == 200) {
                         $scope.locations = resp.data;
                         // Filter locations that have a tag with name "Visit Location"
@@ -110,9 +110,9 @@ angular.module("labTrackingViewQueueController", [])
                             }
                             return false;
                         });
-                        // Add visitLocation property to each location
+                        // add a visitLocation property to each location so we can map each location to it's visit location
                         for (var i = 0; i < $scope.locations.length; i++) {
-                            var visitLoc = $scope.findVisitLocationParent($scope.locations[i]);
+                            var visitLoc = $scope.findNearestVisitLocation($scope.locations[i]);
                             // Only add visitLocation if it's different from the location itself
                             // This prevents a location from referencing itself
                             if (visitLoc && visitLoc.uuid !== $scope.locations[i].uuid) {

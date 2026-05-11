@@ -19,7 +19,6 @@ import org.openmrs.api.context.Context;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
 import org.openmrs.module.labtrackingapp.api.LabTrackingAppService;
-import org.openmrs.module.labtrackingapp.api.VisitLocation;
 import org.openmrs.module.labtrackingapp.api.db.LabTrackingAppDAO;
 
 import java.util.ArrayList;
@@ -30,16 +29,16 @@ import java.util.Map;
 
 public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements LabTrackingAppService {
 
-    private static Map<String, VisitLocation> locationsByUuid = new HashMap<String, VisitLocation>();
+    private static final String VISIT_LOCATION_TAG = "Visit Location";
+    private static Map<String, String> locationUuidToAssociatedVisitLocation = new HashMap<String, String>();
 
     private LabTrackingAppDAO dao;
 
     private static void initializeLocationsMap() {
-        if (locationsByUuid.isEmpty()) {
+        if (locationUuidToAssociatedVisitLocation.isEmpty()) {
             for (Location location : Context.getLocationService().getAllLocations()) {
-                VisitLocation visitLocation = new VisitLocation(location);
-                visitLocation.setNearestVisitLocation(findNearestVisitLocation(location.getParentLocation()));
-                locationsByUuid.put(location.getUuid(), visitLocation);
+                Location nearestVisitLocation = findNearestVisitLocation(location);
+                locationUuidToAssociatedVisitLocation.put(location.getUuid(), nearestVisitLocation != null ? nearestVisitLocation.getUuid() : null );
             }
         }
     }
@@ -48,15 +47,15 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         if (location == null) {
             return null;
         }
-        if (location.hasTag("Visit Location")) {
+        if (location.hasTag(VISIT_LOCATION_TAG)) {
             return location;
         }
         return findNearestVisitLocation(location.getParentLocation());
     }
 
-    public static Map<String, VisitLocation> getLocationsByUuid() {
+    public static Map<String, String> getLocationUuidToAssociatedVisitLocationMap() {
         initializeLocationsMap();
-        return locationsByUuid;
+        return locationUuidToAssociatedVisitLocation;
     }
 
     public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status,
@@ -90,8 +89,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                     continue;
                 }
                 if (StringUtils.isNotBlank(visitLocationUuid) && encounter.getLocation() != null) {
-                    VisitLocation encounterLocation = getLocationsByUuid().get(encounter.getLocation().getUuid());
-                    if ( encounterLocation != null && encounterLocation.getNearestVisitLocation() != null && visitLocationUuid.equals(encounterLocation.getNearestVisitLocation().getUuid()) ) {
+                    if ( getLocationUuidToAssociatedVisitLocationMap().get(encounter.getLocation().getUuid()).equals(visitLocationUuid) ) {
                         includeEncounter =true;
                     } else {
                         //no match on the visitLocationUuid, so skip this encounter
