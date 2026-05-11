@@ -39,10 +39,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <openMRSVersion>2.8.6</openMRSVersion>
 
-        <appframeworkVersion>2.18.0</appframeworkVersion>
+        <appframeworkVersion>2.19.0</appframeworkVersion>
         <appuiVersion>1.18.0</appuiVersion>
         <calculationVersion>2.0.0</calculationVersion>
-        <emrapiVersion>3.3.0</emrapiVersion>
+        <emrapiVersion>3.4.0</emrapiVersion>
         <metadatamappingVersion>2.0.0</metadatamappingVersion>
         <reportingVersion>2.1.0</reportingVersion>
         <serializationxstreamVersion>0.3.0</serializationxstreamVersion>
