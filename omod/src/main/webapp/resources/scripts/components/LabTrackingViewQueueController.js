@@ -46,6 +46,7 @@ angular.module("labTrackingViewQueueController", [])
                 }
 
                 // Prevent infinite loops by checking if we've already visited this location
+                // This should never happen with correctly designed data
                 if (visitedUuids.has(location.uuid)) {
                     return null;
                 }
