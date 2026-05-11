@@ -27,6 +27,16 @@
                   concept_name_type="FULLY_SPECIFIED" locale_preferred="0"/>
     <location location_id="9991" name="Test Location" creator="1" date_created="2016-12-11 00:00:00.0" retired="false" uuid="d033b4e1-2a21-4265-943b-d5a0710a0c2d"/>
 
+    <!-- location hierarchy for locationsByUuid map tests -->
+    <location_tag location_tag_id="20001" name="Visit Location" description="Visit Location tag" creator="1" date_created="2016-12-11 00:00:00.0" retired="false" uuid="20010000-0000-0000-0000-000000000001"/>
+    <!-- root location tagged as Visit Location -->
+    <location location_id="9992" name="Visit Location Root" creator="1" date_created="2016-12-11 00:00:00.0" retired="false" uuid="99920000-0000-0000-0000-000000000002"/>
+    <location_tag_map location_id="9992" location_tag_id="20001"/>
+    <!-- child one level below the Visit Location -->
+    <location location_id="9993" name="Child of Visit Location" parent_location="9992" creator="1" date_created="2016-12-11 00:00:00.0" retired="false" uuid="99930000-0000-0000-0000-000000000003"/>
+    <!-- grandchild two levels below the Visit Location -->
+    <location location_id="9994" name="Grandchild of Visit Location" parent_location="9993" creator="1" date_created="2016-12-11 00:00:00.0" retired="false" uuid="99940000-0000-0000-0000-000000000004"/>
+
     <!--  the concept that matches the specimen details to the order -->
     <concept concept_id="9992" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2016-12-11 00:00:00.0" uuid="393dec41-2fb5-428f-acfa-36ea85da6666"/>
 

@@ -18,6 +18,7 @@ import org.openmrs.Order;
 import org.openmrs.api.OrderService;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.labtrackingapp.LabTrackingConstants;
+import org.openmrs.module.labtrackingapp.api.impl.LabTrackingAppServiceImpl;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 import org.openmrs.test.Verifies;
 
@@ -29,6 +30,7 @@ import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 /**
@@ -60,6 +62,12 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	private static final String TEST_PATIENT = "b5f5ef61-c750-41fe-94cc-f5a9866dcaf5";
 	private static final String TEST_ENCOUNTER_DATE = "2016-12-11 00:00:00.0";
 	private static final String TEST_ORDER_NUMBER="ORD-999";
+
+	// location UUIDs defined in the test dataset for locationsByUuid map tests
+	private static final String TEST_LOCATION_UUID = "d033b4e1-2a21-4265-943b-d5a0710a0c2d";      // no parent, no tag
+	private static final String VISIT_LOCATION_UUID = "99920000-0000-0000-0000-000000000002";      // tagged "Visit Location", no parent
+	private static final String CHILD_LOCATION_UUID = "99930000-0000-0000-0000-000000000003";      // parent is visit location
+	private static final String GRANDCHILD_LOCATION_UUID = "99940000-0000-0000-0000-000000000004"; // two levels below visit location
 	//private static final String TEST_ORDER_UUID="f4740b0b-206c-48a4-a5b7-111111111112";
 	//private static final String TEST_ORDER_UUID_TO_CANCEL="f4740b0b-206c-48a4-a5b7-111111111111";
 
@@ -70,6 +78,8 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		service = Context.getService(LabTrackingAppService.class);
 		orderService = Context.getService(OrderService.class);
 		executeDataSet("LabTrackingAppServiceTest-initialData.xml");
+		// clear the static map so each test loads fresh from the current DB state
+		LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap().clear();
 	}
 	
 	@Test
@@ -95,7 +105,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 
-		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, patientName, status, false, false, false, 0);
+		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, patientName, status, false, false, false, 0, null);
 		assertEquals(TOTAL_ACTIVE_ENCOUNTER_ORDERS, specimenDetailsEncountersByDate.size());
 
 	}
@@ -110,7 +120,7 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 		String patientName = null;
 		int status = LabTrackingConstants.LabTrackingOrderStatus.ALL.getId();
 
-		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, "Hamil", status, false, false,false, 0);
+		List<Encounter> specimenDetailsEncountersByDate = service.getSpecimenDetailsEncountersByDate(startDate, endDate, patientUuid, "Hamil", status, false, false, false, 0, null);
 		assertEquals(TOTAL_ACTIVE_ENCOUNTER_ORDERS, specimenDetailsEncountersByDate.size());
 
 	}
@@ -243,6 +253,57 @@ public class LabTrackingAppServiceTest extends BaseModuleContextSensitiveTest {
 	}
 
 	
+	@Test
+	@Verifies(value = "should load all OpenMRS locations into the map", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldNotBeEmpty() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		assertNotNull(map);
+		assertTrue(map.size() > 0);
+	}
+
+	@Test
+	@Verifies(value = "should contain one entry per OpenMRS location", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldContainAllLocations() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		int allLocationsCount = Context.getLocationService().getAllLocations().size();
+		assertEquals(allLocationsCount, map.size());
+	}
+
+	@Test
+	@Verifies(value = "should return null for a location with no Visit Location tag and no parent", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldReturnNullForNonTaggedRootLocation() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(TEST_LOCATION_UUID);
+		assertNull(associatedVisitLocationUuid);
+	}
+
+	@Test
+	@Verifies(value = "should return itself for a location that is tagged Visit Location", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldReturnItselfForVisitLocation() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(VISIT_LOCATION_UUID);
+		// A location tagged "Visit Location" should return its own UUID
+		assertEquals(VISIT_LOCATION_UUID, associatedVisitLocationUuid);
+	}
+
+	@Test
+	@Verifies(value = "should resolve to the directly tagged parent Visit Location", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldResolveToTaggedParent() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(CHILD_LOCATION_UUID);
+		assertNotNull(associatedVisitLocationUuid);
+		assertEquals(VISIT_LOCATION_UUID, associatedVisitLocationUuid);
+	}
+
+	@Test
+	@Verifies(value = "should recursively resolve to nearest Visit Location across multiple levels", method = "getLocationUuidToAssociatedVisitLocationMap()")
+	public void locationUuidToAssociatedVisitLocationMap_shouldRecursivelyResolveToNearestVisitLocation() {
+		Map<String, String> map = LabTrackingAppServiceImpl.getLocationUuidToAssociatedVisitLocationMap();
+		String associatedVisitLocationUuid = map.get(GRANDCHILD_LOCATION_UUID);
+		assertNotNull(associatedVisitLocationUuid);
+		assertEquals(VISIT_LOCATION_UUID, associatedVisitLocationUuid);
+	}
+
 	/* gets the hours back for testing, b/c the test data date is static*/
 	private static Date getTestEncounterDate() {
 		try {

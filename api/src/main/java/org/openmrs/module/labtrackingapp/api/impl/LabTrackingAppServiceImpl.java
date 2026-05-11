@@ -11,6 +11,7 @@ package org.openmrs.module.labtrackingapp.api.impl;
 
 import org.apache.commons.lang.StringUtils;
 import org.openmrs.Encounter;
+import org.openmrs.Location;
 import org.openmrs.Obs;
 import org.openmrs.Order;
 import org.openmrs.OrderType;
@@ -28,7 +29,34 @@ import java.util.Map;
 
 public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements LabTrackingAppService {
 
+    private static final String VISIT_LOCATION_TAG = "Visit Location";
+    private static Map<String, String> locationUuidToAssociatedVisitLocation = new HashMap<String, String>();
+
     private LabTrackingAppDAO dao;
+
+    private static void initializeLocationsMap() {
+        if (locationUuidToAssociatedVisitLocation.isEmpty()) {
+            for (Location location : Context.getLocationService().getAllLocations()) {
+                Location nearestVisitLocation = findNearestVisitLocation(location);
+                locationUuidToAssociatedVisitLocation.put(location.getUuid(), nearestVisitLocation != null ? nearestVisitLocation.getUuid() : null );
+            }
+        }
+    }
+
+    private static Location findNearestVisitLocation(Location location) {
+        if (location == null) {
+            return null;
+        }
+        if (location.hasTag(VISIT_LOCATION_TAG)) {
+            return location;
+        }
+        return findNearestVisitLocation(location.getParentLocation());
+    }
+
+    public static Map<String, String> getLocationUuidToAssociatedVisitLocationMap() {
+        initializeLocationsMap();
+        return locationUuidToAssociatedVisitLocation;
+    }
 
     public List<Order> getActiveOrders(long startDate, long endDate, String patientUuid, String patientName, int status,
                                        boolean suspectedCancer, boolean urgentReview, int maxResults){
@@ -39,7 +67,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
         return dao.getSpecimenDetailsEncountersByOrderNumbers(orderNumbers);
     }
 
-    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults) {
+    public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults, String visitLocationUuid) {
 
         List<Encounter> encounters = null;
         List<OrderType> orderTypes = new ArrayList<OrderType>();
@@ -52,7 +80,7 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                 Encounter encounter = order.getEncounter();
                 boolean includeEncounter = true;
 
-                if ( StringUtils.isBlank(patientUuid)
+                if ( StringUtils.isBlank(patientUuid) && StringUtils.isBlank(visitLocationUuid)
                         && StringUtils.isBlank(patientName)
                         && (status == LabTrackingConstants.LabTrackingOrderStatus.ALL.getId() || status == LabTrackingConstants.LabTrackingOrderStatus.CANCELED.getId() )
                         && !suspectedCancer && !confirmedCancer && !urgentReview) {
@@ -60,7 +88,14 @@ public class LabTrackingAppServiceImpl extends BaseOpenmrsService implements Lab
                     encounters.add(encounter);
                     continue;
                 }
-
+                if (StringUtils.isNotBlank(visitLocationUuid) && encounter.getLocation() != null) {
+                    if ( getLocationUuidToAssociatedVisitLocationMap().get(encounter.getLocation().getUuid()).equals(visitLocationUuid) ) {
+                        includeEncounter =true;
+                    } else {
+                        //no match on the visitLocationUuid, so skip this encounter
+                        continue;
+                    }
+                }
                 Obs processedObs = getFirstObsByConceptUuid(encounter, LabTrackingConstants.LAB_TRACKING_SPECIMEN_ENCOUNTER_PROCESSED_DATE_UUID);
                 Boolean processed = processedObs != null && processedObs.getValueDatetime() != null;
 

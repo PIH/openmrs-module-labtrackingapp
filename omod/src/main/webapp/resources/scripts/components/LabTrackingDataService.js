@@ -18,6 +18,7 @@ angular.module("labTrackingDataService", [])
                     CANCEL_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID",
                     SAVE_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order",
                     VIEW_CONCEPT_SET: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/concept/CONCEPT_UUID?v=custom:(setMembers:(uuid,display))",
+                    GET_LOCATIONS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/location?v=custom:(uuid,name,tags:(uuid,name),parentLocation:(uuid,name))",
                     VIEW_LOCATIONS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/location?v=custom:(uuid,display)&tag=" + LOCATION_CONSULT_NOTE_UUID,
                     VIEW_CARE_SETTINGS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/caresetting?v=custom:(uuid,display)",
                     VIEW_PROVIDERS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/provider?v=custom:(uuid,display,person)",
@@ -25,7 +26,7 @@ angular.module("labTrackingDataService", [])
                     + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS&suspectedCancer=SUSPECTED_CANCER&confirmedCancer=CONFIRMED_CANCER&urgentReview=URGENT_REVIEW"
                     + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
                     PATHOLOGY_QUEUE: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&v=custom:(" + ENCOUNTER_FIELDS
-                    + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS&suspectedCancer=SUSPECTED_CANCER&confirmedCancer=CONFIRMED_CANCER&urgentReview=URGENT_REVIEW"
+                    + ")&startDateInMillis=START_DATE&endDateInMillis=END_DATE&patient=PATIENT_UUID&name=PATIENT_NAME&status=STATUS&visitLocation=LOCATION_UUID&suspectedCancer=SUSPECTED_CANCER&confirmedCancer=CONFIRMED_CANCER&urgentReview=URGENT_REVIEW"
                     + "&limit=MAX_QUEUE_SIZE&startIndex=START_INDEX&totalCount=true",
                     VIEW_ORDER: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/order/ORDER_UUID?v=custom:(" + ORDER_FIELDS + ")",
                     VIEW_SPECIMEN_DETAILS: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/encounter?s=getSpecimenDetailsEncounter&orderNumbers=ORDER_NUMBER&v=custom:(location:(uuid,name),encounterDatetime,uuid,visit:(uuid,startDatetime,stopDatetime),obs:(concept:(uuid),display,value,uuid,groupMembers),encounterProviders:(uuid,provider:(uuid,person:(display)),encounterRole:(uuid)))",
@@ -114,6 +115,24 @@ angular.module("labTrackingDataService", [])
 
                 }, function (err) {
                     return {status: {code: 500, msg: "Error loading locations " + err}, data: []};
+                });
+            };
+
+            /*
+             loads all the Locations in the system
+             @return An Array of location objects with uuid, name, tags, parentLocation props
+             */
+            this.loadAllLocations = function () {
+                return $http.get(CONSTANTS.URLS.GET_LOCATIONS).then(function (resp) {
+                    if (resp.data && resp.data.results) {
+                        return {status: {code: resp.status, msg: null}, data: resp.data.results};
+                    }
+                    else {
+                        return {status: {code: resp.status, msg: "Error loading locations " + resp.status}, data: []};
+                    }
+                }, function (error) {
+                    console.error("Error loading locations:", error);
+                    return {status: {code: 500, msg: "Error loading locations " + error}, data: []};
                 });
             };
 
@@ -293,7 +312,7 @@ angular.module("labTrackingDataService", [])
             *  @param OPTIONAL {String} patientName - a look up string for the patient name
             * @returns {LabTrackingOrder} an object containing the current page of LabTrackingOrder objects and the total count of all the orders
             * */
-          this.loadPathologyQueue = function (pageNumber, startDate, endDate, status, patientUuid, patientName, suspectedCancer, confirmedCancer, urgentReview) {
+          this.loadPathologyQueue = function (pageNumber, startDate, endDate, status, patientUuid, patientName, suspectedCancer, confirmedCancer, urgentReview, locationUuid) {
             var startIndex = 0;
             if (pageNumber != null && pageNumber > 0) {
               startIndex = (pageNumber - 1) * CONSTANTS.MAX_QUEUE_SIZE;
@@ -304,6 +323,7 @@ angular.module("labTrackingDataService", [])
             .replace("STATUS", (status == null ? "" : status))
             .replace("PATIENT_UUID", (patientUuid == null ? "" : patientUuid))
             .replace("PATIENT_NAME", (patientName == null ? "" : patientName))
+            .replace("LOCATION_UUID", (locationUuid == null ? "" : locationUuid))
             .replace("SUSPECTED_CANCER", (suspectedCancer == null ? "false" : suspectedCancer))
             .replace("CONFIRMED_CANCER", (confirmedCancer == null ? "false" : confirmedCancer))
             .replace("URGENT_REVIEW", (urgentReview == null ? "false" : urgentReview))

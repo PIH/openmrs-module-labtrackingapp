@@ -6,6 +6,8 @@ angular.module("labTrackingViewQueueController", [])
 
             $scope.cookieForFilter = "queue_filter";
             $scope.statusCodes = [];
+            $scope.locations = [];
+            $scope.visitLocations = [];
             $scope.data_loading = true;
             $scope.selectedOrder = null;
             $scope.orderCancelReason = null;
@@ -25,6 +27,109 @@ angular.module("labTrackingViewQueueController", [])
                 }
                 $scope.statusCodes.push(status);
             }
+
+            /**
+             * Recursively finds the first parent location that has a tag with name "Visit Location"
+             * @param {Object} location - the location object to search from
+             * @param {Set} visitedUuids - optional set to track visited locations and prevent infinite loops
+             * @return {Object|null} - the parent location with "Visit Location" tag, or null if not found
+             */
+            $scope.findNearestVisitLocation = function(location,  visitedUuids) {
+                // Initialize visited set on first call to prevent infinite loops
+                if (!visitedUuids) {
+                    visitedUuids = new Set();
+                }
+
+                // Base case: location is null or undefined
+                if (!location) {
+                    return null;
+                }
+
+                // Prevent infinite loops by checking if we've already visited this location
+                // This should never happen with correctly designed data
+                if (visitedUuids.has(location.uuid)) {
+                    return null;
+                }
+                visitedUuids.add(location.uuid);
+
+                // Check if current location has "Visit Location" tag
+                if (location.tags && location.tags.length > 0) {
+                    var hasVisitLocationTag = location.tags.some(function(tag) {
+                        return tag.name === "Visit Location";
+                    });
+
+                    if (hasVisitLocationTag) {
+                        return location;
+                    }
+                }
+
+                // If no parent location, we've reached the top without finding a match
+                if (!location.parentLocation || !location.parentLocation.uuid) {
+                    return null;
+                }
+
+                // Find the full parent location object from allLocations array
+                var parentLocation = null;
+                for (var i = 0; i < $scope.locations.length; i++) {
+                    if ($scope.locations[i].uuid === location.parentLocation.uuid) {
+                        parentLocation = $scope.locations[i];
+                        break;
+                    }
+                }
+
+                // If parent not found in the locations array, return null
+                if (!parentLocation) {
+                    return null;
+                }
+
+                // Recursively search the parent location
+                return $scope.findNearestVisitLocation(parentLocation, visitedUuids);
+            };
+
+            $scope.getVisitLocation = function(encounterLocation) {
+                if ($scope.locations.length > 0 && encounterLocation && encounterLocation.value) {
+                    var location = $scope.locations.find(function(loc) {
+                        return loc.uuid === encounterLocation.value;
+                    });
+                    if (location) {
+                        return location.visitLocation;
+                    }
+                }
+                return null;
+            }
+
+            $scope.loadLocations = function() {
+                LabTrackingDataService.loadAllLocations().then(function(resp) {
+                    if (resp.status.code == 200) {
+                        $scope.locations = resp.data;
+                        // Filter locations that have a tag with name "Visit Location"
+                        $scope.visitLocations = resp.data.filter(function(location) {
+                            if (location.tags && location.tags.length > 0) {
+                                return location.tags.some(function(tag) {
+                                    return tag.name === "Visit Location";
+                                });
+                            }
+                            return false;
+                        });
+                        // add a visitLocation property to each location so we can map each location to it's visit location
+                        for (var i = 0; i < $scope.locations.length; i++) {
+                            var visitLoc = $scope.findNearestVisitLocation($scope.locations[i]);
+                            // Only add visitLocation if it's different from the location itself
+                            // This prevents a location from referencing itself
+                            if (visitLoc && visitLoc.uuid !== $scope.locations[i].uuid) {
+                                $scope.locations[i].visitLocation = visitLoc;
+                            } else {
+                                $scope.locations[i].visitLocation = null;
+                            }
+                        }
+                    } else {
+                        console.error("Error loading locations:", resp.status.msg);
+                    }
+                });
+            };
+
+            // Load locations on controller initialization
+            $scope.loadLocations();
 
             var fromDate = new Date();
             fromDate.setDate(fromDate.getDate() - LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);
@@ -47,6 +152,7 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.filter = {
                     search: null, // the filter for the patient list
                     status: LabTrackingOrder.concepts.statusCodes[0],
+                    location: null,
                     patient: {uuid: null, name: null},
                     suspectedCancer: false,
                     confirmedCancer: false,
@@ -102,8 +208,9 @@ angular.module("labTrackingViewQueueController", [])
                 var confirmedCancer = $scope.filter.confirmedCancer;
                 var urgentReview = $scope.filter.urgentReview;
                 var patientName = $scope.filter.patient.name;
+                var locationUuid = $scope.filter.location ? $scope.filter.location.uuid : null;
 
-                return LabTrackingDataService.loadPathologyQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer, confirmedCancer, urgentReview).then(function (resp) {
+                return LabTrackingDataService.loadPathologyQueue(pageNumber, startDate, endDate, status, $scope.patientUuid, patientName, suspectedCancer, confirmedCancer, urgentReview, locationUuid).then(function (resp) {
                     if (resp.status.code == 200) {
                         var cnt = resp.data.totalCount;
                         $scope.testOrderQueue = resp.data.orders;
@@ -220,7 +327,7 @@ angular.module("labTrackingViewQueueController", [])
              */
             $scope.handleFilterChange = function (filterSource) {
                 if (filterSource == 'from_date' || filterSource == 'to_date'
-                    || filterSource == 'status' || filterSource == 'patient'
+                    || filterSource == 'status' || filterSource == 'location' || filterSource == 'patient'
                     || filterSource == 'suspectedCancer' || filterSource == 'confirmedCancer' || filterSource == 'urgentReview') {
                     // reset to the first page
                     $scope.filter.paging.currentPage = 1;

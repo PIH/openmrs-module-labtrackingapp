@@ -56,7 +56,7 @@ public interface LabTrackingAppService extends OpenmrsService {
 	 * @param maxResults
 	 * @return
 	 */
-	public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults);
+	public List<Encounter> getSpecimenDetailsEncountersByDate(long startDate, long endDate, String patientUuid, String patientName, int status, boolean suspectedCancer, boolean confirmedCancer, boolean urgentReview, int maxResults, String visitLocationUuid);
 
      /*
 	 * gets a summary of the active orders for a patient
