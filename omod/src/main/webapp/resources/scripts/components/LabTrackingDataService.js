@@ -35,7 +35,7 @@ angular.module("labTrackingDataService", [])
                     ACTIVE_VISIT: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/emrapi/activevisit",
                     CONCEPT_SEARCH: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/conceptsearch?q=PROCEDURE_NAME&conceptClasses=" + CONCEPT_CLASS_PROCEDURE_UUID + "&v=custom:(concept:(uuid,display))",
                     DX_SEARCH: "/" + OPENMRS_CONTEXT_PATH + "/ws/rest/v1/conceptsearch?q=DX_NAME&conceptClasses=" + CONCEPT_CLASS_DX_UUID + "&v=custom:(concept:(uuid,display))"
-                },
+                }
             };
 
             // Expose constants
