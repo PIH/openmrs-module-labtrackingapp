@@ -28,64 +28,6 @@ angular.module("labTrackingViewQueueController", [])
                 $scope.statusCodes.push(status);
             }
 
-            /**
-             * Recursively finds the first parent location that has a tag with name "Visit Location"
-             * @param {Object} location - the location object to search from
-             * @param {Set} visitedUuids - optional set to track visited locations and prevent infinite loops
-             * @return {Object|null} - the parent location with "Visit Location" tag, or null if not found
-             */
-            $scope.findNearestVisitLocation = function(location,  visitedUuids) {
-                // Initialize visited set on first call to prevent infinite loops
-                if (!visitedUuids) {
-                    visitedUuids = new Set();
-                }
-
-                // Base case: location is null or undefined
-                if (!location) {
-                    return null;
-                }
-
-                // Prevent infinite loops by checking if we've already visited this location
-                // This should never happen with correctly designed data
-                if (visitedUuids.has(location.uuid)) {
-                    return null;
-                }
-                visitedUuids.add(location.uuid);
-
-                // Check if current location has "Visit Location" tag
-                if (location.tags && location.tags.length > 0) {
-                    var hasVisitLocationTag = location.tags.some(function(tag) {
-                        return tag.name === "Visit Location";
-                    });
-
-                    if (hasVisitLocationTag) {
-                        return location;
-                    }
-                }
-
-                // If no parent location, we've reached the top without finding a match
-                if (!location.parentLocation || !location.parentLocation.uuid) {
-                    return null;
-                }
-
-                // Find the full parent location object from allLocations array
-                var parentLocation = null;
-                for (var i = 0; i < $scope.locations.length; i++) {
-                    if ($scope.locations[i].uuid === location.parentLocation.uuid) {
-                        parentLocation = $scope.locations[i];
-                        break;
-                    }
-                }
-
-                // If parent not found in the locations array, return null
-                if (!parentLocation) {
-                    return null;
-                }
-
-                // Recursively search the parent location
-                return $scope.findNearestVisitLocation(parentLocation, visitedUuids);
-            };
-
             $scope.getVisitLocation = function(encounterLocation) {
                 if ($scope.locations.length > 0 && encounterLocation && encounterLocation.value) {
                     var location = $scope.locations.find(function(loc) {
@@ -98,38 +40,8 @@ angular.module("labTrackingViewQueueController", [])
                 return null;
             }
 
-            $scope.loadLocations = function() {
-                LabTrackingDataService.loadAllLocations().then(function(resp) {
-                    if (resp.status.code == 200) {
-                        $scope.locations = resp.data;
-                        // Filter locations that have a tag with name "Visit Location"
-                        $scope.visitLocations = resp.data.filter(function(location) {
-                            if (location.tags && location.tags.length > 0) {
-                                return location.tags.some(function(tag) {
-                                    return tag.name === "Visit Location";
-                                });
-                            }
-                            return false;
-                        });
-                        // add a visitLocation property to each location so we can map each location to it's visit location
-                        for (var i = 0; i < $scope.locations.length; i++) {
-                            var visitLoc = $scope.findNearestVisitLocation($scope.locations[i]);
-                            // Only add visitLocation if it's different from the location itself
-                            // This prevents a location from referencing itself
-                            if (visitLoc && visitLoc.uuid !== $scope.locations[i].uuid) {
-                                $scope.locations[i].visitLocation = visitLoc;
-                            } else {
-                                $scope.locations[i].visitLocation = null;
-                            }
-                        }
-                    } else {
-                        console.error("Error loading locations:", resp.status.msg);
-                    }
-                });
-            };
-
             // Load locations on controller initialization
-            $scope.loadLocations();
+            LabTrackingDataService.loadVisitLocations($scope.locations, $scope.visitLocations);
 
             var fromDate = new Date();
             fromDate.setDate(fromDate.getDate() - LabTrackingDataService.CONSTANTS.MONITOR_PAGE_DAYS_BACK);

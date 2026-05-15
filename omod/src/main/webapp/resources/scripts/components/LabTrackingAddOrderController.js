@@ -10,6 +10,8 @@ angular.module("labTrackingAddOrderController", [])
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
             $scope.locations = []; // clinical locations in the system
+            $scope.allEmrLocations = [];
+            $scope.visitLocations = [];
             $scope.providers = []; // the proviers in the system
             $scope.concepts = LabTrackingOrder.concepts;
 
@@ -240,14 +242,60 @@ angular.module("labTrackingAddOrderController", [])
             }
 
             /*
+             * Loads locations for the current session location.
+             *
+             * This function filters all EMR locations to find those that:
+             * 1. Belong to the same visit location as the current session location
+             * 2. Are tagged with the "Consult Note" location tag
+             *
+             * The filtered locations are added to $scope.locations for use in the UI.
+             *
+             * Process:
+             * - Find the location matching the current session location UUID
+             * - Get its associated visit location
+             * - Search all locations that share the same visit location
+             * - Filter to only include those with the LOCATION_CONSULT_NOTE_UUID tag
+             * - Add matching locations to $scope.locations array
+             */
+            function loadLocationsForSession() {
+                if ($scope.allEmrLocations.length > 0) {
+                    var sessionLocation = LabTrackingDataService.getSessionLocation();
+                    if (sessionLocation) {
+                        // Find the location object that matches the current session location
+                        var matchingLocation = $scope.allEmrLocations.find(function (loc) {
+                            return loc.uuid === sessionLocation.uuid;
+                        });
+                        if (matchingLocation && matchingLocation.visitLocation && matchingLocation.visitLocation.uuid) {
+                            // Iterate through all locations to find those in the same visit location
+                            for (var i = 0; i < $scope.allEmrLocations.length; i++) {
+                                var item = $scope.allEmrLocations[i];
+                                // Check if this location belongs to the same visit location
+                                if (item.visitLocation && item.visitLocation.uuid === matchingLocation.visitLocation.uuid) {
+                                    // Check if this location has the required "Consult Note" tag
+                                    var consultNoteTag = item.tags.find(function (tag) {
+                                        return tag.uuid === LabTrackingDataService.LOCATION_CONSULT_NOTE_UUID;
+                                    });
+                                    // Only add locations that have the consult note tag
+                                    if (consultNoteTag) {
+                                        $scope.locations.push({
+                                            label: item.name,
+                                            value: item.uuid
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            /*
              loads the system care settings
              */
            $scope.loadingModal = showLoadingModal();
-            return LabTrackingDataService.loadLocations().then(function (respLocations) {
-              if (respLocations.status.code == 200) {
-                $scope.locations = respLocations.data;
-              }
-              return LabTrackingDataService.loadProviders().then(function (respProviders) {
+            // Load locations on controller initialization
+           return  LabTrackingDataService.loadVisitLocations($scope.allEmrLocations, $scope.visitLocations).then(function () {
+                loadLocationsForSession();
+                return LabTrackingDataService.loadProviders().then(function (respProviders) {
                 if (respProviders.status.code == 200) {
                   $scope.providers = respProviders.data;
                 }
@@ -267,7 +315,6 @@ angular.module("labTrackingAddOrderController", [])
                   $scope.loadingModal.dismiss('cancel');
                 });
               });
-
-            });
+           });
         }]);
 
