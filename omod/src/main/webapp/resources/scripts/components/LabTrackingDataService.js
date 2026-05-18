@@ -38,6 +38,8 @@ angular.module("labTrackingDataService", [])
                 }
             };
 
+            // Expose constants
+            this.LOCATION_CONSULT_NOTE_UUID = LOCATION_CONSULT_NOTE_UUID;
 
             /* gets the print page
              * @param  orderUuid - the order
@@ -100,6 +102,7 @@ angular.module("labTrackingDataService", [])
              */
             this.loadLocations = function () {
                 var url = CONSTANTS.URLS.VIEW_LOCATIONS;
+
                 return $http.get(url).then(function (resp) {
                     if (_self.isOk(resp)) {
                         var data = [];
@@ -134,6 +137,52 @@ angular.module("labTrackingDataService", [])
                     console.error("Error loading locations:", error);
                     return {status: {code: 500, msg: "Error loading locations " + error}, data: []};
                 });
+            };
+
+            /*
+             loads all the Locations and populates the provided arrays. Each location is
+             augmented with a visitLocation property pointing to its nearest ancestor tagged
+             "Visit Location" (or null if it is itself a Visit Location).
+             @param locations - array to populate with all locations
+             @param visitLocations - array to populate with the locations tagged "Visit Location"
+             */
+            this.loadVisitLocations = function (locations, visitLocations) {
+                var deferred = $q.defer();
+                _self.loadAllLocations().then(function (resp) {
+                    if (resp.status.code == 200) {
+                        for (var i = 0; i < resp.data.length; i++) {
+                            locations.push(resp.data[i]);
+                        }
+                        var visitLocs = resp.data.filter(function (location) {
+                            if (location.tags && location.tags.length > 0) {
+                                return location.tags.some(function (tag) {
+                                    return tag.name === "Visit Location";
+                                });
+                            }
+                            return false;
+                        });
+                        for (var j = 0; j < visitLocs.length; j++) {
+                            visitLocations.push(visitLocs[j]);
+                        }
+                        for (var k = 0; k < locations.length; k++) {
+                            var visitLoc = findNearestVisitLocation(locations[k], locations);
+                            // Only add visitLocation if it's different from the location itself
+                            // This prevents a location from referencing itself
+                            if (visitLoc && visitLoc.uuid !== locations[k].uuid) {
+                                locations[k].visitLocation = visitLoc;
+                            } else {
+                                locations[k].visitLocation = null;
+                            }
+                        }
+                        deferred.resolve({locations: locations, visitLocations: visitLocations});
+                    } else {
+                        console.error("Error loading locations:", resp.status.msg);
+                        deferred.reject(resp.status.msg);
+                    }
+                }, function (err) {
+                    deferred.reject(err);
+                });
+                return deferred.promise;
             };
 
             /*
@@ -670,6 +719,10 @@ angular.module("labTrackingDataService", [])
               return _self.session.currentProvider ? _self.session.currentProvider : null;
             }
 
+            this.getSessionLocation = function() {
+                return _self.session.sessionLocation ? _self.session.sessionLocation : null;
+            }
+
             /* helper function to determine if REST response is ok
              * @param {WSResps} res - the response from the server
              * @return true/false
@@ -682,6 +735,55 @@ angular.module("labTrackingDataService", [])
             this.session = SessionInfo.get(); // we use this to get the current provider
 
             //internal functions -----------------------------------------
+
+            /* Recursively finds the first parent location that has a tag with name "Visit Location"
+             * @param location - the location object to search from
+             * @param allLocations - the list of all locations (used to resolve parentLocation by uuid)
+             * @param visitedUuids - optional Set used to prevent infinite loops
+             * @return the parent location with "Visit Location" tag, or null if not found
+             */
+            function findNearestVisitLocation(location, allLocations, visitedUuids) {
+                if (!visitedUuids) {
+                    visitedUuids = new Set();
+                }
+
+                if (!location) {
+                    return null;
+                }
+
+                // Prevent infinite loops; should never happen with correctly designed data
+                if (visitedUuids.has(location.uuid)) {
+                    return null;
+                }
+                visitedUuids.add(location.uuid);
+
+                if (location.tags && location.tags.length > 0) {
+                    var hasVisitLocationTag = location.tags.some(function (tag) {
+                        return tag.name === "Visit Location";
+                    });
+                    if (hasVisitLocationTag) {
+                        return location;
+                    }
+                }
+
+                if (!location.parentLocation || !location.parentLocation.uuid) {
+                    return null;
+                }
+
+                var parentLocation = null;
+                for (var i = 0; i < allLocations.length; i++) {
+                    if (allLocations[i].uuid === location.parentLocation.uuid) {
+                        parentLocation = allLocations[i];
+                        break;
+                    }
+                }
+
+                if (!parentLocation) {
+                    return null;
+                }
+
+                return findNearestVisitLocation(parentLocation, allLocations, visitedUuids);
+            }
 
             /*  gets an obs from a list based on the concept uuid
              * @param list - the list of observations
