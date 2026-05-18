@@ -9,7 +9,7 @@ angular.module("labTrackingAddOrderController", [])
             $scope.order = new LabTrackingOrder(patientUuid, locationUuid, visitUuid);
             $scope.error = null; // when not null, this message will show on the screen
             $scope.debugInfo = null;  // for debugging
-            $scope.locations = []; // clinical locations in the system
+            $scope.locations = []; // locations to display in the UI to the user
             $scope.allEmrLocations = [];
             $scope.visitLocations = [];
             $scope.providers = []; // the proviers in the system
@@ -293,6 +293,7 @@ angular.module("labTrackingAddOrderController", [])
              */
            $scope.loadingModal = showLoadingModal();
             // Load locations on controller initialization
+            // passes in empty allEmrLocations and visitLocations list to be populated by the loadVisitLocations function
            return  LabTrackingDataService.loadVisitLocations($scope.allEmrLocations, $scope.visitLocations).then(function () {
                 loadLocationsForSession();
                 return LabTrackingDataService.loadProviders().then(function (respProviders) {
