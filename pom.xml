@@ -37,17 +37,17 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <openMRSVersion>2.8.6</openMRSVersion>
+        <openMRSVersion>3.0.0-SNAPSHOT</openMRSVersion>
 
-        <appframeworkVersion>2.19.0</appframeworkVersion>
-        <appuiVersion>1.18.0</appuiVersion>
-        <calculationVersion>2.0.0</calculationVersion>
-        <emrapiVersion>3.4.0</emrapiVersion>
-        <metadatamappingVersion>2.0.0</metadatamappingVersion>
-        <reportingVersion>2.1.0</reportingVersion>
-        <serializationxstreamVersion>0.3.0</serializationxstreamVersion>
+        <appframeworkVersion>2.20.0-SNAPSHOT</appframeworkVersion>
+        <appuiVersion>1.19.0-SNAPSHOT</appuiVersion>
+        <calculationVersion>2.1.0-SNAPSHOT</calculationVersion>
+        <emrapiVersion>3.5.0-SNAPSHOT</emrapiVersion>
+        <metadatamappingVersion>2.1.0-SNAPSHOT</metadatamappingVersion>
+        <reportingVersion>2.2.0-SNAPSHOT</reportingVersion>
+        <serializationxstreamVersion>0.4.0-SNAPSHOT</serializationxstreamVersion>
         <uicommonsVersion>3.0.0</uicommonsVersion>
-        <uiframeworkVersion>4.0.0</uiframeworkVersion>
+        <uiframeworkVersion>4.0.1-SNAPSHOT</uiframeworkVersion>
         <uilibraryVersion>2.0.7</uilibraryVersion>
         <webservicesRestVersion>3.1.0</webservicesRestVersion>
 	</properties>
