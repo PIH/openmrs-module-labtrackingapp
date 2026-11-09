@@ -723,6 +723,35 @@ angular.module("labTrackingDataService", [])
                 return _self.session.sessionLocation ? _self.session.sessionLocation : null;
             }
 
+            /*
+             gets the locations to offer for "Location where procedure performed": those tagged Consult Note Location
+             in the same site (nearest "Visit Location") as the visit the order is saved in. The order's specimen
+             collection encounter goes into that visit, and the server refuses an encounter at a location outside its
+             visit's site, so when there is a visit its site is used; without one (the visit is then found or created
+             at the login site) the session location's site is used.
+             @param allLocations - all locations, as populated by loadVisitLocations
+             @param visitLocationUuid - the location of the visit the order is saved in, or null if there is no visit
+             @param sessionLocationUuid - the login location
+             @return the locations as {label, value} options, or an empty list if no site is found
+             */
+            this.getProcedureLocations = function (allLocations, visitLocationUuid, sessionLocationUuid) {
+                var siteUuid = findSiteUuid(allLocations, visitLocationUuid) || findSiteUuid(allLocations, sessionLocationUuid);
+                if (!siteUuid) {
+                    return [];
+                }
+                var procedureLocations = [];
+                for (var i = 0; i < allLocations.length; i++) {
+                    var item = allLocations[i];
+                    if (item.visitLocation && item.visitLocation.uuid === siteUuid && hasTag(item, LOCATION_CONSULT_NOTE_UUID)) {
+                        procedureLocations.push({
+                            label: item.name,
+                            value: item.uuid
+                        });
+                    }
+                }
+                return procedureLocations;
+            };
+
             /* helper function to determine if REST response is ok
              * @param {WSResps} res - the response from the server
              * @return true/false
@@ -783,6 +812,42 @@ angular.module("labTrackingDataService", [])
                 }
 
                 return findNearestVisitLocation(parentLocation, allLocations, visitedUuids);
+            }
+
+            /* finds the site (nearest location tagged "Visit Location", which may be the location itself) of a location
+             * @param allLocations - all locations, as populated by loadVisitLocations
+             * @param locationUuid - the location uuid
+             * @return the uuid of the site, or null if the location or its site is not found
+             */
+            function findSiteUuid(allLocations, locationUuid) {
+                if (!locationUuid) {
+                    return null;
+                }
+                var location = allLocations.find(function (loc) {
+                    return loc.uuid === locationUuid;
+                });
+                if (!location) {
+                    return null;
+                }
+                // loadVisitLocations leaves visitLocation null on a location that is itself a Visit Location
+                if (location.visitLocation && location.visitLocation.uuid) {
+                    return location.visitLocation.uuid;
+                }
+                var isVisitLocation = (location.tags || []).some(function (tag) {
+                    return tag.name === "Visit Location";
+                });
+                return isVisitLocation ? location.uuid : null;
+            }
+
+            /* checks whether a location has a tag
+             * @param location - the location, with its tags
+             * @param tagUuid - the tag uuid
+             * @return true/false
+             */
+            function hasTag(location, tagUuid) {
+                return (location.tags || []).some(function (tag) {
+                    return tag.uuid === tagUuid;
+                });
             }
 
             /*  gets an obs from a list based on the concept uuid

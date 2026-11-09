@@ -276,6 +276,7 @@ ${ ui.includeFragment("coreapps", "patientHeader", [ patient: patient ]) }
       .value('returnUrl', '${ returnUrl }')
       .value('patientUuid', '${ patient.uuid }')
       .value('visitUuid', '${ visit.uuid }')
+      .value('visitLocationUuid', '${ visit && visit.location ? visit.location.uuid : '' }')
       .value('orderUuid', '${ orderUuid }')
       .value('visitStartDateTime', '${ visit ? visitStartDateTime : '' }')
       .value('visitStopDateTime', '${ visit && visit.stopDatetime ? visitEndDateTime : '' }')
