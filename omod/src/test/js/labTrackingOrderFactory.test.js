@@ -24,6 +24,67 @@ describe('LabTrackingOrder', () => {
     return undefined;
   }
 
+  describe('fromEncounterRestObject', () => {
+    // A Date obs is stored at midnight in the server's timezone, and REST returns it with the server's offset.
+    // Here the server is on UTC and the browser (the test timezone) is in New York, 5 hours behind, so reading
+    // the value as an instant would give 7 pm on the previous day.
+    const serverMidnight = (date) => `${date}T00:00:00.000+0000`;
+
+    function encounterWithObs(obs) {
+      return {
+        uuid: 'encounter-uuid',
+        encounterDatetime: '2026-11-06T10:00:00.000+0000',
+        patient: { person: { uuid: 'patient-uuid', display: 'Test Patient' }, identifiers: [{ identifier: 'TEST-ID' }] },
+        encounterProviders: [],
+        obs: obs,
+      };
+    }
+
+    function dateObs(conceptUuid, date) {
+      return { uuid: conceptUuid + '-obs', concept: { uuid: conceptUuid }, valueDatetime: serverMidnight(date) };
+    }
+
+    function localDate(date) {
+      return [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+    }
+
+    it('reads the processed date, immuno sent date and result date as the stored calendar date', () => {
+      const order = LabTrackingOrder.fromEncounterRestObject(encounterWithObs([
+        dateObs(LabTrackingOrder.concepts.processedDate.value, '2026-11-06'),
+        dateObs(LabTrackingOrder.concepts.dateImmunoSentToBoston.value, '2026-11-07'),
+        dateObs(LabTrackingOrder.concepts.resultDate.value, '2026-11-08'),
+      ]));
+
+      expect(localDate(order.processedDate.value)).toEqual([2026, 11, 6]);
+      expect(localDate(order.dateImmunoSentToBoston.value)).toEqual([2026, 11, 7]);
+      expect(localDate(order.resultDate.value)).toEqual([2026, 11, 8]);
+    });
+
+    it('reads the specimen sent and returned dates as the stored calendar date', () => {
+      const order = LabTrackingOrder.fromEncounterRestObject(encounterWithObs([{
+        uuid: 'construct-uuid',
+        concept: { uuid: LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_CONSTRUCT },
+        groupMembers: [
+          dateObs(LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE, '2026-11-06'),
+          dateObs(LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE, '2026-11-08'),
+        ],
+      }]));
+
+      expect(localDate(order.specimenSentToPaP.dateSent.value)).toEqual([2026, 11, 6]);
+      expect(localDate(order.specimenSentToPaP.dateReturned.value)).toEqual([2026, 11, 8]);
+    });
+
+    it('saves back the same date it read', () => {
+      const order = LabTrackingOrder.fromEncounterRestObject(encounterWithObs([
+        dateObs(LabTrackingOrder.concepts.processedDate.value, '2026-11-06'),
+      ]));
+
+      const obs = LabTrackingOrder.toSpecimenCollectionEncounterWebServiceObject(order, 'provider-uuid').encounter.obs;
+
+      expect(findObs(obs, LabTrackingOrder.concepts.processedDate.value).value).toBe('2026-11-06');
+    });
+  });
+
   describe('toSpecimenCollectionEncounterWebServiceObject', () => {
     // 11:30 pm in New York, already the next day in UTC
     const lateEvening = new Date(2026, 10, 6, 23, 30);

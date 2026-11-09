@@ -203,6 +203,24 @@ angular.module("encounterFactory", [])
             return $filter('date')(date, "yyyy-MM-dd");
         };
 
+        /* converts the value of an obs for a Date (not Datetime) concept to a JavaScript date at local midnight.
+         * The server stores a date at midnight in its own timezone and returns it like 2016-12-25T00:00:00.000-0500,
+         * so the calendar date is taken from the string as is; converting the instant to the browser's timezone
+         * would show the previous day whenever the browser is behind the server.
+         * @param value - the obs valueDatetime (or a plain yyyy-MM-dd date)
+         * @return the Date, or null if there is no value
+         * */
+        Encounter.fromObsDateOnly = function (value) {
+            if (value == null) {
+                return null;
+            }
+            var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+            if (match == null) {
+                return new Date(value);
+            }
+            return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
+        };
+
         /**
          * Return the constructor function
          */

@@ -387,24 +387,24 @@ angular.module("labTrackingOrderFactory", [])
                     order.specimenSentToPaP.labPaPLocation.obsUuid = grpObs.uuid;
                   }
                   else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE) {
-                    order.specimenSentToPaP.dateSent.value = new Date(grpObs.valueDatetime);
+                    order.specimenSentToPaP.dateSent.value = Encounter.fromObsDateOnly(grpObs.valueDatetime);
                     order.specimenSentToPaP.dateSent.obsUuid = grpObs.uuid;
                   } else if (grpObsConceptUuid == LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE) {
-                    order.specimenSentToPaP.dateReturned.value = new Date(grpObs.valueDatetime);
+                    order.specimenSentToPaP.dateReturned.value = Encounter.fromObsDateOnly(grpObs.valueDatetime);
                     order.specimenSentToPaP.dateReturned.obsUuid = grpObs.uuid;
                   }
                 }
               }
               else if (conceptUuid == LabTrackingOrder.concepts.resultDate.value) {
-                order.resultDate.value = new Date(obs[i].valueDatetime);
+                order.resultDate.value = Encounter.fromObsDateOnly(obs[i].valueDatetime);
                 order.resultDate.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.processedDate.value) {
-                order.processedDate.value = new Date(obs[i].valueDatetime);
+                order.processedDate.value = Encounter.fromObsDateOnly(obs[i].valueDatetime);
                 order.processedDate.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.dateImmunoSentToBoston.value) {
-                order.dateImmunoSentToBoston.value = new Date(obs[i].valueDatetime);
+                order.dateImmunoSentToBoston.value = Encounter.fromObsDateOnly(obs[i].valueDatetime);
                 order.dateImmunoSentToBoston.obsUuid = uuid;
               }
               else if (conceptUuid == LabTrackingOrder.concepts.file.value) {
