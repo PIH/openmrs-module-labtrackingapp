@@ -219,10 +219,10 @@
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
-				<version>1.11.3</version>
+				<version>1.12.0</version>
 				<configuration>
-					<nodeVersion>v14.17.0</nodeVersion>
-					<npmVersion>7.6.2</npmVersion>
+					<nodeVersion>v20.18.1</nodeVersion>
+					<npmVersion>10.8.2</npmVersion>
 				</configuration>
 				<executions>
 					<execution>
@@ -244,6 +244,17 @@
 						</goals>
 						<configuration>
 							<arguments>run build</arguments>
+						</configuration>
+					</execution>
+					<execution>
+						<!-- JavaScript unit tests (src/test/js); skipped with -DskipTests -->
+						<id>npm test</id>
+						<goals>
+							<goal>npm</goal>
+						</goals>
+						<phase>test</phase>
+						<configuration>
+							<arguments>test</arguments>
 						</configuration>
 					</execution>
 				</executions>

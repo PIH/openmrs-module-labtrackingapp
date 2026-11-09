@@ -26,40 +26,6 @@ angular.module("encounterFactory", [])
             }
         }
 
-        /* formats a date like //yyyy-MM-dd HH:mm for DateTime concepts
-        * @param Date dt - the date
-        * @return the formatted date
-        * */
-        Encounter.formatDateTime = function(dt){
-
-            if(dt == null){
-                return null;
-            }
-
-            var ret = "";
-            var yr = dt.getFullYear();
-            var mt = dt.getMonth() + 1;
-            if(mt < 10){
-                mt = "0" + mt;
-            }
-            var dy = dt.getDate();
-            if(dy < 10){
-                dy = "0" + dy;
-            }
-            var h = dt.getHours();
-            if(h < 10){
-                h = "0" + h;
-            }
-
-            var mn = dt.getMinutes();
-            if(mn < 10){
-                mn = "0" + mn;
-            }
-            ret += yr + "-" + mt + "-" + dy + " " + h + ":" + mn;
-
-            return ret;
-        };
-
         /*creates an encounter provider object
          * @param providerUUID = the provider UUID
          * @param encounterRoleUuid = the provicder role UUID
@@ -215,14 +181,47 @@ angular.module("encounterFactory", [])
             return deferred.promise;
         }
 
-        /* converts a JavaScript date to an OpenMRS REST date
-         * like 2016-12-25T19:02:34.232+0700
+        /* converts a JavaScript date to an OpenMRS REST datetime, ISO 8601 with the local offset,
+         * like 2016-12-25T19:02:34.232+0700. Use it for datetimes (obsDatetime, Datetime obs values),
+         * not for Date obs values (see toRestDate).
          * @param date - the Date object
-         * @return  the string date
+         * @return  the string datetime
          * */
-        Encounter.toObsDate = function (date) {
-            var OBS_DATE_FORMAT = "yyyy-MM-ddTHH:mm:ss.sssZ";
-            return $filter('date')(date, OBS_DATE_FORMAT);
+        Encounter.toRestDatetime = function (date) {
+            var REST_DATETIME_FORMAT = "yyyy-MM-ddTHH:mm:ss.sssZ";
+            return $filter('date')(date, REST_DATETIME_FORMAT);
+        };
+
+        /* converts a JavaScript date to an OpenMRS REST date, the local calendar date like 2016-12-25,
+         * with no time or timezone. Use it for the values of obs for Date (not Datetime) concepts, so
+         * the server stores the date the user picked without any timezone conversion.
+         * @param date - the Date object
+         * @return the string date, or null if there is no date
+         * */
+        Encounter.toRestDate = function (date) {
+            if (date == null) {
+                return null;
+            }
+            return $filter('date')(date, "yyyy-MM-dd");
+        };
+
+        /* converts an OpenMRS REST date to a JavaScript date at local midnight on the same calendar date.
+         * Use it for date-only values, such as the values of obs for Date (not Datetime) concepts. The server
+         * stores a date at midnight in its own timezone and returns it like 2016-12-25T00:00:00.000-0500, so
+         * the calendar date is taken from the string as is; converting the instant to the browser's timezone
+         * would show the previous day whenever the browser is behind the server.
+         * @param value - a REST date or datetime string, like an obs valueDatetime or a plain yyyy-MM-dd date
+         * @return the Date, or null if there is no value
+         * */
+        Encounter.fromRestDate = function (value) {
+            if (value == null) {
+                return null;
+            }
+            var match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+            if (match == null) {
+                return new Date(value);
+            }
+            return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]));
         };
 
         /**
