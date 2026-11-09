@@ -191,6 +191,18 @@ angular.module("encounterFactory", [])
             return $filter('date')(date, OBS_DATE_FORMAT);
         };
 
+        /* converts a JavaScript date to the value of an obs for a Date (not Datetime) concept,
+         * the local calendar date like 2016-12-25, so no time or timezone is stored with it
+         * @param date - the Date object
+         * @return the string date, or null if there is no date
+         * */
+        Encounter.toObsDateOnly = function (date) {
+            if (date == null) {
+                return null;
+            }
+            return $filter('date')(date, "yyyy-MM-dd");
+        };
+
         /**
          * Return the constructor function
          */

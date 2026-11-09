@@ -18,3 +18,15 @@ The Lab Tracking Application is a stand-alone Pathology application that can be 
     * Test Order Number (this is what links this specimen encounter to the order and ordering encounter)
     * Information from the clinician who performed the procedure  (specimen details, accession number, clinical history, suspected diagnosis, dates etc…)
     * Information about the results (date, result notes, uploaded file)
+
+### JavaScript tests
+
+The AngularJS code in `omod/src/main/webapp/resources/scripts` has unit tests in `omod/src/test/js`, run with
+[Vitest](https://vitest.dev/) in a jsdom browser environment. `src/test/js/setup.js` loads AngularJS 1.5.8 (the
+version uicommons serves), angular-mocks and the app's component scripts. Use `createInjector(...)` to get the
+app's services in a test.
+
+* `mvn install` runs them in the `test` phase (skip with `-DskipTests`).
+* For quicker runs, from `omod/`: `npm test`, or `npm run test:watch` to re-run on changes.
+
+Tests run in the `America/New_York` timezone, so date code that only works in UTC fails.

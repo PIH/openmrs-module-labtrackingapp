@@ -1003,7 +1003,7 @@ angular.module("labTrackingOrderFactory", [])
             v.push(labLocationObs);
 
             if (labTrackingOrder.specimenSentToPaP.dateSent.value != null) {
-              var dtAsStr = Encounter.toObsDate(labTrackingOrder.specimenSentToPaP.dateSent.value);
+              var dtAsStr = Encounter.toObsDateOnly(labTrackingOrder.specimenSentToPaP.dateSent.value);
               v.push(Encounter.toObsWebServiceObject(
                 LabTrackingOrder.CONSTANTS.SPECIMEN_SENT_DATE,
                 dtAsStr,
@@ -1013,7 +1013,7 @@ angular.module("labTrackingOrderFactory", [])
             }
 
             if (labTrackingOrder.specimenSentToPaP.dateReturned.value != null) {
-              var dtAsStr = Encounter.toObsDate(labTrackingOrder.specimenSentToPaP.dateReturned.value);
+              var dtAsStr = Encounter.toObsDateOnly(labTrackingOrder.specimenSentToPaP.dateReturned.value);
               v.push(Encounter.toObsWebServiceObject(
                 LabTrackingOrder.CONSTANTS.SPECIMEN_RETURN_DATE,
                 dtAsStr,
@@ -1033,14 +1033,14 @@ angular.module("labTrackingOrderFactory", [])
           }
 
            if (labTrackingOrder.processedDate.value != null) {
-                var dtAsStr = Encounter.toObsDate(labTrackingOrder.processedDate.value);
+                var dtAsStr = Encounter.toObsDateOnly(labTrackingOrder.processedDate.value);
                 obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.processedDate.value, dtAsStr, labTrackingOrder.processedDate.obsUuid));
             }
             else if (labTrackingOrder.processedDate.obsUuid != null) {
                 obsIdsToDelete.push(labTrackingOrder.processedDate.obsUuid);
             }
             if (labTrackingOrder.dateImmunoSentToBoston.value != null) {
-                var dtAsStr = Encounter.toObsDate(labTrackingOrder.dateImmunoSentToBoston.value);
+                var dtAsStr = Encounter.toObsDateOnly(labTrackingOrder.dateImmunoSentToBoston.value);
                 obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.dateImmunoSentToBoston.value, dtAsStr, labTrackingOrder.dateImmunoSentToBoston.obsUuid));
             }
             else if (labTrackingOrder.dateImmunoSentToBoston.obsUuid != null) {
@@ -1048,7 +1048,7 @@ angular.module("labTrackingOrderFactory", [])
             }
 
             if (labTrackingOrder.resultDate.value != null) {
-                var dtAsStr = Encounter.toObsDate(labTrackingOrder.resultDate.value);
+                var dtAsStr = Encounter.toObsDateOnly(labTrackingOrder.resultDate.value);
                 obs.push(Encounter.toObsWebServiceObject(LabTrackingOrder.concepts.resultDate.value, dtAsStr, labTrackingOrder.resultDate.obsUuid));
             }
             else if (labTrackingOrder.resultDate.obsUuid != null) {
