@@ -24,6 +24,13 @@ loadScript(require.resolve('angular-mocks/angular-mocks.js'));
 
 loadScript(path.join(COMPONENTS_DIR, 'EncounterFactory.js'));
 loadScript(path.join(COMPONENTS_DIR, 'LabTrackingOrderFactory.js'));
+loadScript(path.join(COMPONENTS_DIR, 'LabTrackingDataService.js'));
+
+// Stand-ins for the services LabTrackingDataService gets from other modules (uicommons' session module and
+// ng-file-upload), which the tests don't load. Include 'labTrackingTestStubs' when creating an injector for it.
+window.angular.module('labTrackingTestStubs', [])
+  .factory('SessionInfo', () => ({ get: () => ({}) }))
+  .factory('Upload', () => ({}));
 
 /**
  * Creates a fresh injector for the given app modules (plus ng and ngMock), so each test gets its own

@@ -1,6 +1,6 @@
 angular.module("labTrackingAddOrderController", [])
-    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'orderUuid', 'visitStartDateTime', 'visitStopDateTime', 'serverDatetime', 'locationUuid', 'returnUrl',
-        function ($window, $filter, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, orderUuid, visitStartDateTime, visitStopDateTime, serverDatetime, locationUuid, returnUrl) {
+    .controller("addOrderController", ['$window', '$filter', '$uibModal', '$scope', 'LabTrackingOrder', 'LabTrackingDataService', 'patientUuid', 'visitUuid', 'visitLocationUuid', 'orderUuid', 'visitStartDateTime', 'visitStopDateTime', 'serverDatetime', 'locationUuid', 'returnUrl',
+        function ($window, $filter, $uibModal, $scope, LabTrackingOrder, LabTrackingDataService, patientUuid, visitUuid, visitLocationUuid, orderUuid, visitStartDateTime, visitStopDateTime, serverDatetime, locationUuid, returnUrl) {
             $scope.savingModal = null; //this is a flag that lets us know we are in save mode, so that we can disable things
             $scope.loadingModal = null; //this is a flag that lets us know we are in loading mode
             $scope.selectedProcedures = []; //the list of procedures available, used to manage the UI state
@@ -242,50 +242,16 @@ angular.module("labTrackingAddOrderController", [])
             }
 
             /*
-             * Loads locations for the current session location.
-             *
-             * This function filters all EMR locations to find those that:
-             * 1. Belong to the same visit location as the current session location
-             * 2. Are tagged with the "Consult Note" location tag
-             *
-             * The filtered locations are added to $scope.locations for use in the UI.
-             *
-             * Process:
-             * - Find the location matching the current session location UUID
-             * - Get its associated visit location
-             * - Search all locations that share the same visit location
-             * - Filter to only include those with the LOCATION_CONSULT_NOTE_UUID tag
-             * - Add matching locations to $scope.locations array
+             * Loads the locations for "Location where procedure performed": the Consult Note locations in the site of
+             * the visit the order is saved in, or of the session location when the page has no visit
+             * (see LabTrackingDataService.getProcedureLocations).
              */
-            function loadLocationsForSession() {
-                if ($scope.allEmrLocations.length > 0) {
-                    var sessionLocation = LabTrackingDataService.getSessionLocation();
-                    if (sessionLocation) {
-                        // Find the location object that matches the current session location
-                        var matchingLocation = $scope.allEmrLocations.find(function (loc) {
-                            return loc.uuid === sessionLocation.uuid;
-                        });
-                        if (matchingLocation && matchingLocation.visitLocation && matchingLocation.visitLocation.uuid) {
-                            // Iterate through all locations to find those in the same visit location
-                            for (var i = 0; i < $scope.allEmrLocations.length; i++) {
-                                var item = $scope.allEmrLocations[i];
-                                // Check if this location belongs to the same visit location
-                                if (item.visitLocation && item.visitLocation.uuid === matchingLocation.visitLocation.uuid) {
-                                    // Check if this location has the required "Consult Note" tag
-                                    var consultNoteTag = item.tags.find(function (tag) {
-                                        return tag.uuid === LabTrackingDataService.LOCATION_CONSULT_NOTE_UUID;
-                                    });
-                                    // Only add locations that have the consult note tag
-                                    if (consultNoteTag) {
-                                        $scope.locations.push({
-                                            label: item.name,
-                                            value: item.uuid
-                                        });
-                                    }
-                                }
-                            }
-                        }
-                    }
+            function loadProcedureLocations() {
+                var sessionLocation = LabTrackingDataService.getSessionLocation();
+                var procedureLocations = LabTrackingDataService.getProcedureLocations($scope.allEmrLocations,
+                    visitLocationUuid, sessionLocation ? sessionLocation.uuid : null);
+                for (var i = 0; i < procedureLocations.length; i++) {
+                    $scope.locations.push(procedureLocations[i]);
                 }
             }
             /*
@@ -295,7 +261,7 @@ angular.module("labTrackingAddOrderController", [])
             // Load locations on controller initialization
             // passes in empty allEmrLocations and visitLocations list to be populated by the loadVisitLocations function
            return  LabTrackingDataService.loadVisitLocations($scope.allEmrLocations, $scope.visitLocations).then(function () {
-                loadLocationsForSession();
+                loadProcedureLocations();
                 return LabTrackingDataService.loadProviders().then(function (respProviders) {
                 if (respProviders.status.code == 200) {
                   $scope.providers = respProviders.data;
